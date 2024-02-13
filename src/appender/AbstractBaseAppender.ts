@@ -2,7 +2,10 @@ import type {IAppender, ILogEvent} from '../definitions';
 import {LogLevel} from '../definitions';
 
 export abstract class AbstractBaseAppender implements IAppender {
-  level: LogLevel = LogLevel.OFF;
+  /**
+   * log everything
+   */
+  level: LogLevel = LogLevel.TRACE;
 
   abstract handle(event: ILogEvent): Promise<void>;
 
