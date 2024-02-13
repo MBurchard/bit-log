@@ -1,0 +1,55 @@
+{
+  "name": "bit-log",
+  "version": "0.1.0",
+  "description": "A Node library for logging",
+  "author": {
+    "name": "Martin Burchard",
+    "email": "dev@burchard-it.de",
+    "url": ""
+  },
+  "license": "MIT",
+  "keywords": [
+    "node",
+    "logging",
+    "typescript"
+  ],
+  "repository": "",
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=8",
+    "npm": ">=10"
+  },
+  "type": "module",
+  "main": "build/esm/index.js",
+  "module": "src/index.ts",
+  "files": [
+    "dist/"
+  ],
+  "exports": {
+    "./*": {
+      "types": "./dist/types/*.d.ts",
+      "require": "./dist/cjs/*.js",
+      "import": "./dist/esm/*.js",
+      "default": "./dist/esm/*.js"
+    }
+  },
+  "scripts": {
+    "compile": "tsc -b ./tsconfig.cjs.json ./tsconfig.esm.json ./tsconfig.types.json",
+    "build:clean": "rm -rf ./dist",
+    "build": "npm-run-all build:clean compile",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "test": "jest",
+    "coverage": "jest"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.17",
+    "@typescript-eslint/eslint-plugin": "^7.0.1",
+    "eslint": "^8.56.0",
+    "jest": "^29.7.0",
+    "npm-run-all2": "^6.1.2",
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "moduleResolution": "Node",
+    "sourceMap": false,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "useUnknownInCatchVariables": false,
+    "stripInternal": true,
+    "baseUrl": ".",
+    "outDir": "./dist"
+  },
+  "exclude": ["**/*.spec.ts", "**/*.test.ts"]
+}
