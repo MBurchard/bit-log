@@ -7,7 +7,6 @@ describe('test ConsoleAppender', () => {
 
   beforeEach(() => {
     appender = new ConsoleAppender();
-    appender.level = LogLevel.TRACE;
   });
 
   afterEach(() => {
@@ -90,27 +89,6 @@ describe('test ConsoleAppender', () => {
     expect(log).toHaveBeenCalledWith(expect.anything(), 'test warn');
     expect(log).toHaveBeenCalledWith(expect.anything(), 'test error');
     expect(log).toHaveBeenCalledWith(expect.anything(), 'test fatal');
-  });
-
-  it('log function not called', async () => {
-    // given
-    const now = new Date();
-    appender.level = LogLevel.INFO;
-    // noinspection DuplicatedCode
-    const log = jest.spyOn(console, 'log').mockImplementation(() => {
-    });
-    const mockLog = jest.fn(() => {
-      return 'jest mock function';
-    });
-
-    // when
-    await appender.handle({
-      level: LogLevel.DEBUG, timestamp: now, loggerName: 'foo.bar', payload: mockLog,
-    });
-
-    // then
-    expect(log).toHaveBeenCalledTimes(0);
-    expect(mockLog).toHaveBeenCalledTimes(0);
   });
 
   it('do not log if loglevel does not match', async () => {
