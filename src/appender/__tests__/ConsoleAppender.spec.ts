@@ -16,7 +16,7 @@ describe('test ConsoleAppender', () => {
   it('check default properties', () => {
     expect(appender).not.toBeNull();
     expect(appender.useSpecificMethods).toBe(false);
-    expect(appender.level).toBe(LogLevel.TRACE);
+    expect(appender.level).toBeUndefined();
   });
 
   it('constructor with log level', () => {
