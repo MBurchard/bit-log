@@ -1,16 +1,13 @@
-import type {IAppender, ILogEvent} from '../definitions';
-import {LogLevel} from '../definitions';
+import type {IAppender, ILogEvent, LogLevel} from '../definitions';
+import {isPresent} from '../definitions';
 
 export abstract class AbstractBaseAppender implements IAppender {
-  /**
-   * log everything
-   */
-  level: LogLevel = LogLevel.TRACE;
+  level?: LogLevel;
 
   abstract handle(event: ILogEvent): Promise<void>;
 
   willHandle(event: ILogEvent): boolean {
-    return event.level >= this.level;
+    return !isPresent(this.level) || event.level >= this.level;
   }
 }
 

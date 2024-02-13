@@ -181,7 +181,7 @@ export interface IAppender {
   /**
    * The level that the appender will handle
    */
-  level: LogLevel;
+  level?: LogLevel;
 
   /**
    * Some appender may need a close method at the end
