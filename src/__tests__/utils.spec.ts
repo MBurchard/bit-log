@@ -1,5 +1,5 @@
 import {LogLevel} from '../definitions';
-import {formatISO8601, formatLogLevel, truncateMiddle, truncateOrExtend} from '../utils';
+import {formatISO8601, formatLogLevel, formatPrefix, truncateMiddle, truncateOrExtend} from '../utils';
 
 describe('test utils', () => {
   it('formatLogLevel TRACE', () => {
@@ -26,7 +26,7 @@ describe('test utils', () => {
     expect(formatLogLevel(LogLevel.FATAL)).toBe('\x1B[95mFATAL\x1B[m');
   });
 
-  it('formatLogLevel FATAL', () => {
+  it('formatLogLevel OFF', () => {
     expect(formatLogLevel(LogLevel.OFF)).toBe('');
   });
 
@@ -49,5 +49,15 @@ describe('test utils', () => {
 
   it('truncateOrExtend if string is shorter then the given limit', () => {
     expect(truncateOrExtend('to short', 10)).toBe('to short  ');
+  });
+
+  it('formatPrefix with 5 chars log level', () => {
+    expect(formatPrefix(LogLevel.DEBUG, 'foo.bar'))
+      .toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}[+-]\d{2}:\d{2}\s.+?\s\[.{20}]:$/);
+  });
+
+  it('formatPrefix with 4 chars log level', () => {
+    expect(formatPrefix(LogLevel.INFO, 'foo.bar'))
+      .toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}[+-]\d{2}:\d{2}\s{2}.+?\s\[.{20}]:$/);
   });
 });

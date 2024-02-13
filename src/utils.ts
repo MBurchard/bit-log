@@ -81,7 +81,8 @@ export function formatPrefix(level: LogLevel, name: string): string {
   //   }
   // } catch (e) {}
   // return `${getTs()} ${formatLogLevel(level)} [${strPad(category, 20)}|${strPad(func, 20)}|${strPad(src, 30)}|${line.padStart(5, ' ')}]:`;
-  return `${formatISO8601(new Date())} ${formatLogLevel(level)} [${truncateOrExtend(name, 20)}]:`;
+  const formattedLevel = formatLogLevel(level);
+  return `${formatISO8601(new Date())} ${formattedLevel.padStart(13, ' ')} [${truncateOrExtend(name, 20)}]:`;
 }
 
 /**
