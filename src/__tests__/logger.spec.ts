@@ -22,14 +22,18 @@ describe('test logger', () => {
       const logger = new Logger('');
       expect(logger.name).toBe('');
       expect(logger.level).toBe(LogLevel.ERROR);
-      expect(logger);
     });
 
     it('with loglevel', () => {
       const logger = new Logger('foo.bar', undefined, LogLevel.INFO);
       expect(logger.name).toBe('foo.bar');
       expect(logger.level).toBe(LogLevel.INFO);
-      expect(logger);
+    });
+
+    it('with loglevel from parent', () => {
+      const parent = new Logger('', undefined, LogLevel.INFO);
+      const child = new Logger('foo', parent);
+      expect(child.level).toBe(LogLevel.INFO);
     });
   });
 
