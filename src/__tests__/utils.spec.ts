@@ -21,7 +21,7 @@ describe('test utils', () => {
   });
 
   it('formatLogLevel ERROR', () => {
-    expect(formatLogLevel(LogLevel.ERROR)).toBe('\x1B[95mERROR\x1B[m');
+    expect(formatLogLevel(LogLevel.ERROR)).toBe('\x1B[91mERROR\x1B[m');
   });
 
   it('formatLogLevel FATAL', () => {
