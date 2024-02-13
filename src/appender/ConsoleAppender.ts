@@ -27,7 +27,7 @@ export class ConsoleAppender extends AbstractBaseAppender {
   }
 
   async handle(event: ILogEvent): Promise<void> {
-    if (event.level < this.level) {
+    if (!this.willHandle(event)) {
       return;
     }
     let loggingMethod = console.log;
