@@ -20,6 +20,11 @@ describe('test ConsoleAppender', () => {
     expect(appender.level).toBe(LogLevel.TRACE);
   });
 
+  it('constructor with log level', () => {
+    appender = new ConsoleAppender(LogLevel.INFO);
+    expect(appender.level).toBe(LogLevel.INFO);
+  });
+
   it('logs with specific console methods', async () => {
     // given
     const now = new Date();
