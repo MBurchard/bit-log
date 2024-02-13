@@ -31,6 +31,7 @@ jobs:
         uses: codecov/codecov-action@v4.0.1
         env:
           slug: MBurchard/bit-log
+          token: ${{ secrets.CODECOV_TOKEN }}
 
 #      - name: Upload coverage report
 #        uses: actions/upload-artifact@v2
