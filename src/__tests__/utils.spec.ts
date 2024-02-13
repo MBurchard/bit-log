@@ -2,6 +2,7 @@ import {LogLevel} from '../definitions';
 import {formatISO8601, formatLogLevel, formatPrefix, truncateMiddle, truncateOrExtend} from '../utils';
 
 describe('test utils', () => {
+  // noinspection DuplicatedCode
   it('formatLogLevel TRACE', () => {
     expect(formatLogLevel(LogLevel.TRACE)).toBe('\x1B[90mTRACE\x1B[m');
   });
@@ -14,12 +15,13 @@ describe('test utils', () => {
     expect(formatLogLevel(LogLevel.INFO)).toBe('\x1B[92mINFO\x1B[m');
   });
 
+  // noinspection DuplicatedCode
   it('formatLogLevel WARN', () => {
     expect(formatLogLevel(LogLevel.WARN)).toBe('\x1B[93mWARN\x1B[m');
   });
 
   it('formatLogLevel ERROR', () => {
-    expect(formatLogLevel(LogLevel.FATAL)).toBe('\x1B[95mFATAL\x1B[m');
+    expect(formatLogLevel(LogLevel.ERROR)).toBe('\x1B[95mERROR\x1B[m');
   });
 
   it('formatLogLevel FATAL', () => {
