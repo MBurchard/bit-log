@@ -91,14 +91,6 @@ export interface ILogger {
   info(msg: () => string): void
 
   /**
-   * logs a log event
-   *
-   * @param {ILogEvent} event
-   * @return {boolean} returns true if this logger has appender that have potentially processed the LogEvent.
-   */
-  log(event: ILogEvent): boolean
-
-  /**
    * true if the log level is greater or equal to the LogLevel of the logger
    *
    * @param {LogLevel} level
