@@ -14,7 +14,7 @@ describe('test logger', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks(); // Wiederherstellen aller Mocks nach jedem Test
+    jest.restoreAllMocks();
   });
 
   describe('initialization', () => {
