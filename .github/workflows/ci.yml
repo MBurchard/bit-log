@@ -29,7 +29,7 @@ jobs:
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
-        env:
+        with:
           slug: MBurchard/bit-log
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -38,9 +38,3 @@ jobs:
 #        with:
 #          name: coverage-report
 #          path: coverage
-#
-#      - name: Upload coverage reports to Codecov
-#        uses: codecov/codecov-action@v4.0.1
-#        env:
-#          token: ${{ secrets.CODECOV_TOKEN }}
-#          slug: MBurchard/bit-log
