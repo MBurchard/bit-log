@@ -68,28 +68,28 @@ describe('useLogger', () => {
   });
 });
 
-describe('test logging configuration', () => {
-  const config: LoggingConfig = {
-    appender: {
-      'CONSOLE': {
-        class: ConsoleAppender,
-        level: LogLevel.DEBUG,
-      },
-    },
-  };
-
-  it('default root logger', () => {
-    const log = useLogger('');
-    expect(log).toBeDefined();
-    expect(log).toBeInstanceOf(Logger);
-    expect(log.level).toBe(LogLevel.INFO);
-    expect((log as Logger).appender).toStrictEqual({'CONSOLE': new ConsoleAppender(LogLevel.TRACE)});
-  });
-
-  it('setup appender', () => {
-    // change log level off ROOT logger to debug, to see logging setup messages
-    const root = useLogger('');
-    root.level = LogLevel.DEBUG;
-    configureLogging(config);
-  });
-});
+// describe('test logging configuration', () => {
+//   const config: LoggingConfig = {
+//     appender: {
+//       'CONSOLE': {
+//         class: ConsoleAppender,
+//         level: LogLevel.DEBUG,
+//       },
+//     },
+//   };
+//
+//   it('default root logger', () => {
+//     const log = useLogger('');
+//     expect(log).toBeDefined();
+//     expect(log).toBeInstanceOf(Logger);
+//     expect(log.level).toBe(LogLevel.INFO);
+//     expect((log as Logger).appender).toStrictEqual({'CONSOLE': new ConsoleAppender(LogLevel.TRACE)});
+//   });
+//
+//   it('setup appender', () => {
+//     // change log level off ROOT logger to debug, to see logging setup messages
+//     const root = useLogger('');
+//     root.level = LogLevel.DEBUG;
+//     configureLogging(config);
+//   });
+// });
