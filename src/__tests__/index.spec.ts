@@ -106,6 +106,24 @@ describe('test usage', () => {
           'AbstractBaseAppender], someKey: 100, otherKey: "Hallo Welt"}, error: Error: Something was wrong');
       }
     });
+
+    it('should throw an exception on wrong appender config', () => {
+      try {
+        configureLogging({
+          appender: {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            'SOMETEST': {
+              someKey: 100,
+              otherKey: 'Hallo Welt',
+            },
+          },
+        });
+      } catch (e) {
+        expect(e).toBeInstanceOf(Error);
+        expect(e.message).toBe('illegal appender config {someKey: 100, otherKey: "Hallo Welt"}');
+      }
+    });
   });
 });
 
