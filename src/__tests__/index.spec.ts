@@ -3,6 +3,7 @@ import {ConsoleAppender} from '../appender/ConsoleAppender';
 import type {LoggingConfig} from '../definitions';
 import {LogLevel} from '../definitions';
 import {configureLogging, useLogger} from '../index';
+import type {Logger} from '../logger';
 
 describe('test usage', () => {
   let spyConsole: jest.SpyInstance;
@@ -72,21 +73,29 @@ describe('test usage', () => {
   });
 
   describe('test logging configuration', () => {
-    const config: LoggingConfig = {
-      appender: {
-        'CONSOLE': {
-          class: ConsoleAppender,
-          level: LogLevel.DEBUG,
-        },
-      },
-      root: {
-        level: LogLevel.DEBUG,
-      },
-      logger: {},
-    };
 
-    it('setup appender', () => {
+    it('setup appender, CONSOLE is replaced in ROOT logger', async () => {
+      const config: LoggingConfig = {
+        appender: {
+          'CONSOLE': {
+            class: ConsoleAppender,
+            level: LogLevel.DEBUG,
+          },
+        },
+      };
+      const root = useLogger('') as Logger;
+      root.level = LogLevel.DEBUG;
       configureLogging(config);
+      await new Promise((r) => setTimeout(r, 10));
+      expect(spyConsole).toHaveBeenCalledTimes(4);
+      expect(spyConsole).toHaveBeenCalledWith(expect.anything(), 'configure logging');
+      expect(spyConsole).toHaveBeenCalledWith(expect.anything(), 'configure appender');
+      expect(spyConsole).toHaveBeenCalledWith(expect.anything(),
+        'found existing appender:', 'CONSOLE', 'search and replace it');
+      expect(spyConsole).toHaveBeenCalledWith(expect.anything(), 'Replace appender', 'CONSOLE', 'in ROOT logger');
+      const appender = root.appender['CONSOLE'];
+      expect(appender).toBeDefined();
+      expect(appender.level).toBe(LogLevel.DEBUG);
     });
 
     it('appender may throw errors on initialization', () => {
@@ -123,6 +132,10 @@ describe('test usage', () => {
         expect(e).toBeInstanceOf(Error);
         expect(e.message).toBe('illegal appender config {someKey: 100, otherKey: "Hallo Welt"}');
       }
+    });
+
+    it('should replace existing loggers and appender', () => {
+
     });
   });
 });

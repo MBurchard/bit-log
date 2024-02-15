@@ -57,7 +57,7 @@ export function configureLogging(config: LoggingConfig): void {
             }
           }
           if (appenderName in AppenderRegistry) {
-            ROOT.debug(`found existing appender: ${appenderName}, search and replace it`);
+            ROOT.debug('found existing appender:', appenderName, 'search and replace it');
             if (appenderName in ROOT.appender) {
               ROOT.debug('Replace appender', appenderName, 'in ROOT logger');
               ROOT.addAppender(appenderName, instance, true);
@@ -67,7 +67,7 @@ export function configureLogging(config: LoggingConfig): void {
                 continue;
               }
               if (appenderName in logger.appender) {
-                ROOT.debug('Replace appender ', appenderName, 'in logger', loggerName);
+                ROOT.debug('Replace appender', appenderName, 'in logger', loggerName);
                 logger.addAppender(appenderName, instance, true);
               }
             }
