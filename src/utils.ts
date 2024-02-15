@@ -1,4 +1,5 @@
-import {LogLevel} from './definitions';
+import type {Just} from './definitions';
+import {isPresent, LogLevel} from './definitions';
 
 /**
  * Format the given timestamp in the typical ISO-8601 format `YYYY-MM-DDTHH:mm:ss.SSSXXX`.
@@ -83,6 +84,38 @@ export function formatPrefix(level: LogLevel, name: string): string {
   // return `${getTs()} ${formatLogLevel(level)} [${strPad(category, 20)}|${strPad(func, 20)}|${strPad(src, 30)}|${line.padStart(5, ' ')}]:`;
   const formattedLevel = formatLogLevel(level);
   return `${formatISO8601(new Date())} ${formattedLevel.padStart(13, ' ')} [${truncateOrExtend(name, 20)}]:`;
+}
+
+/**
+ * Helper function to show a text representation of any class constructor like console.log does.
+ *
+ * @param clazz
+ */
+export function getClassHierarchy(clazz: Just<unknown>): string {
+  if (!isPresent(clazz) || typeof clazz !== 'function' || !isClass(clazz)) {
+    return 'no class';
+  }
+
+  const classHierarchy = [];
+  let constructor: ObjectConstructor = clazz as ObjectConstructor;
+
+  while (constructor && constructor !== Object) {
+    classHierarchy.push(constructor.name);
+    constructor = Object.getPrototypeOf(constructor.prototype)?.constructor;
+  }
+
+  return `[class ${classHierarchy.join(' extends ')}]`;
+}
+
+/**
+ * Check if something is a class.<br>
+ * Unfortunately, this is probably not the fastest method, but I haven't found a better one that works.
+ *
+ * @param clazz
+ */
+export function isClass(clazz: Just<unknown>): boolean {
+  const str = `${clazz}`;
+  return str.startsWith('class ');
 }
 
 /**

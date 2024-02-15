@@ -1,5 +1,12 @@
 import {LogLevel} from '../definitions';
-import {formatISO8601, formatLogLevel, formatPrefix, truncateMiddle, truncateOrExtend} from '../utils';
+import {
+  formatISO8601,
+  formatLogLevel,
+  formatPrefix,
+  getClassHierarchy,
+  truncateMiddle,
+  truncateOrExtend,
+} from '../utils';
 
 describe('test utils', () => {
   // noinspection DuplicatedCode
@@ -61,5 +68,32 @@ describe('test utils', () => {
   it('formatPrefix with 4 chars log level', () => {
     expect(formatPrefix(LogLevel.INFO, 'foo.bar'))
       .toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}[+-]\d{2}:\d{2}\s{2}.+?\s\[.{20}]:$/);
+  });
+
+  describe('test getClassHierarchy', () => {
+    it('ClassB extends classA', () => {
+      class ClassA {
+        someValue?: string;
+      }
+
+      class ClassB extends ClassA {
+        constructor(x: string) {
+          super();
+          this.someValue = x;
+        }
+      }
+
+      expect(getClassHierarchy(ClassB)).toBe('[class ClassB extends ClassA]');
+    });
+
+    it('should not work with function', () => {
+      function test() {}
+
+      expect(getClassHierarchy(test)).toBe('no class');
+    });
+
+    it('should not work with arrow function', () => {
+      expect(getClassHierarchy(() => {})).toBe('no class');
+    });
   });
 });
