@@ -90,6 +90,11 @@ export function configureLogging(config: LoggingConfig): void {
   }
 }
 
+/**
+ * use a logger.
+ *
+ * @param name
+ */
 export function useLogger(name: string): ILogger {
   if (name === '') {
     return ROOT;
