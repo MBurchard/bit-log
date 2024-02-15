@@ -14,7 +14,7 @@ const ROOT = new Logger('', undefined, LogLevel.INFO);
 const LoggerRegistry: Record<string, ILogger> = {};
 const AppenderRegistry: Record<string, IAppender> = {};
 const CONSOLE = 'CONSOLE';
-AppenderRegistry[CONSOLE] = new ConsoleAppender(LogLevel.INFO);
+AppenderRegistry[CONSOLE] = new ConsoleAppender();
 ROOT.addAppender(CONSOLE, AppenderRegistry[CONSOLE]);
 
 /**
