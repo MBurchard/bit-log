@@ -9,6 +9,7 @@ import {ConsoleAppender} from './appender/ConsoleAppender';
 import type {AppenderConfig, IAppender, ILogger, LoggingConfig} from './definitions';
 import {isAppenderConfig, isPresent, LogLevel} from './definitions';
 import {Logger} from './logger';
+import {getClassHierarchy} from './utils';
 
 const ROOT = new Logger('', undefined, LogLevel.INFO);
 const LoggerRegistry: Record<string, ILogger> = {};
@@ -16,6 +17,25 @@ const AppenderRegistry: Record<string, IAppender> = {};
 const CONSOLE = 'CONSOLE';
 AppenderRegistry[CONSOLE] = new ConsoleAppender();
 ROOT.addAppender(CONSOLE, AppenderRegistry[CONSOLE]);
+
+/**
+ * Helper function to display the appender config more or less correctly in the unlikely case of an error
+ *
+ * @param config
+ */
+function asString(config: AppenderConfig): string {
+  let result = '{';
+  let first = true;
+  for (const [key, value] of Object.entries(config)) {
+    if (key === 'class') {
+      result += `${!first ? ', ' : ''}${key}: ${getClassHierarchy(value)}`;
+    } else {
+      result += `${!first ? ', ' : ''}${key}: ${JSON.stringify(value)}`;
+    }
+    first = false;
+  }
+  return `${result}}`;
+}
 
 /**
  * used to configure the logging. Should be used as early ass possible.
@@ -54,10 +74,10 @@ export function configureLogging(config: LoggingConfig): void {
           }
           AppenderRegistry[appenderName] = instance;
         } catch (e) {
-          throw Error(`illegal appender config ${JSON.stringify(appenderConfig)}, error: ${e}`);
+          throw Error(`illegal appender config ${asString(appenderConfig)}, error: ${e}`);
         }
       } else {
-        throw Error(`illegal appender config ${JSON.stringify(appenderConfig)}`);
+        throw Error(`illegal appender config ${asString(appenderConfig)}`);
       }
     }
   }
