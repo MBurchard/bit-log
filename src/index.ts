@@ -6,8 +6,8 @@
  */
 
 import {ConsoleAppender} from './appender/ConsoleAppender';
-import type {IAppender, ILogger, LoggingConfig} from './definitions';
-import {isPresent, LogLevel} from './definitions';
+import type {AppenderConfig, IAppender, ILogger, LoggingConfig} from './definitions';
+import {isAppenderConfig, isPresent, LogLevel} from './definitions';
 import {Logger} from './logger';
 
 const ROOT = new Logger('', undefined, LogLevel.INFO);
@@ -28,7 +28,7 @@ export function configureLogging(config: LoggingConfig): void {
   if (isPresent(config.appender)) {
     ROOT.debug('configure appender');
     for (const [appenderName, appenderConfig] of Object.entries(config.appender)) {
-      if (appenderConfig.class && typeof appenderConfig.class === 'function' && appenderConfig.class.prototype instanceof Object) {
+      if (isAppenderConfig(appenderConfig)) {
         try {
           const instance = new appenderConfig.class();
           for (const [key, value] of Object.entries(appenderConfig)) {
