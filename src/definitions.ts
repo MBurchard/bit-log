@@ -216,6 +216,16 @@ export interface AppenderConfig {
 }
 
 /**
+ * Helper function to check whether it is potentially an AppenderConfig.
+ *
+ * @internal
+ * @param sth
+ */
+export function isAppenderConfig<T extends AppenderConfig>(sth: Just<T>): sth is Just<T> {
+  return isPresent(sth.class) && typeof sth.class === 'function' && sth.class.prototype instanceof Object;
+}
+
+/**
  * Logger configuration
  */
 export interface LoggerConfig {
