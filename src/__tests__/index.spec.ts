@@ -83,16 +83,13 @@ describe('test usage', () => {
           },
         },
       };
-      const root = useLogger('') as Logger;
-      root.level = LogLevel.DEBUG;
       configureLogging(config);
+
       await new Promise((r) => setTimeout(r, 10));
-      expect(spyConsole).toHaveBeenCalledTimes(4);
-      expect(spyConsole).toHaveBeenCalledWith(expect.anything(), 'configure logging');
-      expect(spyConsole).toHaveBeenCalledWith(expect.anything(), 'configure appender');
-      expect(spyConsole).toHaveBeenCalledWith(expect.anything(),
-        'found existing appender:', 'CONSOLE', 'search and replace it');
-      expect(spyConsole).toHaveBeenCalledWith(expect.anything(), 'Replace appender', 'CONSOLE', 'in ROOT logger');
+
+      expect(spyConsole).toHaveBeenCalledTimes(1);
+      expect(spyConsole).toHaveBeenCalledWith(expect.anything(), 'Replace appender', 'CONSOLE', 'in logger', 'ROOT');
+      const root = useLogger('') as Logger;
       const appender = root.appender['CONSOLE'];
       expect(appender).toBeDefined();
       expect(appender.level).toBe(LogLevel.DEBUG);
@@ -134,8 +131,34 @@ describe('test usage', () => {
       }
     });
 
-    it('should replace existing loggers and appender', () => {
+    it('should throw an error on wrong log level configuration', () => {
+      try {
+        configureLogging({
+          root: {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            level: 'test',
+          },
+        });
+      } catch (e) {
+        expect(e).toBeInstanceOf(Error);
+        expect(e.message).toBe('not a valid LogLevel: \'test\'');
+      }
+    });
 
+    it('should log a warning on missing appender config used in ROOT logger', () => {
+      configureLogging({
+        root: {
+          appender: ['FILE'],
+          level: LogLevel.INFO,
+        },
+      });
+      expect(spyConsole).toHaveBeenCalledTimes(1);
+      expect(spyConsole).toHaveBeenCalledWith(
+        expect.anything(),
+        'Appender named',
+        'FILE',
+        'is not configured. Can\'t be used in ROOT logger!');
     });
   });
 });

@@ -1,22 +1,31 @@
 /**
  * src/index.ts
  *
- * @file Bit-Log
+ * @file bit-Log
  * @author Martin Burchard
  */
 
 import {ConsoleAppender} from './appender/ConsoleAppender';
 import type {AppenderConfig, IAppender, ILogger, LoggingConfig} from './definitions';
-import {isAppenderConfig, isPresent, LogLevel} from './definitions';
+import {isAppenderConfig, isPresent, LogLevel, toLogLevel} from './definitions';
 import {Logger} from './logger';
 import {getClassHierarchy} from './utils';
 
-const ROOT = new Logger('', undefined, LogLevel.INFO);
 const LoggerRegistry: Record<string, ILogger> = {};
 const AppenderRegistry: Record<string, IAppender> = {};
-const CONSOLE = 'CONSOLE';
-AppenderRegistry[CONSOLE] = new ConsoleAppender();
-ROOT.addAppender(CONSOLE, AppenderRegistry[CONSOLE]);
+
+const log = useLogger('bit.log', LogLevel.INFO);
+configureLogging({
+  appender: {
+    'CONSOLE': {
+      class: ConsoleAppender,
+    },
+  },
+  root: {
+    appender: ['CONSOLE'],
+    level: 'INFO',
+  },
+});
 
 /**
  * Helper function to display the appender config more or less correctly in the unlikely case of an error
@@ -44,30 +53,30 @@ function asString(config: AppenderConfig): string {
  * @param {LoggingConfig} config
  */
 export function configureLogging(config: LoggingConfig): void {
-  ROOT.debug('configure logging');
+  log.debug('configure logging');
+  const appenderInUse: string[] = [];
   if (isPresent(config.appender)) {
-    ROOT.debug('configure appender');
+    log.debug('configure appender');
     for (const [appenderName, appenderConfig] of Object.entries(config.appender)) {
       if (isAppenderConfig(appenderConfig)) {
         try {
           const instance = new appenderConfig.class();
+          if (isPresent(appenderConfig.level)) {
+            instance.level = toLogLevel(appenderConfig.level);
+          }
           for (const [key, value] of Object.entries(appenderConfig)) {
-            if (key !== 'class') {
+            if (key !== 'class' && key !== 'level') {
               instance[key as keyof IAppender] = value;
             }
           }
           if (appenderName in AppenderRegistry) {
-            ROOT.debug('found existing appender:', appenderName, 'search and replace it');
-            if (appenderName in ROOT.appender) {
-              ROOT.debug('Replace appender', appenderName, 'in ROOT logger');
-              ROOT.addAppender(appenderName, instance, true);
-            }
+            log.debug('found existing appender:', appenderName, 'search and replace it');
             for (const [loggerName, logger] of Object.entries(LoggerRegistry)) {
               if (!(logger instanceof Logger)) {
                 continue;
               }
               if (appenderName in logger.appender) {
-                ROOT.debug('Replace appender', appenderName, 'in logger', loggerName);
+                log.info('Replace appender', appenderName, 'in logger', loggerName || 'ROOT');
                 logger.addAppender(appenderName, instance, true);
               }
             }
@@ -82,29 +91,55 @@ export function configureLogging(config: LoggingConfig): void {
     }
   }
   if (isPresent(config.root)) {
-    ROOT.debug('configure ROOT logger');
-
+    log.debug('configure ROOT logger');
+    const root = useLogger('') as Logger;
+    if (isPresent(config.root.level)) {
+      const level = toLogLevel(config.root.level);
+      if (root.level !== level) {
+        log.info('changing ROOT logger level from', root.level, 'to', level);
+        root.level = level;
+      }
+    }
+    if (isPresent(config.root.appender)) {
+      for (const appenderName of config.root.appender) {
+        if (appenderName in AppenderRegistry) {
+          if (appenderName in root.appender) {
+            log.info('Replace appender', appenderName, 'in logger ROOT');
+          } else {
+            log.info('register appender', appenderName, 'to logger ROOT');
+          }
+          root.addAppender(appenderName, AppenderRegistry[appenderName], true);
+          appenderInUse.push(appenderName);
+        } else {
+          log.warn('Appender named', appenderName, 'is not configured. Can\'t be used in ROOT logger!');
+        }
+      }
+    }
   }
   if (isPresent(config.logger)) {
-    ROOT.debug('configure additional loggers');
+    log.debug('configure additional loggers');
   }
 }
 
 /**
  * use a logger.
  *
- * @param name
+ * @param {string} name
+ * @param {LogLevel} level optional, if not given the level from a parent logger is used
  */
-export function useLogger(name: string): ILogger {
-  if (name === '') {
-    return ROOT;
-  }
+export function useLogger(name: string, level?: LogLevel): ILogger {
   if (!(name in LoggerRegistry)) {
-    const parentName = name.includes('.') ? name.substring(0, name.lastIndexOf('.')) : '';
-    const parent = useLogger(parentName);
-    const logger = new Logger(name, parent as Logger);
-    LoggerRegistry[name] = logger;
-    return logger;
+    if (name === '') {
+      LoggerRegistry[name] = new Logger(name);
+    } else {
+      const parentName = name.includes('.') ? name.substring(0, name.lastIndexOf('.')) : '';
+      const parent = useLogger(parentName);
+      LoggerRegistry[name] = new Logger(name, parent as Logger);
+    }
   }
-  return LoggerRegistry[name];
+  const logger = LoggerRegistry[name];
+  if (isPresent(level)) {
+    logger.level = toLogLevel(level);
+  }
+  return logger;
 }
