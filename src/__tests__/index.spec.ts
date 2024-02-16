@@ -153,11 +153,25 @@ describe('test usage', () => {
         },
       });
       expect(spyConsole).toHaveBeenCalledTimes(1);
-      expect(spyConsole).toHaveBeenCalledWith(
-        expect.anything(),
-        'Appender named',
-        'FILE',
-        'is not configured. Can\'t be used in ROOT logger!');
+      expect(spyConsole).toHaveBeenCalledWith(expect.anything(),
+        'Appender named \'FILE\' is not configured. Can\'t be used in logger \'ROOT\'');
+    });
+
+    it('should log info about registering an appender in ROOT', () => {
+      configureLogging({
+        appender: {
+          'CONSOLE2': {
+            class: ConsoleAppender,
+          },
+        },
+        root: {
+          appender: ['CONSOLE', 'CONSOLE2'],
+          level: LogLevel.INFO,
+        },
+      });
+      expect(spyConsole).toHaveBeenCalledTimes(1);
+      expect(spyConsole).toHaveBeenCalledWith(expect.anything(),
+        'registering appender \'CONSOLE2\' to logger \'ROOT\'');
     });
   });
 });
