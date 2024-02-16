@@ -9,7 +9,6 @@ describe('test usage', () => {
   let spyConsole: jest.SpyInstance;
 
   beforeEach(() => {
-    jest.resetModules();
     spyConsole = jest.spyOn(console, 'log').mockImplementation();
   });
 
