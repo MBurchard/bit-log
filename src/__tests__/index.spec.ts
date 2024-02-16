@@ -205,6 +205,21 @@ describe('test usage', () => {
       expect(spyConsole).toHaveBeenCalledWith(expect.anything(),
         'appender \'CONSOLE\' was removed from logger \'ROOT\'');
     });
+
+    it('should prepare a new logger with the given log level', () => {
+      configureLogging({
+        logger: {
+          'foo.bar': {
+            level: 'DEBUG',
+          },
+        },
+      });
+      const foo = useLogger('foo');
+      const bar = useLogger('foo.bar');
+      // because the root logger has level INFO at the moment when foo logger has been created
+      expect(foo.level).toBe(LogLevel.INFO);
+      expect(bar.level).toBe(LogLevel.DEBUG);
+    });
   });
 });
 

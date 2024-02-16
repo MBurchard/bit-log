@@ -148,7 +148,7 @@ export function useLogger(name: string, level?: LogLevel): ILogger {
   }
   const logger = LoggerRegistry[name];
   if (isPresent(level)) {
-    logger.level = toLogLevel(level);
+    logger.level = level;
   }
   return logger;
 }
