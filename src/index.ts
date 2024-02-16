@@ -119,24 +119,14 @@ export function configureLogging(config: LoggingConfig): void {
         root.level = level;
       }
     }
-    if (isPresent(config.root.appender)) {
-      for (const appenderName of config.root.appender) {
-        if (appenderName in AppenderRegistry) {
-          if (appenderName in root.appender) {
-            log.info('Replace appender', appenderName, 'in logger ROOT');
-          } else {
-            log.info('register appender', appenderName, 'to logger ROOT');
-          }
-          root.addAppender(appenderName, AppenderRegistry[appenderName], true);
-          appenderInUse.push(appenderName);
-        } else {
-          log.warn('Appender named', appenderName, 'is not configured. Can\'t be used in ROOT logger!');
-        }
-      }
-    }
+    configureAppender(root, config.root.appender);
   }
   if (isPresent(config.logger)) {
     log.debug('configure additional loggers');
+    for (const [loggerName, loggerConfig] of Object.entries(config.logger)) {
+      const logger = useLogger(loggerName, toLogLevel(loggerConfig.level)) as Logger;
+      configureAppender(logger, loggerConfig.appender);
+    }
   }
 }
 
