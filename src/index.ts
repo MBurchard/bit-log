@@ -48,8 +48,8 @@ function configureAppender(logger: Logger, appender: string[] | undefined) {
     }
   } else {
     for (const appenderName in logger.appender) {
-      delete logger.appender[appenderName];
       log.info(`appender '${appenderName}' was removed from logger '${loggerName}'`);
+      delete logger.appender[appenderName];
     }
   }
 }
