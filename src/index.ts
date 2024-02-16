@@ -11,7 +11,7 @@ import {isAppenderConfig, isPresent, LogLevel, toLogLevel} from './definitions';
 import {Logger} from './logger';
 import {getClassHierarchy} from './utils';
 
-const LoggerRegistry: Record<string, ILogger> = {};
+const LoggerRegistry: Record<string, Logger> = {};
 const AppenderRegistry: Record<string, IAppender> = {};
 
 const log = useLogger('bit.log', LogLevel.INFO);
@@ -68,9 +68,6 @@ export function configureLogging(config: LoggingConfig): void {
           if (appenderName in AppenderRegistry) {
             log.debug('found existing appender:', appenderName, 'search and replace it');
             for (const [loggerName, logger] of Object.entries(LoggerRegistry)) {
-              if (!(logger instanceof Logger)) {
-                continue;
-              }
               if (appenderName in logger.appender) {
                 log.info('Replace appender', appenderName, 'in logger', loggerName || 'ROOT');
                 logger.addAppender(appenderName, instance, true);
