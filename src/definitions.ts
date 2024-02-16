@@ -20,6 +20,11 @@ export function isPresent<T>(value: T): value is Just<T> {
 }
 
 /**
+ * Log level type strings.
+ */
+export type LogLevelString = 'DEBUG' | 'ERROR' | 'FATAL' | 'INFO' | 'OFF' | 'TRACE' | 'WARN';
+
+/**
  * Log level definition.
  */
 export enum LogLevel {
@@ -30,6 +35,26 @@ export enum LogLevel {
   'ERROR' = 40,
   'FATAL' = 50,
   'OFF' = 1000,
+}
+
+/**
+ * Get LogLevel for the given log level string.
+ *
+ * @internal
+ * @param {LogLevelString | LogLevel} value
+ * @throws {Error} an error if the given string is not a valid LogLevel
+ */
+export function toLogLevel(value: LogLevelString | LogLevel): LogLevel {
+  if (typeof value === 'string' && value in LogLevel) {
+    return LogLevel[value];
+  }
+  if (typeof value === 'number') {
+    const values = Object.values(LogLevel);
+    if (values.includes(value)) {
+      return value;
+    }
+  }
+  throw new Error(`not a valid LogLevel: '${value}'`);
 }
 
 /**
@@ -210,7 +235,7 @@ export interface IAppender {
  */
 export interface AppenderConfig {
   class: new () => IAppender;
-  level?: LogLevel
+  level?: LogLevel | LogLevelString
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: Just<any>
 }
@@ -229,7 +254,7 @@ export function isAppenderConfig<T extends AppenderConfig>(sth: Just<T>): sth is
  * Logger configuration
  */
 export interface LoggerConfig {
-  level: LogLevel
+  level: LogLevel | LogLevelString
   appender?: string[]
 }
 
@@ -244,7 +269,7 @@ export interface LoggerConfig {
  *     },
  *     'FILE': {
  *       class: FutureFileAppender,
- *       level: LogLevel.INFO,
+ *       level: 'INFO',
  *       filename: 'app.log',
  *       useAnsi: false,
  *     },
@@ -254,12 +279,12 @@ export interface LoggerConfig {
  *     },
  *   },
  *   root: {
- *     level: LogLevel.INFO,
+ *     level: 'INFO',
  *     appender: ['CONSOLE', 'FILE'],
  *   },
  *   logger: {
  *     'foo': {
- *       level: LogLevel.ERROR,
+ *       level: 'ERROR',
  *     },
  *     'foo.bar': {
  *       level: LogLevel.DEBUG,
