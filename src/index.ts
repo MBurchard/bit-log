@@ -36,11 +36,7 @@ function asString(config: AppenderConfig): string {
   let result = '{';
   let first = true;
   for (const [key, value] of Object.entries(config)) {
-    if (key === 'class') {
-      result += `${!first ? ', ' : ''}${key}: ${getClassHierarchy(value)}`;
-    } else {
-      result += `${!first ? ', ' : ''}${key}: ${JSON.stringify(value)}`;
-    }
+    result += `${!first ? ', ' : ''}${key}: ${key === 'class' ? getClassHierarchy(value) : JSON.stringify(value)}`;
     first = false;
   }
   return `${result}}`;
