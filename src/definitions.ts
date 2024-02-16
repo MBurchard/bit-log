@@ -44,7 +44,12 @@ export enum LogLevel {
  * @param {LogLevelString | LogLevel} value
  * @throws {Error} an error if the given string is not a valid LogLevel
  */
-export function toLogLevel(value: LogLevelString | LogLevel): LogLevel {
+export function toLogLevel(value: undefined): undefined;
+export function toLogLevel(value: LogLevelString | LogLevel): LogLevel;
+export function toLogLevel(value: LogLevelString | LogLevel | undefined): LogLevel | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
   if (typeof value === 'string' && value in LogLevel) {
     return LogLevel[value];
   }

@@ -23,6 +23,7 @@ describe('test definitions', () => {
   });
 
   it('toLogLevel', () => {
+    expect(toLogLevel(undefined)).toBeUndefined();
     expect(toLogLevel('ERROR')).toBe(LogLevel.ERROR);
     expect(toLogLevel(LogLevel.DEBUG)).toBe(LogLevel.DEBUG);
     expect(toLogLevel(30)).toBe(LogLevel.WARN);
