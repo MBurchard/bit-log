@@ -169,21 +169,41 @@ describe('test usage', () => {
         'Appender named \'FILE\' is not configured. Can\'t be used in logger \'ROOT\'');
     });
 
-    it('should log info about registering an appender in ROOT', () => {
+    it('should handle additional appender properties properly', () => {
       configureLogging({
         appender: {
-          'CONSOLE2': {
-            class: ConsoleAppender,
+          'NOOP': {
+            class: NoOpAppender,
+            customString: 'Hallo Welt',
+            customNumber: 42,
+            customBoolean: true,
           },
         },
         root: {
-          appender: ['CONSOLE', 'CONSOLE2'],
-          level: LogLevel.INFO,
+          level: 'INFO',
+          appender: ['CONSOLE', 'NOOP'],
         },
       });
       expect(spyConsole).toHaveBeenCalledTimes(1);
       expect(spyConsole).toHaveBeenCalledWith(expect.anything(),
-        'registering appender \'CONSOLE2\' to logger \'ROOT\'');
+        'registering appender \'NOOP\' to logger \'ROOT\'');
+      const root = useLogger('') as Logger;
+      const appender = root.appender['NOOP'] as NoOpAppender;
+      expect(appender).toBeDefined();
+      expect(appender.customString).toBe('Hallo Welt');
+      expect(appender.customNumber).toBe(42);
+      expect(appender.customBoolean).toBe(true);
+    });
+
+    it('should remove appender', () => {
+      configureLogging({
+        root: {
+          level: 'INFO',
+        },
+      });
+      expect(spyConsole).toHaveBeenCalledTimes(1);
+      expect(spyConsole).toHaveBeenCalledWith(expect.anything(),
+        'appender \'CONSOLE\' was removed from logger \'ROOT\'');
     });
   });
 });
@@ -194,6 +214,16 @@ class ErrorThrowingAppender extends AbstractBaseAppender {
     super();
     throw Error('Something was wrong');
   }
+
+  handle(): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+}
+
+class NoOpAppender extends AbstractBaseAppender {
+  customString?: string;
+  customNumber?: number;
+  customBoolean?: boolean;
 
   handle(): Promise<void> {
     return Promise.resolve(undefined);
