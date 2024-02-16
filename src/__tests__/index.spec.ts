@@ -10,6 +10,18 @@ describe('test usage', () => {
 
   beforeEach(() => {
     spyConsole = jest.spyOn(console, 'log').mockImplementation();
+    configureLogging({
+      appender: {
+        'CONSOLE': {
+          class: ConsoleAppender,
+        },
+      },
+      root: {
+        appender: ['CONSOLE'],
+        level: 'INFO',
+      },
+    });
+    spyConsole.mockReset();
   });
 
   afterEach(() => {
