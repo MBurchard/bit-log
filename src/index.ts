@@ -50,7 +50,6 @@ function asString(config: AppenderConfig): string {
  */
 export function configureLogging(config: LoggingConfig): void {
   log.debug('configure logging');
-  const appenderInUse: string[] = [];
   if (isPresent(config.appender)) {
     log.debug('configure appender');
     for (const [appenderName, appenderConfig] of Object.entries(config.appender)) {
