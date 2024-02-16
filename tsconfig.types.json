@@ -2,6 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outFile": "./dist/types.d.ts",
+    "sourceMap": false,
     "declaration": true,
     "emitDeclarationOnly": true,
     "isolatedModules": false
