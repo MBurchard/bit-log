@@ -27,6 +27,33 @@ configureLogging({
   },
 });
 
+function configureAppender(logger: Logger, appender: string[] | undefined) {
+  const loggerName = logger.name || 'ROOT';
+  if (appender !== undefined) {
+    for (const appenderName of appender) {
+      if (appenderName in AppenderRegistry) {
+        if (!(appenderName in logger.appender)) {
+          log.info(`registering appender '${appenderName}' to logger '${loggerName}'`);
+          logger.addAppender(appenderName, AppenderRegistry[appenderName], true);
+        }
+      } else {
+        log.warn(`Appender named '${appenderName}' is not configured. Can't be used in logger '${loggerName}'`);
+      }
+    }
+    for (const appenderName in logger.appender) {
+      if (!appender.includes(appenderName)) {
+        delete logger.appender[appenderName];
+        log.info(`appender '${appenderName}' was removed from logger '${loggerName}'`);
+      }
+    }
+  } else {
+    for (const appenderName in logger.appender) {
+      delete logger.appender[appenderName];
+      log.info(`appender '${appenderName}' was removed from logger '${loggerName}'`);
+    }
+  }
+}
+
 /**
  * Helper function to display the appender config more or less correctly in the unlikely case of an error
  *
