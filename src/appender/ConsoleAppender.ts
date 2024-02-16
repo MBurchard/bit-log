@@ -51,8 +51,6 @@ export class ConsoleAppender extends AbstractBaseAppender {
         case LogLevel.WARN:
           loggingMethod = console.warn;
           break;
-        default:
-          loggingMethod = console.log;
       }
     }
     const prefix = formatPrefix(event.level, event.loggerName);
