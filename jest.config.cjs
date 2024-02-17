@@ -10,4 +10,8 @@ module.exports = {
       lines: 90,
     },
   },
+  extensionsToTreatAsEsm: ['.ts'],
+  moduleNameMapper: {
+    '^(\\.{1,2}/.*)\\.js$': '$1',
+  },
 };

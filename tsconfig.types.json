@@ -1,10 +1,10 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outFile": "./dist/types.d.ts",
-    "sourceMap": false,
     "declaration": true,
+    "declarationMap": false,
     "emitDeclarationOnly": true,
-    "isolatedModules": false
+    "outFile": "./dist/types.d.ts",
+    "removeComments": false
   }
 }
