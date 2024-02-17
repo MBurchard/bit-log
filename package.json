@@ -1,6 +1,6 @@
 {
-  "name": "bit-log",
-  "version": "0.1.0",
+  "name": "@mburchard/bit-log",
+  "version": "0.2.0",
   "description": "A Node library for logging",
   "author": {
     "name": "Martin Burchard",
@@ -13,7 +13,10 @@
     "logging",
     "typescript"
   ],
-  "repository": "https://github.com/MBurchard/bit-log",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MBurchard/bit-log.git"
+  },
   "engines": {
     "node": ">=20",
     "pnpm": ">=8",
@@ -37,7 +40,8 @@
     "build": "npm-run-all build:clean compile",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "test": "jest",
-    "docs": "typedoc"
+    "docs": "typedoc",
+    "publish": "npm publish --access public"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
