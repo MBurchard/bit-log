@@ -1,20 +1,22 @@
 {
+  "compileOnSave": false,
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
     "lib": ["ESNext", "DOM"],
     "moduleResolution": "Node",
-    "sourceMap": true,
-    "esModuleInterop": true,
-    "isolatedModules": true,
+    "types": ["node", "jest"],
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "inlineSourceMap": false,
     "skipLibCheck": true,
     "strict": true,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
     "useUnknownInCatchVariables": false,
     "stripInternal": true,
-    "baseUrl": ".",
-    "outDir": "./dist"
+    "removeComments": true
   },
-  "exclude": ["**/*.spec.ts", "**/*.test.ts"]
+  "exclude": ["**/*.spec.ts", "**/*.test.ts", "node_modules", "dist", "coverage"],
+  "include": ["src/**/*.ts"]
 }
