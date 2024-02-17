@@ -1,5 +1,5 @@
-import type {Just} from './definitions';
-import {isPresent, LogLevel} from './definitions';
+import type {Just} from './definitions.js';
+import {isPresent, LogLevel} from './definitions.js';
 
 /**
  * Format the given timestamp in the typical ISO-8601 format `YYYY-MM-DDTHH:mm:ss.SSSXXX`.

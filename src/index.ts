@@ -5,11 +5,11 @@
  * @author Martin Burchard
  */
 
-import {ConsoleAppender} from './appender/ConsoleAppender';
-import type {AppenderConfig, IAppender, ILogger, LoggingConfig} from './definitions';
-import {isAppenderConfig, isPresent, LogLevel, toLogLevel} from './definitions';
-import {Logger} from './logger';
-import {getClassHierarchy} from './utils';
+import {ConsoleAppender} from './appender/ConsoleAppender.js';
+import type {AppenderConfig, IAppender, ILogger, LoggingConfig} from './definitions.js';
+import {isAppenderConfig, isPresent, LogLevel, toLogLevel} from './definitions.js';
+import {Logger} from './logger.js';
+import {getClassHierarchy} from './utils.js';
 
 const LoggerRegistry: Record<string, Logger> = {};
 const AppenderRegistry: Record<string, IAppender> = {};

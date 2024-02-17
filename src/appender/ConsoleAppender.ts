@@ -1,18 +1,17 @@
-import type {ILogEvent} from '../definitions';
-import {isPresent} from '../definitions';
-import {LogLevel} from '../definitions';
-import {formatPrefix} from '../utils';
-import {AbstractBaseAppender} from './AbstractBaseAppender';
+import type {ILogEvent} from '../definitions.js';
+import {isPresent, LogLevel} from '../definitions.js';
+import {formatPrefix} from '../utils.js';
+import {AbstractBaseAppender} from './AbstractBaseAppender.js';
 
 export class ConsoleAppender extends AbstractBaseAppender {
-  private _useSpecificMethods: boolean = false;
-
   constructor(level?: LogLevel) {
     super();
     if (isPresent(level)) {
       this.level = level;
     }
   }
+
+  private _useSpecificMethods: boolean = false;
 
   get useSpecificMethods(): boolean {
     return this._useSpecificMethods;

@@ -4,8 +4,8 @@
  * @file A hierarchic Logger implementation
  * @author Martin Burchard
  */
-import type {IAppender, ILogEvent, ILogger} from './definitions';
-import {isPresent, LogLevel} from './definitions';
+import type {IAppender, ILogEvent, ILogger} from './definitions.js';
+import {isPresent, LogLevel} from './definitions.js';
 
 /**
  * A hierarchic Logger implementation

@@ -1,5 +1,5 @@
-import type {IAppender, ILogEvent, LogLevel} from '../definitions';
-import {isPresent} from '../definitions';
+import type {IAppender, ILogEvent, LogLevel} from '../definitions.js';
+import {isPresent} from '../definitions.js';
 
 export abstract class AbstractBaseAppender implements IAppender {
   level?: LogLevel;
