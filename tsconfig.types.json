@@ -3,8 +3,8 @@
   "compilerOptions": {
     "declaration": true,
     "declarationMap": false,
-    "declarationDir": "dist/types",
     "emitDeclarationOnly": true,
+    "outFile": "./dist/types.d.ts",
     "removeComments": false
   }
 }
