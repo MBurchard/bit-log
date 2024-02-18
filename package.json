@@ -9,8 +9,9 @@
   },
   "license": "MIT",
   "keywords": [
-    "node",
+    "javascript",
     "logging",
+    "node",
     "typescript"
   ],
   "repository": {
