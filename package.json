@@ -35,6 +35,9 @@
       "types": "./dist/types.d.ts"
     }
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "compile": "tsc -b ./tsconfig.cjs.json ./tsconfig.esm.json ./tsconfig.types.json",
     "build:clean": "rm -rf ./dist",
