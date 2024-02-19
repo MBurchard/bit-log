@@ -24,15 +24,21 @@
     "npm": ">=10"
   },
   "type": "module",
-  "main": "dist/cjs/index.js",
+  "main": "dist/esm/index.js",
   "module": "dist/esm/index.js",
-  "types": "dist/types.d.ts",
+  "types": "dist/types/index.d.ts",
   "exports": {
     ".": {
       "default": "./dist/esm/index.js",
       "import": "./dist/esm/index.js",
       "require": "./dist/cjs/index.js",
-      "types": "./dist/types.d.ts"
+      "types": "./dist/types/index.d.ts"
+    },
+    "./*": {
+      "default": "./dist/esm/*.js",
+      "import": "./dist/esm/*.js",
+      "require": "./dist/cjs/*.js",
+      "types": "./dist/types/*.d.ts"
     }
   },
   "files": [
