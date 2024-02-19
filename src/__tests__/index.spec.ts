@@ -2,7 +2,7 @@ import {AbstractBaseAppender} from '../appender/AbstractBaseAppender';
 import {ConsoleAppender} from '../appender/ConsoleAppender';
 import type {LoggingConfig} from '../definitions';
 import {LogLevel} from '../definitions';
-import {configureLogging, useLogger} from '../index';
+import {configureLogging, useLog} from '../index';
 import type {Logger} from '../logger';
 
 describe('test usage', () => {
@@ -30,7 +30,7 @@ describe('test usage', () => {
 
   describe('test default configuration', () => {
     // get the root logger
-    const log = useLogger('');
+    const log = useLog('');
 
     it('log.trace', () => {
       log.trace('trace log');
@@ -50,7 +50,7 @@ describe('test usage', () => {
 
   describe('useLogger', () => {
     it('default root logger', () => {
-      const logger = useLogger('');
+      const logger = useLog('');
       expect(logger).toEqual({
           level: LogLevel.INFO,
           name: '',
@@ -63,7 +63,7 @@ describe('test usage', () => {
     });
 
     it('logger creation works recursive', () => {
-      const logger = useLogger('foo.bar');
+      const logger = useLog('foo.bar');
       expect(logger).toEqual({
         appender: {},
         level: LogLevel.INFO,
@@ -100,7 +100,7 @@ describe('test usage', () => {
 
       expect(spyConsole).toHaveBeenCalledTimes(1);
       expect(spyConsole).toHaveBeenCalledWith(expect.anything(), 'Replace appender', 'CONSOLE', 'in logger', 'ROOT');
-      const root = useLogger('') as Logger;
+      const root = useLog('') as Logger;
       const appender = root.appender['CONSOLE'];
       expect(appender).toBeDefined();
       expect(appender.level).toBe(LogLevel.DEBUG);
@@ -187,7 +187,7 @@ describe('test usage', () => {
       expect(spyConsole).toHaveBeenCalledTimes(1);
       expect(spyConsole).toHaveBeenCalledWith(expect.anything(),
         'registering appender \'NOOP\' to logger \'ROOT\'');
-      const root = useLogger('') as Logger;
+      const root = useLog('') as Logger;
       const appender = root.appender['NOOP'] as NoOpAppender;
       expect(appender).toBeDefined();
       expect(appender.customString).toBe('Hallo Welt');
@@ -214,8 +214,8 @@ describe('test usage', () => {
           },
         },
       });
-      const foo = useLogger('foo');
-      const bar = useLogger('foo.bar');
+      const foo = useLog('foo');
+      const bar = useLog('foo.bar');
       // because the root logger has level INFO at the moment when foo logger has been created
       expect(foo.level).toBe(LogLevel.INFO);
       expect(bar.level).toBe(LogLevel.DEBUG);
