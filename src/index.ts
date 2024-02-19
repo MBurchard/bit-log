@@ -115,7 +115,7 @@ export function configureLogging(config: LoggingConfig): void {
     if (isPresent(config.root.level)) {
       const level = toLogLevel(config.root.level);
       if (root.level !== level) {
-        log.info('changing ROOT logger level from', root.level, 'to', level);
+        log.info('changing ROOT logger level from', LogLevel[root.level], 'to', LogLevel[level]);
         root.level = level;
       }
     }

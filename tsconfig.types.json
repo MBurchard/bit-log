@@ -2,9 +2,9 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "declaration": true,
+    "declarationDir": "dist/types",
     "declarationMap": false,
     "emitDeclarationOnly": true,
-    "outFile": "./dist/types.d.ts",
     "removeComments": false
   }
 }

@@ -28,6 +28,12 @@ describe('test usage', () => {
     jest.restoreAllMocks();
   });
 
+  it('should show Level as String', () => {
+    const level = LogLevel.DEBUG;
+    const txt = `Test: ${LogLevel[level]}`;
+    expect(txt).toBe('Test: DEBUG');
+  });
+
   describe('test default configuration', () => {
     // get the root logger
     const log = useLog('');
