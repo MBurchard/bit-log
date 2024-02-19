@@ -1,3 +1,4 @@
+import {Ansi} from './ansi.js';
 import type {Just} from './definitions.js';
 import {isPresent, LogLevel} from './definitions.js';
 
@@ -37,17 +38,17 @@ export function formatISO8601(date: Date): string {
 export function formatLogLevel(level: LogLevel): string {
   switch (level) {
     case LogLevel.DEBUG:
-      return '\x1B[37mDEBUG\x1B[m';
+      return Ansi.gray('DEBUG');
     case LogLevel.ERROR:
-      return '\x1B[91mERROR\x1B[m';
+      return Ansi.red('ERROR');
     case LogLevel.FATAL:
-      return '\x1B[95mFATAL\x1B[m';
+      return Ansi.magenta('FATAL');
     case LogLevel.INFO:
-      return '\x1B[92mINFO\x1B[m';
+      return Ansi.green('INFO');
     case LogLevel.TRACE:
-      return '\x1B[90mTRACE\x1B[m';
+      return Ansi.darkGray('TRACE');
     case LogLevel.WARN:
-      return '\x1B[93mWARN\x1B[m';
+      return Ansi.yellow('WARN');
     default:
       return '';
   }
