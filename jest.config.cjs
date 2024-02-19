@@ -14,4 +14,14 @@ module.exports = {
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
+  transform: {
+    '^.+\\.[tj]s$': [
+      'ts-jest',
+      {
+        diagnostics: {
+          ignoreCodes: ['TS151001'],
+        },
+      },
+    ],
+  },
 };
