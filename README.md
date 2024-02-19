@@ -8,7 +8,7 @@
 ## Usage
 
 ```javascript
-const log = useLogger('foo.bar');
+const log = useLog('foo.bar');
 log.debug('Here we are, a debug log');
 log.info('Here we are, a debug log');
 try {
