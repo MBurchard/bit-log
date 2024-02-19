@@ -1,6 +1,6 @@
 {
   "name": "@mburchard/bit-log",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "A Node library for logging",
   "author": {
     "name": "Martin Burchard",
@@ -35,6 +35,9 @@
       "types": "./dist/types.d.ts"
     }
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "compile": "tsc -b ./tsconfig.cjs.json ./tsconfig.esm.json ./tsconfig.types.json",
     "build:clean": "rm -rf ./dist",
