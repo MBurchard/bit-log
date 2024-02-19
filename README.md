@@ -5,3 +5,21 @@
 ![CI: GitHub](https://github.com/MBurchard/bit-log/actions/workflows/ci.yml/badge.svg)
 [![Codecov](https://img.shields.io/codecov/c/gh/mburchard/bit-log?logo=codecov)](https://app.codecov.io/gh/MBurchard/bit-log)
 
+## Usage
+
+```javascript
+const log = useLogger('foo.bar');
+log.debug('Here we are, a debug log');
+log.info('Here we are, a debug log');
+try {
+  //...
+} catch (e) {
+  log.error('error in method ...', e);
+}
+```
+
+## Todo
+
+  - [ ] Documentation
+  - [ ] FileAppender
+  - [ ] improve log output
