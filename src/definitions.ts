@@ -236,8 +236,7 @@ export interface IAppender {
 export interface AppenderConfig {
   class: new () => IAppender;
   level?: LogLevel | LogLevelString
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: NonNullable<any>
+  [key: string]: undefined | NonNullable<unknown>
 }
 
 /**

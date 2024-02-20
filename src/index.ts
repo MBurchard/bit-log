@@ -87,8 +87,10 @@ export function configureLogging(config: LoggingConfig): void {
             instance.level = toLogLevel(appenderConfig.level);
           }
           for (const [key, value] of Object.entries(appenderConfig)) {
-            if (key !== 'class' && key !== 'level') {
-              instance[key as keyof IAppender] = value;
+            if (key !== 'class' && key !== 'level' && isPresent(value)) {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-expect-error
+              instance[key] = value;
             }
           }
           if (appenderName in AppenderRegistry) {
