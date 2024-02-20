@@ -1,6 +1,78 @@
 import {Ansi} from './ansi.js';
 import {isPresent, LogLevel} from './definitions.js';
 
+export function formatAny(value: unknown, pretty: boolean = false, colored: boolean = false,
+                          inner: number = 0): string {
+  // noinspection SuspiciousTypeOfGuard
+  if (!isPresent(value) || typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+    if (inner === 0) {
+      return `${value}`;
+    }
+    const result = typeof value === 'string' ? `"${value}"` : `${value}`;
+    if (colored) {
+      if (typeof value === 'string') {
+        return Ansi.green(result);
+      }
+      if (typeof value === 'number') {
+        return Ansi.darkCyan(result);
+      }
+      if (typeof value === 'boolean') {
+        return Ansi.darkYellow(result);
+      }
+      return Ansi.bold(result);
+    }
+    return result;
+  }
+  if (Array.isArray(value)) {
+    return formatArray(value, pretty, colored, inner);
+  }
+  if (typeof value === 'object') {
+    return formatObject(value, pretty, colored, inner);
+  }
+  if (isClass(value)) {
+    const result = getClassHierarchy(value);
+    if (colored) {
+      return Ansi.darkMagenta(result);
+    }
+    return result;
+  }
+  if (typeof value === 'function') {
+    const src = value.toString();
+    const lines = src.split('\n');
+    if (colored) {
+      return `[${Ansi.blue('Function')} ${lines[0].substring(0, 100)}${lines.length > 1 || lines[0].length > 100 ? '...' : ''}]`;
+    }
+    return `[Function ${lines[0].substring(0, 100)}${lines.length > 1 || lines[0].length > 100 ? '...' : ''}]`;
+  }
+  return '';
+}
+
+function formatArray(array: Array<unknown>, pretty: boolean = false, colored: boolean = false,
+                     inner: number = 0): string {
+  const results: string[] = [];
+  for (const elem of array) {
+    results.push(formatAny(elem, pretty, colored, inner + 1));
+  }
+  if (pretty) {
+    const indent = ' '.repeat((inner + 1) * 2);
+    return `[\n${indent}${results.join(`,\n${indent}`)}\n${' '.repeat((inner) * 2)}]`;
+  }
+  return `[${results.join(', ')}]`;
+}
+
+function formatObject(obj: object, pretty: boolean = false, colored: boolean = false,
+                      inner: number = 0): string {
+  const results: string[] = [];
+  for (const [key, elem] of Object.entries(obj)) {
+    results.push(`${key}: ${formatAny(elem, pretty, colored, inner + 1)}`);
+  }
+  if (pretty) {
+    const indent = ' '.repeat((inner + 1) * 2);
+    return `{\n${indent}${results.join(`,\n${indent}`)}\n${' '.repeat((inner) * 2)}}`;
+  }
+  return `{${results.join(', ')}}`;
+}
+
 /**
  * Format the given timestamp in the typical ISO-8601 format `YYYY-MM-DDTHH:mm:ss.SSSXXX`.
  *
