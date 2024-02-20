@@ -1,5 +1,4 @@
 import {Ansi} from './ansi.js';
-import type {Just} from './definitions.js';
 import {isPresent, LogLevel} from './definitions.js';
 
 /**
@@ -92,7 +91,7 @@ export function formatPrefix(level: LogLevel, name: string): string {
  *
  * @param clazz
  */
-export function getClassHierarchy(clazz: Just<unknown>): string {
+export function getClassHierarchy(clazz: NonNullable<unknown>): string {
   if (!isPresent(clazz) || typeof clazz !== 'function' || !isClass(clazz)) {
     return 'no class';
   }
@@ -114,7 +113,7 @@ export function getClassHierarchy(clazz: Just<unknown>): string {
  *
  * @param clazz
  */
-export function isClass(clazz: Just<unknown>): boolean {
+export function isClass(clazz: NonNullable<unknown>): boolean {
   const str = `${clazz}`;
   return str.startsWith('class ');
 }
