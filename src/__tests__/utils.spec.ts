@@ -180,6 +180,28 @@ describe('test utils', () => {
       expect(formatAny(ClassB)).toBe('[class ClassB extends ClassA]');
     });
 
+    it('should format a function', () => {
+      expect(formatAny(() => {})).toBe('[Function () => { }]');
+    });
+
+    it('should format a function colored', () => {
+      expect(formatAny(() => {}, false, true)).toBe(`[${Ansi.blue('Function')} () => { }]`);
+    });
+
+    it('should format a long function', () => {
+      const func = () => {
+        return 42;
+      };
+      expect(formatAny(func)).toBe('[Function () => {...]');
+    });
+
+    it('should format a long function colored', () => {
+      const func = () => {
+        return 42;
+      };
+      expect(formatAny(func, false, true)).toBe(`[${Ansi.blue('Function')} () => {...]`);
+    });
+
     it('should format something big nicely', () => {
       abstract class ClassA {
       }
@@ -214,5 +236,9 @@ describe('test utils', () => {
         `  func2: [${Ansi.blue('Function')} function doSth() {...],\n` +
         `  func3: [${Ansi.blue('Function')} function () {...]\n}`);
     });
+  });
+
+  it('should format a Symbol', () => {
+    expect(formatAny(Symbol('test'))).toBe('symbol');
   });
 });

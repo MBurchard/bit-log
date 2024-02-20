@@ -44,7 +44,7 @@ export function formatAny(value: unknown, pretty: boolean = false, colored: bool
     }
     return `[Function ${lines[0].substring(0, 100)}${lines.length > 1 || lines[0].length > 100 ? '...' : ''}]`;
   }
-  return '';
+  return `${typeof value}`;
 }
 
 function formatArray(array: Array<unknown>, pretty: boolean = false, colored: boolean = false,
@@ -186,8 +186,12 @@ export function getClassHierarchy(clazz: NonNullable<unknown>): string {
  * @param clazz
  */
 export function isClass(clazz: NonNullable<unknown>): boolean {
-  const str = `${clazz}`;
-  return str.startsWith('class ');
+  try {
+    const str = `${clazz}`;
+    return str.startsWith('class ');
+  } catch (e) {
+    return false;
+  }
 }
 
 /**
