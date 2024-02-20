@@ -2,7 +2,7 @@ import {Ansi} from './ansi.js';
 import {isPresent, LogLevel} from './definitions.js';
 
 export function formatAny(value: unknown, pretty: boolean = false, colored: boolean = false,
-                          inner: number = 0): string {
+    inner: number = 0): string {
   // noinspection SuspiciousTypeOfGuard
   if (!isPresent(value) || typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
     if (inner === 0) {
@@ -48,7 +48,7 @@ export function formatAny(value: unknown, pretty: boolean = false, colored: bool
 }
 
 function formatArray(array: Array<unknown>, pretty: boolean = false, colored: boolean = false,
-                     inner: number = 0): string {
+    inner: number = 0): string {
   const results: string[] = [];
   for (const elem of array) {
     results.push(formatAny(elem, pretty, colored, inner + 1));
@@ -61,7 +61,7 @@ function formatArray(array: Array<unknown>, pretty: boolean = false, colored: bo
 }
 
 function formatObject(obj: object, pretty: boolean = false, colored: boolean = false,
-                      inner: number = 0): string {
+    inner: number = 0): string {
   const results: string[] = [];
   for (const [key, elem] of Object.entries(obj)) {
     results.push(`${key}: ${formatAny(elem, pretty, colored, inner + 1)}`);

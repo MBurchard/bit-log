@@ -25,6 +25,21 @@ module.exports = {
       exports: 'always-multiline',
       functions: 'never',
     }],
+    'indent': ['warn', 2, {
+      'CallExpression': {
+        'arguments': 1,
+      },
+      'FunctionDeclaration': {
+        'parameters': 2,
+        'body': 1,
+      },
+      'FunctionExpression': {
+        'parameters': 2,
+        'body': 1,
+      },
+      'MemberExpression': 1,
+      'SwitchCase': 1,
+    }],
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-mixed-operators': 'off', // the logic of && and || should be known to every developer
