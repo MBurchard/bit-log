@@ -6,16 +6,11 @@
  */
 
 /**
- * Just can be anything but neither null nor undefined.
- */
-export type Just<T> = Exclude<T, undefined | null>
-
-/**
  * Checks if the value is 'something' but neither null nor undefined.
  *
  * @param value
  */
-export function isPresent<T>(value: T): value is Just<T> {
+export function isPresent<T>(value: T): value is NonNullable<T> {
   return value !== undefined && value !== null;
 }
 
@@ -241,8 +236,7 @@ export interface IAppender {
 export interface AppenderConfig {
   class: new () => IAppender;
   level?: LogLevel | LogLevelString
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: Just<any>
+  [key: string]: undefined | NonNullable<unknown>
 }
 
 /**
@@ -251,7 +245,7 @@ export interface AppenderConfig {
  * @internal
  * @param sth
  */
-export function isAppenderConfig<T extends AppenderConfig>(sth: Just<T>): sth is Just<T> {
+export function isAppenderConfig<T extends AppenderConfig>(sth: NonNullable<T>): sth is NonNullable<T> {
   return isPresent(sth.class) && typeof sth.class === 'function' && sth.class.prototype instanceof Object;
 }
 

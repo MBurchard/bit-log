@@ -6,10 +6,10 @@
  */
 
 import {ConsoleAppender} from './appender/ConsoleAppender.js';
-import type {AppenderConfig, IAppender, ILogger, LoggingConfig} from './definitions.js';
+import type {IAppender, ILogger, LoggingConfig} from './definitions.js';
 import {isAppenderConfig, isPresent, LogLevel, toLogLevel} from './definitions.js';
 import {Logger} from './logger.js';
-import {getClassHierarchy} from './utils.js';
+import {formatAny} from './utils';
 
 const LoggerRegistry: Record<string, Logger> = {};
 const AppenderRegistry: Record<string, IAppender> = {};
@@ -55,21 +55,6 @@ function configureAppender(logger: Logger, appender: string[] | undefined) {
 }
 
 /**
- * Helper function to display the appender config more or less correctly in the unlikely case of an error
- *
- * @param config
- */
-function asString(config: AppenderConfig): string {
-  let result = '{';
-  let first = true;
-  for (const [key, value] of Object.entries(config)) {
-    result += `${!first ? ', ' : ''}${key}: ${key === 'class' ? getClassHierarchy(value) : JSON.stringify(value)}`;
-    first = false;
-  }
-  return `${result}}`;
-}
-
-/**
  * used to configure the logging. Should be used as early ass possible.
  * See also: @see {@link LoggingConfig}
  *
@@ -87,8 +72,10 @@ export function configureLogging(config: LoggingConfig): void {
             instance.level = toLogLevel(appenderConfig.level);
           }
           for (const [key, value] of Object.entries(appenderConfig)) {
-            if (key !== 'class' && key !== 'level') {
-              instance[key as keyof IAppender] = value;
+            if (key !== 'class' && key !== 'level' && isPresent(value)) {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-expect-error
+              instance[key] = value;
             }
           }
           if (appenderName in AppenderRegistry) {
@@ -102,10 +89,10 @@ export function configureLogging(config: LoggingConfig): void {
           }
           AppenderRegistry[appenderName] = instance;
         } catch (e) {
-          throw Error(`illegal appender config ${asString(appenderConfig)}, error: ${e}`);
+          throw Error(`illegal appender config ${formatAny(appenderConfig)}, error: ${e}`);
         }
       } else {
-        throw Error(`illegal appender config ${asString(appenderConfig)}`);
+        throw Error(`illegal appender config ${formatAny(appenderConfig)}`);
       }
     }
   }

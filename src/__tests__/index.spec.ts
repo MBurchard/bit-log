@@ -58,14 +58,13 @@ describe('test usage', () => {
     it('default root logger', () => {
       const logger = useLog('');
       expect(logger).toEqual({
-          level: LogLevel.INFO,
-          name: '',
-          parent: undefined,
-          appender: {
-            'CONSOLE': expect.any(ConsoleAppender),
-          },
-        }
-      );
+        level: LogLevel.INFO,
+        name: '',
+        parent: undefined,
+        appender: {
+          'CONSOLE': expect.any(ConsoleAppender),
+        },
+      });
     });
 
     it('logger creation works recursive', () => {
