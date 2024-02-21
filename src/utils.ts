@@ -5,6 +5,7 @@ export function formatAny(value: unknown, pretty: boolean = false, colored: bool
     inner: number = 0): string {
   // noinspection SuspiciousTypeOfGuard
   if (!isPresent(value) || typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+    // Should we colorize string, number and boolean, even if they are not in an object or array, but stand alone?
     if (inner === 0) {
       return `${value}`;
     }
