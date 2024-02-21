@@ -1,9 +1,12 @@
 import type {ILogEvent} from '../definitions.js';
 import {isPresent, LogLevel} from '../definitions.js';
-import {formatPrefix} from '../utils.js';
+import {formatAny, formatPrefix} from '../utils.js';
 import {AbstractBaseAppender} from './AbstractBaseAppender.js';
 
 export class ConsoleAppender extends AbstractBaseAppender {
+  colored: boolean = false;
+  pretty: boolean = false;
+
   constructor(level?: LogLevel) {
     super();
     if (isPresent(level)) {
@@ -56,7 +59,9 @@ export class ConsoleAppender extends AbstractBaseAppender {
     if (typeof event.payload === 'function') {
       loggingMethod(prefix, event.payload());
     } else {
-      loggingMethod(prefix, ...event.payload);
+      loggingMethod(prefix, ...event.payload.map(elem => {
+        return formatAny(elem, this.pretty, this.colored);
+      }));
     }
   }
 }

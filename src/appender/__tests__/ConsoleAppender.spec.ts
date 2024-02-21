@@ -1,3 +1,4 @@
+import {Ansi} from '../../ansi';
 import type {ILogEvent} from '../../definitions';
 import {LogLevel} from '../../definitions';
 import {ConsoleAppender} from '../ConsoleAppender';
@@ -146,5 +147,19 @@ describe('test ConsoleAppender', () => {
 
     // then
     expect(appender.willHandle(event)).toBe(true);
+  });
+
+  it('should have colored output', async () => {
+    const log = jest.spyOn(console, 'log');
+    appender.colored = true;
+    await appender.handle({
+      level: LogLevel.INFO,
+      timestamp: new Date(),
+      loggerName: 'foo.bar',
+      payload: ['Text', 42, false, {prop: 'Test'}],
+    });
+    expect(log).toHaveBeenCalledTimes(1);
+    expect(log).toHaveBeenCalledWith(expect.anything(), 'Text', '42', 'false',
+      `{prop: ${Ansi.green('"Test"')}}`);
   });
 });
