@@ -1,6 +1,6 @@
 {
   "name": "@mburchard/bit-log",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "A Node library for logging",
   "author": {
     "name": "Martin Burchard",
