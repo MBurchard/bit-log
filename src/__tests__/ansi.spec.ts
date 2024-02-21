@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import {Ansi} from '../ansi.js'; // Stellen Sie sicher, dass der Dateipfad korrekt ist
 
 describe('Ansi Colors', () => {

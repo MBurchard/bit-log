@@ -149,6 +149,7 @@ export class Logger implements ILogger {
     for (const [appenderName, appender] of Object.entries(this.appender)) {
       if (appender.willHandle(event)) {
         appender.handle(event).catch(reason => {
+          // eslint-disable-next-line no-console
           console.error(`error in appender.handle of ${appenderName}`, reason);
         });
         handled = true;

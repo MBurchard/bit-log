@@ -151,7 +151,6 @@ describe('test utils', () => {
 
     it('should format an object colored', () => {
       const result = formatAny({key: 'value', num: 12.333, bool: false, bad: null}, false, true);
-      console.log('Result: ', result);
       expect(result)
         .toBe(`{key: ${Ansi.green('"value"')}, num: ${Ansi.darkCyan('12.333')}, bool: ${Ansi.darkYellow('false')}, bad: ${Ansi.bold('null')}}`);
     });
@@ -230,7 +229,6 @@ describe('test utils', () => {
         },
       };
       const result = formatAny(sth, true, true);
-      console.log('Result:', result);
       expect(result).toBe(`{\n  class: ${Ansi.darkMagenta('[class ClassA]')},\n  obj: {\n    array: [\n      {\n` +
         `        prop: ${Ansi.darkYellow('false')}\n      },\n      ${Ansi.darkCyan('123')},\n` +
         `      ${Ansi.green('"Text"')}\n    ]\n  },\n  func: [${Ansi.blue('Function')} () => {...],\n` +

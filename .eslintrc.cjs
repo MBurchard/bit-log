@@ -28,26 +28,26 @@ module.exports = {
       functions: 'never',
     }],
     '@stylistic/indent': ['warn', 2, {
-      'CallExpression': {
-        'arguments': 1,
+      CallExpression: {
+        arguments: 1,
       },
-      'FunctionDeclaration': {
-        'parameters': 2,
-        'body': 1,
+      FunctionDeclaration: {
+        parameters: 2,
+        body: 1,
       },
-      'FunctionExpression': {
-        'parameters': 2,
-        'body': 1,
+      FunctionExpression: {
+        parameters: 2,
+        body: 1,
       },
-      'MemberExpression': 1,
-      'SwitchCase': 1,
+      MemberExpression: 1,
+      SwitchCase: 1,
     }],
     '@stylistic/operator-linebreak': ['warn', 'after'],
     '@stylistic/quotes': ['warn', 'single'],
     '@stylistic/semi': ['warn', 'always'],
     '@typescript-eslint/consistent-type-imports': 'error',
-    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'no-console': 'warn',
+    'no-debugger': 'warn',
     'no-mixed-operators': 'off', // the logic of && and || should be known to every developer
     'object-curly-newline': ['warn', {multiline: true, consistent: true}],
     'object-curly-spacing': ['warn', 'never'],

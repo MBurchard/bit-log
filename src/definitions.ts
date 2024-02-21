@@ -29,7 +29,7 @@ export enum LogLevel {
   'WARN' = 30,
   'ERROR' = 40,
   'FATAL' = 50,
-  'OFF' = 1000,
+  'OFF' = 1000
 }
 
 /**
