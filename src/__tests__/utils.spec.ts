@@ -1,6 +1,7 @@
 import {Ansi} from '../ansi';
 import {LogLevel} from '../definitions';
 import {
+  CircularTracker,
   formatAny,
   formatISO8601,
   formatLogLevel,
@@ -236,9 +237,52 @@ describe('test utils', () => {
         `  func2: [${Ansi.blue('Function')} function doSth() {...],\n` +
         `  func3: [${Ansi.blue('Function')} function () {...]\n}`);
     });
+
+    it('should format a Symbol', () => {
+      expect(formatAny(Symbol('test'))).toBe('symbol');
+    });
+
+    it('should handle circular references in objects', () => {
+      const child = {otherProp: {parent: {}}};
+      const parent = {prop: {child: child}};
+      child.otherProp.parent = parent;
+      expect(formatAny(parent)).toBe('<ref1>{prop: {child: {otherProp: {parent: [Circular ref1]}}}}');
+    });
+
+    it('should handle circular references in objects colored', () => {
+      const child = {otherProp: {parent: {}}};
+      const parent = {prop: {child: child}};
+      child.otherProp.parent = parent;
+      expect(formatAny(parent, true, true)).toBe(`${Ansi.blue('<ref1>')}{\n  prop: {\n    child: {\n      ` +
+        `otherProp: {\n        parent: [${Ansi.cyan('Circular')} ${Ansi.blue('ref1')}]\n      }\n    }\n  }\n}`);
+    });
+
+    it('should handle circular references in arrays', () => {
+      const array: unknown[] = [1, 'Test', true];
+      array.push(array);
+      expect(formatAny(array)).toBe('<ref1>[1, "Test", true, [Circular ref1]]');
+    });
+
+    it('should handle circular references in arrays colored', () => {
+      const array: unknown[] = [1, 'Test', true];
+      array.push(array);
+      expect(formatAny(array, true, true)).toBe(`${Ansi.blue('<ref1>')}[\n  ${Ansi.darkCyan(1)},\n  ` +
+        `${Ansi.green('"Test"')},\n  ${Ansi.darkYellow('true')},\n  [${Ansi.cyan('Circular')} ` +
+        `${Ansi.blue('ref1')}]\n]`);
+    });
   });
 
-  it('should format a Symbol', () => {
-    expect(formatAny(Symbol('test'))).toBe('symbol');
+  describe('test CircularTracker', () => {
+    it('should throw an error if the same object is added again', () => {
+      const obj = {};
+      const ct = new CircularTracker();
+      ct.add(obj);
+      try {
+        ct.add(obj);
+      } catch (e) {
+        expect(e).toBeInstanceOf(Error);
+        expect(e.message).toBe('object must not be added twice');
+      }
+    });
   });
 });
