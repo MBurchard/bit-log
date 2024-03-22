@@ -60,7 +60,7 @@ export class CircularTracker {
 }
 
 export function formatAny(value: unknown, pretty: boolean = false, colored: boolean = false,
-    inner: number = 0, ct: CircularTracker = new CircularTracker()) : string {
+  inner: number = 0, ct: CircularTracker = new CircularTracker()): string {
   // noinspection SuspiciousTypeOfGuard
   if (!isPresent(value) || typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
     // Should we colorize string, number and boolean, even if they are not in an object or array, but stand alone?
@@ -99,7 +99,8 @@ export function formatAny(value: unknown, pretty: boolean = false, colored: bool
     const src = value.toString();
     const lines = src.split('\n');
     if (colored) {
-      return `[${Ansi.blue('Function')} ${lines[0].substring(0, 100)}${lines.length > 1 || lines[0].length > 100 ? '...' : ''}]`;
+      return `[${Ansi.blue('Function')} ${lines[0].substring(0, 100)}${lines.length > 1 || lines[0].length > 100 ?
+        '...' : ''}]`;
     }
     return `[Function ${lines[0].substring(0, 100)}${lines.length > 1 || lines[0].length > 100 ? '...' : ''}]`;
   }
@@ -107,7 +108,7 @@ export function formatAny(value: unknown, pretty: boolean = false, colored: bool
 }
 
 function formatArray(array: Array<unknown>, pretty: boolean = false, colored: boolean = false,
-    inner: number = 0, ct: CircularTracker): string {
+  inner: number = 0, ct: CircularTracker): string {
   ct.add(array);
   const results: string[] = [];
   for (const elem of array) {
@@ -116,7 +117,7 @@ function formatArray(array: Array<unknown>, pretty: boolean = false, colored: bo
       const ref = ct.indexOf(elem);
       results.push(colored ?
         `[${Ansi.cyan('Circular')} ${Ansi.blue(`ref${ref}`)}]` :
-        `[Circular ref${ref}]`
+        `[Circular ref${ref}]`,
       );
     } else {
       results.push(formatAny(elem, pretty, colored, inner + 1, ct));
@@ -134,7 +135,7 @@ function formatArray(array: Array<unknown>, pretty: boolean = false, colored: bo
 }
 
 function formatObject(obj: object, pretty: boolean = false, colored: boolean = false,
-    inner: number = 0, ct: CircularTracker): string {
+  inner: number = 0, ct: CircularTracker): string {
   ct.add(obj);
   const results: string[] = [];
   for (const [key, elem] of Object.entries(obj)) {

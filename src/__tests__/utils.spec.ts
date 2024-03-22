@@ -1,5 +1,5 @@
-import {Ansi} from '../ansi';
-import {LogLevel} from '../definitions';
+import {Ansi} from '../ansi.js';
+import {LogLevel} from '../definitions.js';
 import {
   CircularTracker,
   formatAny,
@@ -9,7 +9,7 @@ import {
   getClassHierarchy,
   truncateMiddle,
   truncateOrExtend,
-} from '../utils';
+} from '../utils.js';
 
 describe('test utils', () => {
   // noinspection DuplicatedCode
@@ -135,7 +135,8 @@ describe('test utils', () => {
 
     it('should format an array colored', () => {
       expect(formatAny([null, undefined, 'Test', false, 200], false, true))
-        .toBe(`[${Ansi.bold('null')}, ${Ansi.bold('undefined')}, ${Ansi.green('"Test"')}, ${Ansi.darkYellow('false')}, ${Ansi.darkCyan('200')}]`);
+        .toBe(`[${Ansi.bold('null')}, ${Ansi.bold('undefined')}, ${Ansi.green('"Test"')}, ${Ansi
+          .darkYellow('false')}, ${Ansi.darkCyan('200')}]`);
     });
 
     it('should format an array pretty', () => {
@@ -152,7 +153,8 @@ describe('test utils', () => {
     it('should format an object colored', () => {
       const result = formatAny({key: 'value', num: 12.333, bool: false, bad: null}, false, true);
       expect(result)
-        .toBe(`{key: ${Ansi.green('"value"')}, num: ${Ansi.darkCyan('12.333')}, bool: ${Ansi.darkYellow('false')}, bad: ${Ansi.bold('null')}}`);
+        .toBe(`{key: ${Ansi.green('"value"')}, num: ${Ansi.darkCyan('12.333')}, bool: ${Ansi
+          .darkYellow('false')}, bad: ${Ansi.bold('null')}}`);
     });
 
     it('should format an object with an internal object', () => {
@@ -181,11 +183,15 @@ describe('test utils', () => {
     });
 
     it('should format a function', () => {
-      expect(formatAny(() => {})).toBe('[Function () => { }]');
+      expect(formatAny(() => {
+        return 'sth';
+      })).toBe('[Function () => {...]');
     });
 
     it('should format a function colored', () => {
-      expect(formatAny(() => {}, false, true)).toBe(`[${Ansi.blue('Function')} () => { }]`);
+      expect(formatAny(() => {
+        return 'sth';
+      }, false, true)).toBe(`[${Ansi.blue('Function')} () => {...]`);
     });
 
     it('should format a long function', () => {

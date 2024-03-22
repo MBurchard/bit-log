@@ -1,5 +1,5 @@
-import type {IAppender} from '../definitions';
-import {isAppenderConfig, isPresent, LogLevel, toLogLevel} from '../definitions';
+import type {IAppender} from '../definitions.js';
+import {isAppenderConfig, isPresent, LogLevel, toLogLevel} from '../definitions.js';
 
 describe('test definitions', () => {
   it('isAppenderConfig', () => {
