@@ -1,9 +1,9 @@
-import {AbstractBaseAppender} from '../appender/AbstractBaseAppender';
-import {ConsoleAppender} from '../appender/ConsoleAppender';
-import type {LoggingConfig} from '../definitions';
-import {LogLevel} from '../definitions';
-import {configureLogging, useLog} from '../index';
-import type {Logger} from '../logger';
+import {AbstractBaseAppender} from '../appender/AbstractBaseAppender.js';
+import {ConsoleAppender} from '../appender/ConsoleAppender.js';
+import type {LoggingConfig} from '../definitions.js';
+import {LogLevel} from '../definitions.js';
+import {configureLogging, useLog} from '../index.js';
+import type {Logger} from '../logger.js';
 
 describe('test usage', () => {
   let spyConsole: jest.SpyInstance;

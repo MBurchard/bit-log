@@ -1,7 +1,7 @@
-import {Ansi} from '../../ansi';
-import type {ILogEvent} from '../../definitions';
-import {LogLevel} from '../../definitions';
-import {ConsoleAppender} from '../ConsoleAppender';
+import {Ansi} from '../../ansi.js';
+import type {ILogEvent} from '../../definitions.js';
+import {LogLevel} from '../../definitions.js';
+import {ConsoleAppender} from '../ConsoleAppender.js';
 
 describe('test ConsoleAppender', () => {
   let appender: ConsoleAppender;
@@ -72,7 +72,6 @@ describe('test ConsoleAppender', () => {
     // noinspection DuplicatedCode
     const log = jest.spyOn(console, 'log').mockImplementation(() => {
     });
-
 
     // when
     await appender.handle({level: LogLevel.TRACE, timestamp: now, loggerName: 'foo.bar', payload: ['test trace']});

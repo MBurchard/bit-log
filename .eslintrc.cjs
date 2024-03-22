@@ -22,32 +22,36 @@ module.exports = {
   rules: {
     '@stylistic/comma-dangle': ['warn', {
       arrays: 'always-multiline',
-      objects: 'always-multiline',
-      imports: 'always-multiline',
+      enums: 'always-multiline',
       exports: 'always-multiline',
-      functions: 'never',
+      functions: 'always-multiline',
+      imports: 'always-multiline',
+      objects: 'always-multiline',
     }],
     '@stylistic/indent': ['warn', 2, {
-      'CallExpression': {
-        'arguments': 1,
+      CallExpression: {
+        arguments: 1,
       },
-      'FunctionDeclaration': {
-        'parameters': 2,
-        'body': 1,
+      FunctionDeclaration: {
+        parameters: 1,
+        body: 1,
       },
-      'FunctionExpression': {
-        'parameters': 2,
-        'body': 1,
+      FunctionExpression: {
+        parameters: 1,
+        body: 1,
       },
-      'MemberExpression': 1,
-      'SwitchCase': 1,
+      MemberExpression: 1,
+      SwitchCase: 1,
     }],
     '@stylistic/operator-linebreak': ['warn', 'after'],
     '@stylistic/quotes': ['warn', 'single'],
     '@stylistic/semi': ['warn', 'always'],
     '@typescript-eslint/consistent-type-imports': 'error',
-    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'max-len': ['warn', {
+      code: 120, tabWidth: 2, ignoreStrings: true, ignoreTemplateLiterals: true, ignoreComments: true,
+    }],
+    'no-console': 'warn',
+    'no-debugger': 'warn',
     'no-mixed-operators': 'off', // the logic of && and || should be known to every developer
     'object-curly-newline': ['warn', {multiline: true, consistent: true}],
     'object-curly-spacing': ['warn', 'never'],
@@ -56,10 +60,7 @@ module.exports = {
       named: 'never',
       asyncArrow: 'always',
     }],
-    'spaced-comment': ['warn', 'always'],
-    'max-len': ['warn', {
-      code: 120, tabWidth: 2, ignoreStrings: true, ignoreTemplateLiterals: true, ignoreComments: true,
-    }],
+    'spaced-comment': 'off',
   },
   overrides: [
     {

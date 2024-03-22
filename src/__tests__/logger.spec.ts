@@ -1,6 +1,6 @@
-import type {IAppender} from '../definitions';
-import {LogLevel} from '../definitions';
-import {Logger} from '../logger';
+import type {IAppender} from '../definitions.js';
+import {LogLevel} from '../definitions.js';
+import {Logger} from '../logger.js';
 
 describe('test logger', () => {
   let mockAppender: IAppender;
@@ -124,7 +124,8 @@ describe('test logger', () => {
       await new Promise((r) => setTimeout(r, 10));
 
       expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
-      expect(consoleErrorSpy).toHaveBeenCalledWith('error in appender.handle of MockAppender', 'Reject for some reason');
+      expect(consoleErrorSpy)
+        .toHaveBeenCalledWith('error in appender.handle of MockAppender', 'Reject for some reason');
     });
   });
 
@@ -141,7 +142,6 @@ describe('test logger', () => {
 
       const now = Date.now();
       logger.info('Test info');
-
 
       expect(spyEmit).toHaveBeenCalledTimes(1);
       expect(spyEmit).toHaveBeenCalledWith({

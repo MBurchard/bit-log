@@ -1,5 +1,5 @@
-import {Ansi} from '../ansi';
-import {LogLevel} from '../definitions';
+import {Ansi} from '../ansi.js';
+import {LogLevel} from '../definitions.js';
 import {
   CircularTracker,
   formatAny,
@@ -9,7 +9,7 @@ import {
   getClassHierarchy,
   truncateMiddle,
   truncateOrExtend,
-} from '../utils';
+} from '../utils.js';
 
 describe('test utils', () => {
   // noinspection DuplicatedCode
@@ -135,7 +135,8 @@ describe('test utils', () => {
 
     it('should format an array colored', () => {
       expect(formatAny([null, undefined, 'Test', false, 200], false, true))
-        .toBe(`[${Ansi.bold('null')}, ${Ansi.bold('undefined')}, ${Ansi.green('"Test"')}, ${Ansi.darkYellow('false')}, ${Ansi.darkCyan('200')}]`);
+        .toBe(`[${Ansi.bold('null')}, ${Ansi.bold('undefined')}, ${Ansi.green('"Test"')}, ${Ansi
+          .darkYellow('false')}, ${Ansi.darkCyan('200')}]`);
     });
 
     it('should format an array pretty', () => {
@@ -151,9 +152,9 @@ describe('test utils', () => {
 
     it('should format an object colored', () => {
       const result = formatAny({key: 'value', num: 12.333, bool: false, bad: null}, false, true);
-      console.log('Result: ', result);
       expect(result)
-        .toBe(`{key: ${Ansi.green('"value"')}, num: ${Ansi.darkCyan('12.333')}, bool: ${Ansi.darkYellow('false')}, bad: ${Ansi.bold('null')}}`);
+        .toBe(`{key: ${Ansi.green('"value"')}, num: ${Ansi.darkCyan('12.333')}, bool: ${Ansi
+          .darkYellow('false')}, bad: ${Ansi.bold('null')}}`);
     });
 
     it('should format an object with an internal object', () => {
@@ -186,7 +187,8 @@ describe('test utils', () => {
     });
 
     it('should format a function colored', () => {
-      expect(formatAny(() => {}, false, true)).toBe(`[${Ansi.blue('Function')} () => { }]`);
+      expect(formatAny(() => {}, false, true))
+        .toBe(`[${Ansi.blue('Function')} () => { }]`);
     });
 
     it('should format a long function', () => {
@@ -230,7 +232,6 @@ describe('test utils', () => {
         },
       };
       const result = formatAny(sth, true, true);
-      console.log('Result:', result);
       expect(result).toBe(`{\n  class: ${Ansi.darkMagenta('[class ClassA]')},\n  obj: {\n    array: [\n      {\n` +
         `        prop: ${Ansi.darkYellow('false')}\n      },\n      ${Ansi.darkCyan('123')},\n` +
         `      ${Ansi.green('"Text"')}\n    ]\n  },\n  func: [${Ansi.blue('Function')} () => {...],\n` +

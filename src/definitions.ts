@@ -70,7 +70,7 @@ export interface ILogger {
   /**
    * the name or namespace for this logger<br>
    */
-  readonly name: string
+  readonly name: string;
 
   /**
    * Used to log a debug message.<br>
@@ -79,7 +79,7 @@ export interface ILogger {
    *
    * @param args
    */
-  debug(...args: unknown[]): void
+  debug(...args: unknown[]): void;
 
   /**
    * Used to log a debug message.<br>
@@ -87,7 +87,7 @@ export interface ILogger {
    *
    * @param {() => string} msg
    */
-  debug(msg: () => string): void
+  debug(msg: () => string): void;
 
   /**
    * Used to log an error message.<br>
@@ -95,7 +95,7 @@ export interface ILogger {
    * @see {@link debug}
    * @param args
    */
-  error(...args: unknown[]): void
+  error(...args: unknown[]): void;
 
   /**
    * Used to log an error message.<br>
@@ -103,7 +103,7 @@ export interface ILogger {
    * @see {@link debug}
    * @param {() => string} msg
    */
-  error(msg: () => string): void
+  error(msg: () => string): void;
 
   /**
    * Used to log a fatal error message.<br>
@@ -111,7 +111,7 @@ export interface ILogger {
    * @see {@link debug}
    * @param args
    */
-  fatal(...args: unknown[]): void
+  fatal(...args: unknown[]): void;
 
   /**
    * Used to log a fatal error message.<br>
@@ -119,7 +119,7 @@ export interface ILogger {
    * @see {@link debug}
    * @param {() => string} msg
    */
-  fatal(msg: () => string): void
+  fatal(msg: () => string): void;
 
   /**
    * Used to log an info message.<br>
@@ -127,7 +127,7 @@ export interface ILogger {
    * @see {@link debug}
    * @param args
    */
-  info(...args: unknown[]): void
+  info(...args: unknown[]): void;
 
   /**
    * Used to log an info message.<br>
@@ -135,7 +135,7 @@ export interface ILogger {
    * @see {@link debug}
    * @param {() => string} msg
    */
-  info(msg: () => string): void
+  info(msg: () => string): void;
 
   /**
    * true if the log level is greater or equal to the LogLevel of the logger
@@ -143,7 +143,7 @@ export interface ILogger {
    * @param {LogLevel} level
    * @return {boolean}
    */
-  shouldLog(level: LogLevel): boolean
+  shouldLog(level: LogLevel): boolean;
 
   /**
    * Used to log a trace message.<br>
@@ -151,7 +151,7 @@ export interface ILogger {
    * @see {@link debug}
    * @param args
    */
-  trace(...args: unknown[]): void
+  trace(...args: unknown[]): void;
 
   /**
    * Used to log a trace message.<br>
@@ -159,7 +159,7 @@ export interface ILogger {
    * @see {@link debug}
    * @param {() => string} msg
    */
-  trace(msg: () => string): void
+  trace(msg: () => string): void;
 
   /**
    * Used to log a warn message.<br>
@@ -167,7 +167,7 @@ export interface ILogger {
    * @see {@link debug}
    * @param args
    */
-  warn(...args: unknown[]): void
+  warn(...args: unknown[]): void;
 
   /**
    * Used to log a warn message.<br>
@@ -175,7 +175,7 @@ export interface ILogger {
    * @see {@link debug}
    * @param {() => string} msg
    */
-  warn(msg: () => string): void
+  warn(msg: () => string): void;
 }
 
 export interface ILogEvent {
@@ -183,19 +183,19 @@ export interface ILogEvent {
   /**
    * LogLevel of the triggering logger
    */
-  level: LogLevel
+  level: LogLevel;
   /**
    * Name(space) of the triggering logger
    */
-  loggerName: string
+  loggerName: string;
   /**
    * What to log
    */
-  payload: unknown[] | (() => string)
+  payload: unknown[] | (() => string);
   /**
    * Timestamp at the moment of creation
    */
-  timestamp: Date
+  timestamp: Date;
 }
 
 /**
@@ -211,7 +211,7 @@ export interface IAppender {
   /**
    * Some appender may need a close method at the end
    */
-  close?(): void
+  close?(): void;
 
   /**
    * This method does what ever is needed for that specific appender.
@@ -219,7 +219,7 @@ export interface IAppender {
    * @async
    * @param {ILogEvent} event
    */
-  handle(event: ILogEvent): Promise<void>
+  handle(event: ILogEvent): Promise<void>;
 
   /**
    * Method to check whether the appender is likely to process the LogEvent.<br>
@@ -227,7 +227,7 @@ export interface IAppender {
    *
    * @param event
    */
-  willHandle(event: ILogEvent): boolean
+  willHandle(event: ILogEvent): boolean;
 }
 
 /**
@@ -235,8 +235,9 @@ export interface IAppender {
  */
 export interface AppenderConfig {
   class: new () => IAppender;
-  level?: LogLevel | LogLevelString
-  [key: string]: undefined | NonNullable<unknown>
+  level?: LogLevel | LogLevelString;
+
+  [key: string]: undefined | NonNullable<unknown>;
 }
 
 /**
@@ -253,8 +254,8 @@ export function isAppenderConfig<T extends AppenderConfig>(sth: NonNullable<T>):
  * Logger configuration
  */
 export interface LoggerConfig {
-  level: LogLevel | LogLevelString
-  appender?: string[]
+  level: LogLevel | LogLevelString;
+  appender?: string[];
 }
 
 /**
@@ -293,7 +294,7 @@ export interface LoggerConfig {
  * };
  */
 export interface LoggingConfig {
-  root?: LoggerConfig
-  logger?: Record<string, LoggerConfig>
-  appender?: Record<string, AppenderConfig>
+  root?: LoggerConfig;
+  logger?: Record<string, LoggerConfig>;
+  appender?: Record<string, AppenderConfig>;
 }

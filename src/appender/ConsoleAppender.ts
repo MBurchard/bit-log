@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import type {ILogEvent} from '../definitions.js';
 import {isPresent, LogLevel} from '../definitions.js';
 import {formatAny, formatPrefix} from '../utils.js';
