@@ -22,21 +22,22 @@ module.exports = {
   rules: {
     '@stylistic/comma-dangle': ['warn', {
       arrays: 'always-multiline',
-      objects: 'always-multiline',
-      imports: 'always-multiline',
+      enums: 'always-multiline',
       exports: 'always-multiline',
-      functions: 'never',
+      functions: 'always-multiline',
+      imports: 'always-multiline',
+      objects: 'always-multiline',
     }],
     '@stylistic/indent': ['warn', 2, {
       CallExpression: {
         arguments: 1,
       },
       FunctionDeclaration: {
-        parameters: 2,
+        parameters: 1,
         body: 1,
       },
       FunctionExpression: {
-        parameters: 2,
+        parameters: 1,
         body: 1,
       },
       MemberExpression: 1,
@@ -46,6 +47,9 @@ module.exports = {
     '@stylistic/quotes': ['warn', 'single'],
     '@stylistic/semi': ['warn', 'always'],
     '@typescript-eslint/consistent-type-imports': 'error',
+    'max-len': ['warn', {
+      code: 120, tabWidth: 2, ignoreStrings: true, ignoreTemplateLiterals: true, ignoreComments: true,
+    }],
     'no-console': 'warn',
     'no-debugger': 'warn',
     'no-mixed-operators': 'off', // the logic of && and || should be known to every developer
@@ -56,10 +60,7 @@ module.exports = {
       named: 'never',
       asyncArrow: 'always',
     }],
-    'spaced-comment': ['warn', 'always'],
-    'max-len': ['warn', {
-      code: 120, tabWidth: 2, ignoreStrings: true, ignoreTemplateLiterals: true, ignoreComments: true,
-    }],
+    'spaced-comment': 'off',
   },
   overrides: [
     {
