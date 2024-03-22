@@ -183,15 +183,12 @@ describe('test utils', () => {
     });
 
     it('should format a function', () => {
-      expect(formatAny(() => {
-        return 'sth';
-      })).toBe('[Function () => {...]');
+      expect(formatAny(() => {})).toBe('[Function () => { }]');
     });
 
     it('should format a function colored', () => {
-      expect(formatAny(() => {
-        return 'sth';
-      }, false, true)).toBe(`[${Ansi.blue('Function')} () => {...]`);
+      expect(formatAny(() => {}, false, true))
+        .toBe(`[${Ansi.blue('Function')} () => { }]`);
     });
 
     it('should format a long function', () => {
