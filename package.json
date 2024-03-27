@@ -54,6 +54,7 @@
   },
   "devDependencies": {
     "@stylistic/eslint-plugin": "^1.7.0",
+    "@tsconfig/node20": "^20.1.4",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.11.30",
     "@typescript-eslint/eslint-plugin": "^7.4.0",
