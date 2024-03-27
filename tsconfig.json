@@ -1,12 +1,8 @@
 {
+  "extends": "@tsconfig/node20/tsconfig.json",
   "compileOnSave": false,
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "lib": ["ESNext", "DOM"],
     "types": ["node", "jest"],
-    "skipLibCheck": true,
 
     "removeComments": true,
     "stripInternal": true,
@@ -16,7 +12,6 @@
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "strict": true,
     "useUnknownInCatchVariables": false
   },
   "exclude": ["**/*.spec.ts", "**/*.test.ts", "node_modules", "dist", "coverage"],
