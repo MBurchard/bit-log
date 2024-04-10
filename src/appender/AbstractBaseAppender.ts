@@ -10,4 +10,3 @@ export abstract class AbstractBaseAppender implements IAppender {
     return !isPresent(this.level) || event.level >= this.level;
   }
 }
-

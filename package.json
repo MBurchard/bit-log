@@ -1,5 +1,6 @@
 {
   "name": "@mburchard/bit-log",
+  "type": "module",
   "version": "0.2.10",
   "description": "A Node library for logging",
   "author": {
@@ -8,62 +9,60 @@
     "url": "https://github.com/MBurchard/bit-log"
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MBurchard/bit-log.git"
+  },
   "keywords": [
     "javascript",
     "logging",
     "node",
     "typescript"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/MBurchard/bit-log.git"
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "default": "./dist/esm/index.js"
+    },
+    "./*": {
+      "types": "./dist/types/*.d.ts",
+      "import": "./dist/esm/*.js",
+      "require": "./dist/cjs/*.js",
+      "default": "./dist/esm/*.js"
+    }
   },
+  "main": "dist/esm/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "engines": {
     "node": ">=20",
     "pnpm": ">=8",
     "npm": ">=10"
   },
-  "type": "module",
-  "main": "dist/esm/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/types/index.d.ts",
-  "exports": {
-    ".": {
-      "default": "./dist/esm/index.js",
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js",
-      "types": "./dist/types/index.d.ts"
-    },
-    "./*": {
-      "default": "./dist/esm/*.js",
-      "import": "./dist/esm/*.js",
-      "require": "./dist/cjs/*.js",
-      "types": "./dist/types/*.d.ts"
-    }
-  },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "compile": "tsc -b ./tsconfig.cjs.json ./tsconfig.esm.json ./tsconfig.types.json",
     "build:clean": "rm -rf ./dist",
     "build": "npm-run-all build:clean compile",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
+    "lint": "eslint . --fix",
     "test": "jest",
     "docs": "typedoc"
   },
   "devDependencies": {
-    "@stylistic/eslint-plugin": "^1.7.0",
+    "@antfu/eslint-config": "^2.13.2",
     "@tsconfig/node20": "^20.1.4",
     "@types/jest": "^29.5.12",
-    "@types/node": "^20.11.30",
-    "@typescript-eslint/eslint-plugin": "^7.4.0",
+    "@types/node": "^20.12.7",
     "eslint": "^8.57.0",
     "jest": "^29.7.0",
     "npm-run-all2": "^6.1.2",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
-    "typedoc": "^0.25.12",
-    "typescript": "^5.4.3"
+    "typedoc": "^0.25.13",
+    "typescript": "^5.4.4"
   }
 }

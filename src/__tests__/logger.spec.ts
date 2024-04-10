@@ -112,16 +112,14 @@ describe('test logger', () => {
     });
 
     it('appender exception during handle is caught', async () => {
-      (mockAppender.handle as jest.Mock).mockResolvedValue(Promise.reject('Reject for some reason'));
+      (mockAppender.handle as jest.Mock).mockResolvedValue(Promise.reject(new Error('Reject for some reason')));
 
       logger.addAppender('MockAppender', mockAppender);
-      const consoleErrorSpy =
-        jest.spyOn(console, 'error').mockImplementation(() => {
-        });
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
       expect(() => logger.info('test info')).not.toThrow();
 
-      await new Promise((r) => setTimeout(r, 10));
+      await new Promise(r => setTimeout(r, 10));
 
       expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
       expect(consoleErrorSpy)

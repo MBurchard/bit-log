@@ -5,7 +5,7 @@
  * @author Martin Burchard
  */
 import type {IAppender, ILogEvent, ILogger} from './definitions.js';
-import {isPresent, LogLevel} from './definitions.js';
+import {LogLevel, isPresent} from './definitions.js';
 
 /**
  * A hierarchic Logger implementation
@@ -148,8 +148,7 @@ export class Logger implements ILogger {
     let handled = false;
     for (const [appenderName, appender] of Object.entries(this.appender)) {
       if (appender.willHandle(event)) {
-        appender.handle(event).catch(reason => {
-          // eslint-disable-next-line no-console
+        appender.handle(event).catch((reason) => {
           console.error(`error in appender.handle of ${appenderName}`, reason);
         });
         handled = true;

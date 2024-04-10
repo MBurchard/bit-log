@@ -23,13 +23,13 @@ export type LogLevelString = 'DEBUG' | 'ERROR' | 'FATAL' | 'INFO' | 'OFF' | 'TRA
  * Log level definition.
  */
 export enum LogLevel {
-  'TRACE' = 0,
-  'DEBUG' = 10,
-  'INFO' = 20,
-  'WARN' = 30,
-  'ERROR' = 40,
-  'FATAL' = 50,
-  'OFF' = 1000,
+  TRACE = 0,
+  DEBUG = 10,
+  INFO = 20,
+  WARN = 30,
+  ERROR = 40,
+  FATAL = 50,
+  OFF = 1000,
 }
 
 /**
@@ -76,66 +76,29 @@ export interface ILogger {
    * Used to log a debug message.<br>
    * The signature is well known from console.log,<br>
    * The registered appender are finally responsible for handling these args.
-   *
-   * @param args
    */
-  debug(...args: unknown[]): void;
-
-  /**
-   * Used to log a debug message.<br>
-   * Can be used if the output message has to be a concatenated String and the `...args` approach does not fit.
-   *
-   * @param {() => string} msg
-   */
-  debug(msg: () => string): void;
+  debug: ((...args: unknown[]) => void) & ((msg: () => string) => void);
 
   /**
    * Used to log an error message.<br>
    *
    * @see {@link debug}
-   * @param args
    */
-  error(...args: unknown[]): void;
-
-  /**
-   * Used to log an error message.<br>
-   *
-   * @see {@link debug}
-   * @param {() => string} msg
-   */
-  error(msg: () => string): void;
+  error: ((...args: unknown[]) => void) & ((msg: () => string) => void);
 
   /**
    * Used to log a fatal error message.<br>
    *
    * @see {@link debug}
-   * @param args
    */
-  fatal(...args: unknown[]): void;
-
-  /**
-   * Used to log a fatal error message.<br>
-   *
-   * @see {@link debug}
-   * @param {() => string} msg
-   */
-  fatal(msg: () => string): void;
+  fatal: ((...args: unknown[]) => void) & ((msg: () => string) => void);
 
   /**
    * Used to log an info message.<br>
    *
    * @see {@link debug}
-   * @param args
    */
-  info(...args: unknown[]): void;
-
-  /**
-   * Used to log an info message.<br>
-   *
-   * @see {@link debug}
-   * @param {() => string} msg
-   */
-  info(msg: () => string): void;
+  info: ((...args: unknown[]) => void) & ((msg: () => string) => void);
 
   /**
    * true if the log level is greater or equal to the LogLevel of the logger
@@ -143,39 +106,21 @@ export interface ILogger {
    * @param {LogLevel} level
    * @return {boolean}
    */
-  shouldLog(level: LogLevel): boolean;
+  shouldLog: (level: LogLevel) => boolean;
 
   /**
    * Used to log a trace message.<br>
    *
    * @see {@link debug}
-   * @param args
    */
-  trace(...args: unknown[]): void;
-
-  /**
-   * Used to log a trace message.<br>
-   *
-   * @see {@link debug}
-   * @param {() => string} msg
-   */
-  trace(msg: () => string): void;
+  trace: ((...args: unknown[]) => void) & ((msg: () => string) => void);
 
   /**
    * Used to log a warn message.<br>
    *
    * @see {@link debug}
-   * @param args
    */
-  warn(...args: unknown[]): void;
-
-  /**
-   * Used to log a warn message.<br>
-   *
-   * @see {@link debug}
-   * @param {() => string} msg
-   */
-  warn(msg: () => string): void;
+  warn: ((...args: unknown[]) => void) & ((msg: () => string) => void);
 }
 
 export interface ILogEvent {
@@ -211,7 +156,7 @@ export interface IAppender {
   /**
    * Some appender may need a close method at the end
    */
-  close?(): void;
+  close?: () => void;
 
   /**
    * This method does what ever is needed for that specific appender.
@@ -219,7 +164,7 @@ export interface IAppender {
    * @async
    * @param {ILogEvent} event
    */
-  handle(event: ILogEvent): Promise<void>;
+  handle: (event: ILogEvent) => Promise<void>;
 
   /**
    * Method to check whether the appender is likely to process the LogEvent.<br>
@@ -227,14 +172,14 @@ export interface IAppender {
    *
    * @param event
    */
-  willHandle(event: ILogEvent): boolean;
+  willHandle: (event: ILogEvent) => boolean;
 }
 
 /**
  * Appender configuration
  */
 export interface AppenderConfig {
-  class: new () => IAppender;
+  Class: new () => IAppender;
   level?: LogLevel | LogLevelString;
 
   [key: string]: undefined | NonNullable<unknown>;
@@ -247,7 +192,7 @@ export interface AppenderConfig {
  * @param sth
  */
 export function isAppenderConfig<T extends AppenderConfig>(sth: NonNullable<T>): sth is NonNullable<T> {
-  return isPresent(sth.class) && typeof sth.class === 'function' && sth.class.prototype instanceof Object;
+  return isPresent(sth.Class) && typeof sth.Class === 'function' && sth.Class.prototype instanceof Object;
 }
 
 /**

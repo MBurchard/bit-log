@@ -4,16 +4,16 @@
   "compilerOptions": {
     "types": ["node", "jest"],
 
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "useUnknownInCatchVariables": false,
     "removeComments": true,
     "stripInternal": true,
 
     /* Linting */
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "useUnknownInCatchVariables": false
+    "forceConsistentCasingInFileNames": true
   },
-  "exclude": ["**/*.spec.ts", "**/*.test.ts", "node_modules", "dist", "coverage"],
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["**/*.spec.ts", "**/*.test.ts", "node_modules", "dist", "coverage"]
 }
