@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import type {ILogEvent} from '../definitions.js';
 import {LogLevel, isPresent} from '../definitions.js';
-import {formatAny, formatPrefix} from '../utils.js';
 import {AbstractBaseAppender} from './AbstractBaseAppender.js';
 
 export class ConsoleAppender extends AbstractBaseAppender {
@@ -58,12 +57,12 @@ export class ConsoleAppender extends AbstractBaseAppender {
           break;
       }
     }
-    const prefix = formatPrefix(event.level, event.loggerName, this.colored);
+    const prefix = this.formatPrefix(event.timestamp, event.level, event.loggerName, this.colored);
     if (typeof event.payload === 'function') {
       loggingMethod(prefix, event.payload());
     } else {
       loggingMethod(prefix, ...event.payload.map((elem) => {
-        return formatAny(elem, this.pretty, this.colored);
+        return this.formatAny(elem, this.pretty, this.colored);
       }));
     }
   }

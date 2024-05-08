@@ -167,3 +167,48 @@ describe('test ConsoleAppender', () => {
     expect(log).toHaveBeenCalledWith(expect.anything(), 'Text', '42', 'false', `{prop: ${Ansi.green('"Test"')}}`);
   });
 });
+
+describe('test ConsoleAppender overwrite formatting', () => {
+  let appender: ConsoleAppender;
+
+  beforeEach(() => {
+    appender = new ConsoleAppender();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks(); // Wiederherstellen aller Mocks nach jedem Test
+  });
+
+  it('should use default ISO 8601 date format', async () => {
+    const log = jest.spyOn(console, 'log');
+    const event: ILogEvent = {
+      level: LogLevel.INFO,
+      timestamp: new Date('2024-05-08T12:30:45.678'),
+      loggerName: 'foo.bar',
+      payload: ['test info'],
+    };
+    await appender.handle(event);
+    expect(log).toHaveBeenCalledTimes(1);
+    expect(log).toHaveBeenCalledWith(
+      expect.stringMatching(/^2024-05-08T12:30:45\.678([+-]\d{2}:\d{2})? {2}INFO \[foo\.bar\s*]:$/),
+      'test info',
+    );
+  });
+
+  it('should log with a custom date format', async () => {
+    const log = jest.spyOn(console, 'log');
+    appender.formatTimestamp = (date: Date): string => {
+      return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString()
+        .padStart(2, '0')}.${date.getFullYear()}`;
+    };
+    const event: ILogEvent = {
+      level: LogLevel.INFO,
+      timestamp: new Date('2024-05-08T12:30:45.678'),
+      loggerName: 'foo.bar',
+      payload: ['test info'],
+    };
+    await appender.handle(event);
+    expect(log).toHaveBeenCalledTimes(1);
+    expect(log).toHaveBeenCalledWith('08.05.2024  INFO [foo.bar             ]:', 'test info');
+  });
+});

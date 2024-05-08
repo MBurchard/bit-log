@@ -59,6 +59,17 @@ export class CircularTracker {
   }
 }
 
+/**
+ * Format any value.
+ * Entrypoint for the formatting functions.
+ *
+ * @param value
+ * @param {boolean} pretty
+ * @param {boolean} colored
+ * @param {number} inner
+ * @param {CircularTracker} ct
+ * @return {string}
+ */
 export function formatAny(
   value: unknown,
   pretty: boolean = false,
@@ -237,18 +248,20 @@ export function formatLogLevel(level: LogLevel, colored: boolean = false): strin
  * As usual, the timestamp, the log level and the category are used.
  *
  * @internal
- * @param level
- * @param name
- * @param colored
+ * @param {Date} ts
+ * @param {LogLevel} level
+ * @param {string} name
+ * @param {boolean} colored
+ * @return {string}
  */
-export function formatPrefix(level: LogLevel, name: string, colored: boolean = false): string {
+export function formatPrefix(ts: Date, level: LogLevel, name: string, colored: boolean = false): string {
   let formattedLevel;
   if (colored) {
     formattedLevel = formatLogLevel(level, colored).padStart(13, ' ');
   } else {
     formattedLevel = formatLogLevel(level).padStart(5, ' ');
   }
-  return `${formatISO8601(new Date())} ${formattedLevel} [${truncateOrExtend(name, 20)}]:`;
+  return `${formatISO8601(ts)} ${formattedLevel} [${truncateOrExtend(name, 20)}]:`;
 }
 
 /**
