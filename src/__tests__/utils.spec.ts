@@ -14,32 +14,57 @@ import {
 describe('test utils', () => {
   // noinspection DuplicatedCode
   it('formatLogLevel TRACE', () => {
-    expect(formatLogLevel(LogLevel.TRACE)).toBe('\x1B[90mTRACE\x1B[m');
+    expect(formatLogLevel(LogLevel.TRACE, true)).toBe('\x1B[90mTRACE\x1B[m');
   });
 
   it('formatLogLevel DEBUG', () => {
-    expect(formatLogLevel(LogLevel.DEBUG)).toBe('\x1B[37mDEBUG\x1B[m');
+    expect(formatLogLevel(LogLevel.DEBUG, true)).toBe('\x1B[37mDEBUG\x1B[m');
   });
 
   it('formatLogLevel INFO', () => {
-    expect(formatLogLevel(LogLevel.INFO)).toBe('\x1B[92mINFO\x1B[m');
+    expect(formatLogLevel(LogLevel.INFO, true)).toBe('\x1B[92mINFO\x1B[m');
   });
 
   // noinspection DuplicatedCode
   it('formatLogLevel WARN', () => {
-    expect(formatLogLevel(LogLevel.WARN)).toBe('\x1B[93mWARN\x1B[m');
+    expect(formatLogLevel(LogLevel.WARN, true)).toBe('\x1B[93mWARN\x1B[m');
   });
 
   it('formatLogLevel ERROR', () => {
-    expect(formatLogLevel(LogLevel.ERROR)).toBe('\x1B[91mERROR\x1B[m');
+    expect(formatLogLevel(LogLevel.ERROR, true)).toBe('\x1B[91mERROR\x1B[m');
   });
 
   it('formatLogLevel FATAL', () => {
-    expect(formatLogLevel(LogLevel.FATAL)).toBe('\x1B[95mFATAL\x1B[m');
+    expect(formatLogLevel(LogLevel.FATAL, true)).toBe('\x1B[95mFATAL\x1B[m');
   });
 
   it('formatLogLevel OFF', () => {
-    expect(formatLogLevel(LogLevel.OFF)).toBe('');
+    expect(formatLogLevel(LogLevel.OFF, true)).toBe('');
+  });
+
+  it('formatLogLevel TRACE without color', () => {
+    expect(formatLogLevel(LogLevel.TRACE)).toBe('TRACE');
+  });
+
+  it('formatLogLevel DEBUG without color', () => {
+    expect(formatLogLevel(LogLevel.DEBUG)).toBe('DEBUG');
+  });
+
+  it('formatLogLevel INFO without color', () => {
+    expect(formatLogLevel(LogLevel.INFO)).toBe('INFO');
+  });
+
+  // noinspection DuplicatedCode
+  it('formatLogLevel WARN without color', () => {
+    expect(formatLogLevel(LogLevel.WARN)).toBe('WARN');
+  });
+
+  it('formatLogLevel ERROR without color', () => {
+    expect(formatLogLevel(LogLevel.ERROR)).toBe('ERROR');
+  });
+
+  it('formatLogLevel FATAL without color', () => {
+    expect(formatLogLevel(LogLevel.FATAL)).toBe('FATAL');
   });
 
   it('formatISO8601', () => {
@@ -64,13 +89,23 @@ describe('test utils', () => {
   });
 
   it('formatPrefix with 5 chars log level', () => {
-    expect(formatPrefix(LogLevel.DEBUG, 'foo.bar'))
+    expect(formatPrefix(LogLevel.DEBUG, 'foo.bar', true))
       .toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}[+-]\d{2}:\d{2}\s.+?\s\[.{20}]:$/);
   });
 
   it('formatPrefix with 4 chars log level', () => {
-    expect(formatPrefix(LogLevel.INFO, 'foo.bar'))
+    expect(formatPrefix(LogLevel.INFO, 'foo.bar', true))
       .toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}[+-]\d{2}:\d{2}\s{2}.+?\s\[.{20}]:$/);
+  });
+
+  it('formatPrefix with 5 chars log level without color', () => {
+    expect(formatPrefix(LogLevel.DEBUG, 'foo.bar'))
+      .toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}[+-]\d{2}:\d{2}\sDEBUG\s\[.{20}]:$/);
+  });
+
+  it('formatPrefix with 4 chars log level without color', () => {
+    expect(formatPrefix(LogLevel.INFO, 'foo.bar'))
+      .toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}[+-]\d{2}:\d{2}\s{2}INFO\s\[.{20}]:$/);
   });
 
   describe('test getClassHierarchy', () => {
