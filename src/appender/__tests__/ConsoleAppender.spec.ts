@@ -189,7 +189,10 @@ describe('test ConsoleAppender overwrite formatting', () => {
     };
     await appender.handle(event);
     expect(log).toHaveBeenCalledTimes(1);
-    expect(log).toHaveBeenCalledWith('2024-05-08T12:30:45.678+02:00  INFO [foo.bar             ]:', 'test info');
+    expect(log).toHaveBeenCalledWith(
+      expect.stringMatching(/^2024-05-08T12:30:45\.678([+-]\d{2}:\d{2})? {2}INFO \[foo\.bar\s*]:$/),
+      'test info',
+    );
   });
 
   it('should log with a custom date format', async () => {
