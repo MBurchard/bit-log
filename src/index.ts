@@ -97,7 +97,7 @@ export function configureLogging(config: LoggingConfig): void {
   }
   if (isPresent(config.root)) {
     log.debug('configure ROOT logger');
-    const root = useLog('') as Logger;
+    const root = useLog() as Logger;
     if (isPresent(config.root.level)) {
       const level = toLogLevel(config.root.level);
       if (root.level !== level) {
@@ -122,10 +122,10 @@ export function configureLogging(config: LoggingConfig): void {
  * @param {string} name
  * @param {LogLevel} level optional, if not given the level from a parent logger is used
  */
-export function useLog(name: string, level?: LogLevel): ILogger {
+export function useLog(name: string = '', level?: LogLevel): ILogger {
   if (!(name in LoggerRegistry)) {
-    if (name === '') {
-      LoggerRegistry[name] = new Logger(name);
+    if (name === '' || name === 'root') {
+      LoggerRegistry[''] = new Logger('');
     } else {
       const parentName = name.includes('.') ? name.substring(0, name.lastIndexOf('.')) : '';
       const parent = useLog(parentName);

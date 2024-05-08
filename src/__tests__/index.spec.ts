@@ -36,7 +36,7 @@ describe('test usage', () => {
 
   describe('test default configuration', () => {
     // get the root logger
-    const log = useLog('');
+    const log = useLog();
 
     it('log.trace', () => {
       log.trace('trace log');
@@ -56,7 +56,7 @@ describe('test usage', () => {
 
   describe('useLogger', () => {
     it('default root logger', () => {
-      const logger = useLog('');
+      const logger = useLog();
       expect(logger).toEqual({
         level: LogLevel.INFO,
         name: '',
@@ -104,7 +104,7 @@ describe('test usage', () => {
 
       expect(spyConsole).toHaveBeenCalledTimes(1);
       expect(spyConsole).toHaveBeenCalledWith(expect.anything(), 'Replace appender', 'CONSOLE', 'in logger', 'ROOT');
-      const root = useLog('') as Logger;
+      const root = useLog() as Logger;
       const appender = root.appender.CONSOLE;
       expect(appender).toBeDefined();
       expect(appender.level).toBe(LogLevel.DEBUG);
@@ -192,7 +192,7 @@ describe('test usage', () => {
       });
       expect(spyConsole).toHaveBeenCalledTimes(1);
       expect(spyConsole).toHaveBeenCalledWith(expect.anything(), 'registering appender \'NOOP\' to logger \'ROOT\'');
-      const root = useLog('') as Logger;
+      const root = useLog() as Logger;
       const appender = root.appender.NOOP as NoOpAppender;
       expect(appender).toBeDefined();
       expect(appender.customString).toBe('Hallo Welt');
@@ -244,7 +244,7 @@ describe('test usage', () => {
 
       await new Promise(r => setTimeout(r, 10));
 
-      const root = useLog('') as Logger;
+      const root = useLog() as Logger;
       root.info('Hello World');
       expect(spyConsole).toHaveBeenCalledTimes(2);
       expect(spyConsole).toHaveBeenCalledWith('works as designed', 'Hello World');
