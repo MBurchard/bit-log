@@ -59,6 +59,17 @@ export class CircularTracker {
   }
 }
 
+/**
+ * Format any value.
+ * Entrypoint for the formatting functions.
+ *
+ * @param value
+ * @param {boolean} pretty
+ * @param {boolean} colored
+ * @param {number} inner
+ * @param {CircularTracker} ct
+ * @return {string}
+ */
 export function formatAny(
   value: unknown,
   pretty: boolean = false,
