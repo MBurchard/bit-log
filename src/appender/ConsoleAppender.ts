@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import type {ILogEvent} from '../definitions.js';
-import {isPresent, LogLevel} from '../definitions.js';
+import {LogLevel, isPresent} from '../definitions.js';
 import {formatAny, formatPrefix} from '../utils.js';
 import {AbstractBaseAppender} from './AbstractBaseAppender.js';
 
@@ -23,8 +23,10 @@ export class ConsoleAppender extends AbstractBaseAppender {
 
   set useSpecificMethods(value: boolean) {
     if (value) {
-      console.info('Depending on the user\'s browser settings, specific console log methods may prevent',
-        'certain messages from appearing in the console.');
+      console.info(
+        'Depending on the user\'s browser settings, specific console log methods may prevent',
+        'certain messages from appearing in the console.',
+      );
     }
     this._useSpecificMethods = value;
   }
@@ -60,7 +62,7 @@ export class ConsoleAppender extends AbstractBaseAppender {
     if (typeof event.payload === 'function') {
       loggingMethod(prefix, event.payload());
     } else {
-      loggingMethod(prefix, ...event.payload.map(elem => {
+      loggingMethod(prefix, ...event.payload.map((elem) => {
         return formatAny(elem, this.pretty, this.colored);
       }));
     }

@@ -12,8 +12,8 @@ describe('test usage', () => {
     spyConsole = jest.spyOn(console, 'log').mockImplementation();
     configureLogging({
       appender: {
-        'CONSOLE': {
-          class: ConsoleAppender,
+        CONSOLE: {
+          Class: ConsoleAppender,
         },
       },
       root: {
@@ -62,7 +62,7 @@ describe('test usage', () => {
         name: '',
         parent: undefined,
         appender: {
-          'CONSOLE': expect.any(ConsoleAppender),
+          CONSOLE: expect.any(ConsoleAppender),
         },
       });
     });
@@ -89,24 +89,23 @@ describe('test usage', () => {
   });
 
   describe('test logging configuration', () => {
-
     it('setup appender, CONSOLE is replaced in ROOT logger', async () => {
       const config: LoggingConfig = {
         appender: {
-          'CONSOLE': {
-            class: ConsoleAppender,
+          CONSOLE: {
+            Class: ConsoleAppender,
             level: LogLevel.DEBUG,
           },
         },
       };
       configureLogging(config);
 
-      await new Promise((r) => setTimeout(r, 10));
+      await new Promise(r => setTimeout(r, 10));
 
       expect(spyConsole).toHaveBeenCalledTimes(1);
       expect(spyConsole).toHaveBeenCalledWith(expect.anything(), 'Replace appender', 'CONSOLE', 'in logger', 'ROOT');
       const root = useLog('') as Logger;
-      const appender = root.appender['CONSOLE'];
+      const appender = root.appender.CONSOLE;
       expect(appender).toBeDefined();
       expect(appender.level).toBe(LogLevel.DEBUG);
     });
@@ -115,8 +114,8 @@ describe('test usage', () => {
       try {
         configureLogging({
           appender: {
-            'SOMETEST': {
-              class: ErrorThrowingAppender,
+            SOMETEST: {
+              Class: ErrorThrowingAppender,
               someKey: 100,
               otherKey: 'Hallo Welt',
             },
@@ -124,8 +123,10 @@ describe('test usage', () => {
         });
       } catch (e) {
         expect(e).toBeInstanceOf(Error);
-        expect(e.message).toBe('illegal appender config {class: [class ErrorThrowingAppender extends ' +
-          'AbstractBaseAppender], someKey: 100, otherKey: "Hallo Welt"}, error: Error: Something was wrong');
+        expect(e.message).toBe(
+          'illegal appender config {Class: [class ErrorThrowingAppender extends ' +
+          'AbstractBaseAppender], someKey: 100, otherKey: "Hallo Welt"}, error: Error: Something was wrong',
+        );
       }
     });
 
@@ -133,9 +134,8 @@ describe('test usage', () => {
       try {
         configureLogging({
           appender: {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
-            'SOMETEST': {
+            // @ts-expect-error for test
+            SOMETEST: {
               someKey: 100,
               otherKey: 'Hallo Welt',
             },
@@ -151,8 +151,7 @@ describe('test usage', () => {
       try {
         configureLogging({
           root: {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
+            // @ts-expect-error for test
             level: 'test',
           },
         });
@@ -170,15 +169,17 @@ describe('test usage', () => {
         },
       });
       expect(spyConsole).toHaveBeenCalledTimes(1);
-      expect(spyConsole).toHaveBeenCalledWith(expect.anything(),
-        'Appender named \'FILE\' is not configured. Can\'t be used in logger \'ROOT\'');
+      expect(spyConsole).toHaveBeenCalledWith(
+        expect.anything(),
+        'Appender named \'FILE\' is not configured. Can\'t be used in logger \'ROOT\'',
+      );
     });
 
     it('should handle additional appender properties properly', () => {
       configureLogging({
         appender: {
-          'NOOP': {
-            class: NoOpAppender,
+          NOOP: {
+            Class: NoOpAppender,
             customString: 'Hallo Welt',
             customNumber: 42,
             customBoolean: true,
@@ -190,10 +191,9 @@ describe('test usage', () => {
         },
       });
       expect(spyConsole).toHaveBeenCalledTimes(1);
-      expect(spyConsole).toHaveBeenCalledWith(expect.anything(),
-        'registering appender \'NOOP\' to logger \'ROOT\'');
+      expect(spyConsole).toHaveBeenCalledWith(expect.anything(), 'registering appender \'NOOP\' to logger \'ROOT\'');
       const root = useLog('') as Logger;
-      const appender = root.appender['NOOP'] as NoOpAppender;
+      const appender = root.appender.NOOP as NoOpAppender;
       expect(appender).toBeDefined();
       expect(appender.customString).toBe('Hallo Welt');
       expect(appender.customNumber).toBe(42);
@@ -207,8 +207,10 @@ describe('test usage', () => {
         },
       });
       expect(spyConsole).toHaveBeenCalledTimes(1);
-      expect(spyConsole).toHaveBeenCalledWith(expect.anything(),
-        'appender \'CONSOLE\' was removed from logger \'ROOT\'');
+      expect(spyConsole).toHaveBeenCalledWith(
+        expect.anything(),
+        'appender \'CONSOLE\' was removed from logger \'ROOT\'',
+      );
     });
 
     it('should prepare a new logger with the given log level', () => {
@@ -229,10 +231,9 @@ describe('test usage', () => {
 });
 
 class ErrorThrowingAppender extends AbstractBaseAppender {
-
   constructor() {
     super();
-    throw Error('Something was wrong');
+    throw new Error('Something was wrong');
   }
 
   handle(): Promise<void> {

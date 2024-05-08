@@ -7,7 +7,7 @@
 
 import {ConsoleAppender} from './appender/ConsoleAppender.js';
 import type {IAppender, ILogger, LoggingConfig} from './definitions.js';
-import {isAppenderConfig, isPresent, LogLevel, toLogLevel} from './definitions.js';
+import {LogLevel, isAppenderConfig, isPresent, toLogLevel} from './definitions.js';
 import {Logger} from './logger.js';
 import {formatAny} from './utils.js';
 
@@ -17,8 +17,8 @@ const AppenderRegistry: Record<string, IAppender> = {};
 const log = useLog('bit.log', LogLevel.INFO);
 configureLogging({
   appender: {
-    'CONSOLE': {
-      class: ConsoleAppender,
+    CONSOLE: {
+      Class: ConsoleAppender,
     },
   },
   root: {
@@ -67,14 +67,13 @@ export function configureLogging(config: LoggingConfig): void {
     for (const [appenderName, appenderConfig] of Object.entries(config.appender)) {
       if (isAppenderConfig(appenderConfig)) {
         try {
-          const instance = new appenderConfig.class();
+          const instance = new appenderConfig.Class();
           if (isPresent(appenderConfig.level)) {
             instance.level = toLogLevel(appenderConfig.level);
           }
           for (const [key, value] of Object.entries(appenderConfig)) {
             if (key !== 'class' && key !== 'level' && isPresent(value)) {
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-expect-error
+              // @ts-expect-error works as designed, no reason to mark this as error
               instance[key] = value;
             }
           }
@@ -89,10 +88,10 @@ export function configureLogging(config: LoggingConfig): void {
           }
           AppenderRegistry[appenderName] = instance;
         } catch (e) {
-          throw Error(`illegal appender config ${formatAny(appenderConfig)}, error: ${e}`);
+          throw new Error(`illegal appender config ${formatAny(appenderConfig)}, error: ${e}`);
         }
       } else {
-        throw Error(`illegal appender config ${formatAny(appenderConfig)}`);
+        throw new Error(`illegal appender config ${formatAny(appenderConfig)}`);
       }
     }
   }

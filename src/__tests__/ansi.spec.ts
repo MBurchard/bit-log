@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
 import {Ansi} from '../ansi.js'; // Stellen Sie sicher, dass der Dateipfad korrekt ist
 
-describe('Ansi Colors', () => {
-  it('Print all colors', () => {
-    console.log(Ansi.black('Black'), ', ', Ansi.darkGray('Dark Gray'), ', ', Ansi.gray('Gray'), ', ', Ansi.white('White'));
+describe('ansi Colors', () => {
+  it('print all colors', () => {
+    console.log(`${Ansi.black('Black')}, ${Ansi.darkGray('Dark Gray')}, ${Ansi.gray('Gray')}, ${Ansi.white('White')}`);
     console.log(Ansi.red('Red'), ', ', Ansi.darkRed('Dark Red'));
     console.log(Ansi.green('Green'), ', ', Ansi.darkGreen('Dark Green'));
     console.log(Ansi.yellow('Yellow'), ', ', Ansi.darkYellow('Dark Yellow'));

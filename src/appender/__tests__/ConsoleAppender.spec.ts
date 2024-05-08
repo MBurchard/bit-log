@@ -101,12 +101,18 @@ describe('test ConsoleAppender', () => {
 
     // when
     await appender.handle({
-      level: LogLevel.DEBUG, timestamp: now, loggerName: 'foo.bar', payload: () => {
+      level: LogLevel.DEBUG,
+      timestamp: now,
+      loggerName: 'foo.bar',
+      payload: () => {
         return 'test function debug';
       },
     });
     await appender.handle({
-      level: LogLevel.INFO, timestamp: now, loggerName: 'foo.bar', payload: () => {
+      level: LogLevel.INFO,
+      timestamp: now,
+      loggerName: 'foo.bar',
+      payload: () => {
         return 'test function info';
       },
     });
@@ -158,7 +164,6 @@ describe('test ConsoleAppender', () => {
       payload: ['Text', 42, false, {prop: 'Test'}],
     });
     expect(log).toHaveBeenCalledTimes(1);
-    expect(log).toHaveBeenCalledWith(expect.anything(), 'Text', '42', 'false',
-      `{prop: ${Ansi.green('"Test"')}}`);
+    expect(log).toHaveBeenCalledWith(expect.anything(), 'Text', '42', 'false', `{prop: ${Ansi.green('"Test"')}}`);
   });
 });

@@ -1,5 +1,5 @@
 import type {IAppender} from '../definitions.js';
-import {isAppenderConfig, isPresent, LogLevel, toLogLevel} from '../definitions.js';
+import {LogLevel, isAppenderConfig, isPresent, toLogLevel} from '../definitions.js';
 
 describe('test definitions', () => {
   it('isAppenderConfig', () => {
@@ -12,7 +12,7 @@ describe('test definitions', () => {
       }
     }
 
-    expect(isAppenderConfig({class: Test})).toBe(true);
+    expect(isAppenderConfig({Class: Test})).toBe(true);
   });
 
   it('isPresent', () => {
@@ -28,16 +28,14 @@ describe('test definitions', () => {
     expect(toLogLevel(LogLevel.DEBUG)).toBe(LogLevel.DEBUG);
     expect(toLogLevel(30)).toBe(LogLevel.WARN);
     try {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
+      // @ts-expect-error for test
       toLogLevel('foobar');
     } catch (e) {
       expect(e).toBeInstanceOf(Error);
       expect(e.message).toBe('not a valid LogLevel: \'foobar\'');
     }
     try {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
+      // @ts-expect-error for test
       toLogLevel(12);
     } catch (e) {
       expect(e).toBeInstanceOf(Error);
