@@ -13,7 +13,7 @@ const log = useLog('foo.bar');
 log.debug('Here we are, a debug log');
 log.info('Here we are, a debug log');
 try {
-  //...
+  // ...
 } catch (e) {
   log.error('error in method ...', e);
 }
