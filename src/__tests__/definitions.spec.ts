@@ -12,7 +12,7 @@ describe('test definitions', () => {
       }
     }
 
-    expect(isAppenderConfig({class: Test})).toBe(true);
+    expect(isAppenderConfig({Class: Test})).toBe(true);
   });
 
   it('isPresent', () => {

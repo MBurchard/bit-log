@@ -1,5 +1,5 @@
 import {Ansi} from './ansi.js';
-import {isPresent, LogLevel} from './definitions.js';
+import {LogLevel, isPresent} from './definitions.js';
 
 /**
  * @internal
@@ -15,7 +15,7 @@ export class CircularTracker {
    */
   add(obj: object) {
     if (this.cache.has(obj)) {
-      throw Error('object must not be added twice');
+      throw new Error('object must not be added twice');
     }
     this.cache.add(obj);
   }
@@ -59,8 +59,13 @@ export class CircularTracker {
   }
 }
 
-export function formatAny(value: unknown, pretty: boolean = false, colored: boolean = false,
-  inner: number = 0, ct: CircularTracker = new CircularTracker()): string {
+export function formatAny(
+  value: unknown,
+  pretty: boolean = false,
+  colored: boolean = false,
+  inner: number = 0,
+  ct: CircularTracker = new CircularTracker(),
+): string {
   // noinspection SuspiciousTypeOfGuard
   if (!isPresent(value) || typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
     // Should we colorize string, number and boolean, even if they are not in an object or array, but stand alone?
@@ -99,16 +104,21 @@ export function formatAny(value: unknown, pretty: boolean = false, colored: bool
     const src = value.toString();
     const lines = src.split('\n');
     if (colored) {
-      return `[${Ansi.blue('Function')} ${lines[0].substring(0, 100)}${lines.length > 1 || lines[0].length > 100 ?
-        '...' : ''}]`;
+      return `[${Ansi.blue('Function')} ${lines[0].substring(0, 100)}${
+        lines.length > 1 || lines[0].length > 100 ? '...' : ''}]`;
     }
     return `[Function ${lines[0].substring(0, 100)}${lines.length > 1 || lines[0].length > 100 ? '...' : ''}]`;
   }
   return `${typeof value}`;
 }
 
-function formatArray(array: Array<unknown>, pretty: boolean = false, colored: boolean = false,
-  inner: number = 0, ct: CircularTracker): string {
+function formatArray(
+  array: Array<unknown>,
+  pretty: boolean = false,
+  colored: boolean = false,
+  inner: number = 0,
+  ct: CircularTracker,
+): string {
   ct.add(array);
   const results: string[] = [];
   for (const elem of array) {
@@ -134,8 +144,13 @@ function formatArray(array: Array<unknown>, pretty: boolean = false, colored: bo
   return `${ref}[${results.join(', ')}]`;
 }
 
-function formatObject(obj: object, pretty: boolean = false, colored: boolean = false,
-  inner: number = 0, ct: CircularTracker): string {
+function formatObject(
+  obj: object,
+  pretty: boolean = false,
+  colored: boolean = false,
+  inner: number = 0,
+  ct: CircularTracker,
+): string {
   ct.add(obj);
   const results: string[] = [];
   for (const [key, elem] of Object.entries(obj)) {
@@ -222,26 +237,6 @@ export function formatLogLevel(level: LogLevel): string {
  * @param name
  */
 export function formatPrefix(level: LogLevel, name: string): string {
-  // let func = 'undefined';
-  // let src = 'undefined';
-  // let line = '';
-  // try {
-  //   const stack = (new Error()).stack;
-  //   if (stack) {
-  //     // console.error('Stack:', stack);
-  //     const stackLine = stack.split('\n')[4];
-  //     // console.error('Line:', stackLine);
-  //     if (stackLine) {
-  //       const match = stackLine.match(/^.*?at +?(.+?) .+?\.\/(src.+?)(?:\?.*?)?:(\d+).*?$/);
-  //       if (match) {
-  //         func = match[1] ?? 'undefined';
-  //         src = match[2] ?? 'undefined';
-  //         line = match[3] ?? '';
-  //       }
-  //     }
-  //   }
-  // } catch (e) {}
-  // return `${getTs()} ${formatLogLevel(level)} [${strPad(category, 20)}|${strPad(func, 20)}|${strPad(src, 30)}|${line.padStart(5, ' ')}]:`;
   const formattedLevel = formatLogLevel(level);
   return `${formatISO8601(new Date())} ${formattedLevel.padStart(13, ' ')} [${truncateOrExtend(name, 20)}]:`;
 }

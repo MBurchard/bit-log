@@ -124,7 +124,7 @@ describe('test usage', () => {
       } catch (e) {
         expect(e).toBeInstanceOf(Error);
         expect(e.message).toBe(
-          'illegal appender config {class: [class ErrorThrowingAppender extends ' +
+          'illegal appender config {Class: [class ErrorThrowingAppender extends ' +
           'AbstractBaseAppender], someKey: 100, otherKey: "Hallo Welt"}, error: Error: Something was wrong',
         );
       }

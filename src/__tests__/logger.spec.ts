@@ -123,7 +123,7 @@ describe('test logger', () => {
 
       expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
       expect(consoleErrorSpy)
-        .toHaveBeenCalledWith('error in appender.handle of MockAppender', 'Reject for some reason');
+        .toHaveBeenCalledWith('error in appender.handle of MockAppender', new Error('Reject for some reason'));
     });
   });
 
