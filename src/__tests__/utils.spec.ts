@@ -89,22 +89,26 @@ describe('test utils', () => {
   });
 
   it('formatPrefix with 5 chars log level', () => {
-    expect(formatPrefix(LogLevel.DEBUG, 'foo.bar', true))
-      .toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}[+-]\d{2}:\d{2}\s.+?\s\[.{20}]:$/);
+    const date = new Date('2024-05-08T12:30:45.678');
+    expect(formatPrefix(date, LogLevel.DEBUG, 'foo.bar', true))
+      .toMatch(/^2024-05-08T\d{2}:30:45.678[+-]\d{2}:\d{2}\s.+?\s\[.{20}]:$/);
   });
 
   it('formatPrefix with 4 chars log level', () => {
-    expect(formatPrefix(LogLevel.INFO, 'foo.bar', true))
+    const date = new Date('2024-05-08T12:30:45.678');
+    expect(formatPrefix(date, LogLevel.INFO, 'foo.bar', true))
       .toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}[+-]\d{2}:\d{2}\s{2}.+?\s\[.{20}]:$/);
   });
 
   it('formatPrefix with 5 chars log level without color', () => {
-    expect(formatPrefix(LogLevel.DEBUG, 'foo.bar'))
+    const date = new Date('2024-05-08T12:30:45.678');
+    expect(formatPrefix(date, LogLevel.DEBUG, 'foo.bar'))
       .toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}[+-]\d{2}:\d{2}\sDEBUG\s\[.{20}]:$/);
   });
 
   it('formatPrefix with 4 chars log level without color', () => {
-    expect(formatPrefix(LogLevel.INFO, 'foo.bar'))
+    const date = new Date('2024-05-08T12:30:45.678');
+    expect(formatPrefix(date, LogLevel.INFO, 'foo.bar'))
       .toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}[+-]\d{2}:\d{2}\s{2}INFO\s\[.{20}]:$/);
   });
 
