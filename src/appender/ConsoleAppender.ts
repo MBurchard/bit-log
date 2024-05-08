@@ -58,7 +58,7 @@ export class ConsoleAppender extends AbstractBaseAppender {
           break;
       }
     }
-    const prefix = formatPrefix(event.level, event.loggerName);
+    const prefix = formatPrefix(event.level, event.loggerName, this.colored);
     if (typeof event.payload === 'function') {
       loggingMethod(prefix, event.payload());
     } else {

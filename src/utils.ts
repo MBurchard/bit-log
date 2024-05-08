@@ -208,24 +208,28 @@ export function formatISO8601(date: Date): string {
  *
  * @internal
  * @param level
+ * @param colored
  */
-export function formatLogLevel(level: LogLevel): string {
-  switch (level) {
-    case LogLevel.DEBUG:
-      return Ansi.gray('DEBUG');
-    case LogLevel.ERROR:
-      return Ansi.red('ERROR');
-    case LogLevel.FATAL:
-      return Ansi.magenta('FATAL');
-    case LogLevel.INFO:
-      return Ansi.green('INFO');
-    case LogLevel.TRACE:
-      return Ansi.darkGray('TRACE');
-    case LogLevel.WARN:
-      return Ansi.yellow('WARN');
-    default:
-      return '';
+export function formatLogLevel(level: LogLevel, colored: boolean = false): string {
+  if (colored) {
+    switch (level) {
+      case LogLevel.DEBUG:
+        return Ansi.gray('DEBUG');
+      case LogLevel.ERROR:
+        return Ansi.red('ERROR');
+      case LogLevel.FATAL:
+        return Ansi.magenta('FATAL');
+      case LogLevel.INFO:
+        return Ansi.green('INFO');
+      case LogLevel.TRACE:
+        return Ansi.darkGray('TRACE');
+      case LogLevel.WARN:
+        return Ansi.yellow('WARN');
+      default:
+        return '';
+    }
   }
+  return LogLevel[level];
 }
 
 /**
@@ -235,10 +239,16 @@ export function formatLogLevel(level: LogLevel): string {
  * @internal
  * @param level
  * @param name
+ * @param colored
  */
-export function formatPrefix(level: LogLevel, name: string): string {
-  const formattedLevel = formatLogLevel(level);
-  return `${formatISO8601(new Date())} ${formattedLevel.padStart(13, ' ')} [${truncateOrExtend(name, 20)}]:`;
+export function formatPrefix(level: LogLevel, name: string, colored: boolean = false): string {
+  let formattedLevel;
+  if (colored) {
+    formattedLevel = formatLogLevel(level, colored).padStart(13, ' ');
+  } else {
+    formattedLevel = formatLogLevel(level).padStart(5, ' ');
+  }
+  return `${formatISO8601(new Date())} ${formattedLevel} [${truncateOrExtend(name, 20)}]:`;
 }
 
 /**
