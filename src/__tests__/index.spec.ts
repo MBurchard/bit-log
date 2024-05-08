@@ -227,6 +227,31 @@ describe('test usage', () => {
       expect(foo.level).toBe(LogLevel.INFO);
       expect(bar.level).toBe(LogLevel.DEBUG);
     });
+
+    it('should use overwritten formatPrefix method', async () => {
+      const config: LoggingConfig = {
+        appender: {
+          CONSOLE: {
+            Class: ConsoleAppender,
+            level: LogLevel.DEBUG,
+            formatPrefix: (_ts: Date, _level: LogLevel, _name: string, _colored: boolean = false): string => {
+              return 'works as designed';
+            },
+          },
+        },
+      };
+      configureLogging(config);
+
+      await new Promise(r => setTimeout(r, 10));
+
+      const root = useLog('') as Logger;
+      root.info('Hello World');
+      expect(spyConsole).toHaveBeenCalledTimes(2);
+      expect(spyConsole).toHaveBeenCalledWith('works as designed', 'Hello World');
+      const appender = root.appender.CONSOLE;
+      expect(appender).toBeDefined();
+      expect(appender.level).toBe(LogLevel.DEBUG);
+    });
   });
 });
 
