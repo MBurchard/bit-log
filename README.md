@@ -11,7 +11,7 @@
 ```javascript
 const log = useLog('foo.bar');
 log.debug('Here we are, a debug log');
-log.info('Here we are, a debug log');
+log.info('Here we are, an info log');
 try {
   // ...
 } catch (e) {
@@ -72,11 +72,11 @@ register a different appender than the `ConsoleAppender`.
 #### Additional Appender
 
 Just like the loggers, you can also configure additional appender. These must then be registered on a logger.
-You can also register them on several loggers, but you must ensure that this does not generate any duplicate outputs.  
-Since a LogEvent is bubbled up through the hierarchy to the root logger, you should not register an appender on several
-loggers that are hierarchical to each other. You could do this with parallel loggers if it makes sense.
+You can also register them on several loggers.  
+If you use one of the logging methods of a logger, a LogEvent is created. This is bubbled up the hierarchy until an
+appender takes care of it. If this has happened, it is not passed up further.
 
-For example, you could add a hypothetical SQLiteAppender to the root logger:
+You could add a hypothetical SQLiteAppender to the root logger this way:
 ```javascript
 configureLogging({
   appender: {
