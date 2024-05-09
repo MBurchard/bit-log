@@ -4,7 +4,7 @@
 ![GitHub License](https://img.shields.io/github/license/mburchard/bit-log)
 ![CI: GitHub](https://github.com/MBurchard/bit-log/actions/workflows/ci.yml/badge.svg)
 [![Codecov](https://img.shields.io/codecov/c/gh/mburchard/bit-log?logo=codecov)](https://app.codecov.io/gh/MBurchard/bit-log)
-![NPM Version](https://img.shields.io/npm/v/%40mburchard%2Fbit-log?logo=npm)
+[![NPM Version](https://img.shields.io/npm/v/%40mburchard%2Fbit-log?logo=npm)](https://www.npmjs.com/package/@mburchard/bit-log)
 
 ## Usage
 
