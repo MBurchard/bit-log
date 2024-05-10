@@ -4,7 +4,7 @@
 ![GitHub License](https://img.shields.io/github/license/mburchard/bit-log)
 ![CI: GitHub](https://github.com/MBurchard/bit-log/actions/workflows/ci.yml/badge.svg)
 [![Codecov](https://img.shields.io/codecov/c/gh/mburchard/bit-log?logo=codecov)](https://app.codecov.io/gh/MBurchard/bit-log)
-![NPM Version](https://img.shields.io/npm/v/%40mburchard%2Fbit-log?logo=npm)
+[![NPM Version](https://img.shields.io/npm/v/%40mburchard%2Fbit-log?logo=npm)](https://www.npmjs.com/package/@mburchard/bit-log)
 
 ## Usage
 
@@ -72,7 +72,7 @@ register a different appender than the `ConsoleAppender`.
 #### Additional Appender
 
 Just like the loggers, you can also configure additional appender. These must then be registered on a logger.
-You can also register them on several loggers.  
+You can also register them on several loggers.
 If you use one of the logging methods of a logger, a LogEvent is created. This is bubbled up the hierarchy until an
 appender takes care of it. If this has happened, it is not passed up further.
 
@@ -85,7 +85,7 @@ configureLogging({
     },
     SQLITE: {
       Class: SQLiteAppender,
-      level: "WARN",
+      level: 'WARN',
     },
   },
   root: {
