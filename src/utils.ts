@@ -164,8 +164,8 @@ function formatObject(
 ): string {
   ct.add(obj);
   const results: string[] = [];
-  for (const [key, elem] of Object.entries(obj)) {
-    if (ct.has(elem)) {
+  for (const [key, elem] of getAllProperties(obj)) {
+    if (typeof elem === 'object' && elem !== null && ct.has(elem)) {
       ct.setAsCircular(elem);
       const ref = ct.indexOf(elem);
       results.push(`${key}: ${colored ?
@@ -262,6 +262,34 @@ export function formatPrefix(ts: Date, level: LogLevel, name: string, colored: b
     formattedLevel = formatLogLevel(level).padStart(5, ' ');
   }
   return `${formatISO8601(ts)} ${formattedLevel} [${truncateOrExtend(name, 20)}]:`;
+}
+
+/**
+ * Get all properties of an object and don't care about enumerable or prototyp.
+ *
+ * @internal
+ * @param {object} obj
+ * @return {[string, unknown][]}
+ */
+export function getAllProperties(obj: object): [string, unknown][] {
+  const properties: [string, unknown][] = [];
+  const prototypChain: string[] = [];
+  let currentObj = obj;
+
+  while (currentObj !== Object.prototype && currentObj !== null) {
+    Object.getOwnPropertyNames(currentObj).forEach((key) => {
+      if (prototypChain.length > 0) {
+        // @ts-expect-error I want it this way!
+        properties.push([`${prototypChain.join('.')}.${key}`, currentObj[key]]);
+      } else {
+        // @ts-expect-error I want it this way!
+        properties.push([key, currentObj[key]]);
+      }
+    });
+    currentObj = Object.getPrototypeOf(currentObj);
+    prototypChain.push('prototyp');
+  }
+  return properties;
 }
 
 /**
