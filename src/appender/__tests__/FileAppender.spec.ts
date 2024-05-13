@@ -238,7 +238,7 @@ describe('test FileAppender', () => {
       .toHaveBeenCalledWith('Error during FileAppender.handle', new Error('This is a test error'));
   });
 
-  it('test the whole shit', async () => {
+  it('test multiple handles with different date and coloring', async () => {
     appender.pretty = true;
     appender.colored = true;
     await appender.handle({
