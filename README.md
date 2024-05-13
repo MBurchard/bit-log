@@ -95,8 +95,105 @@ configureLogging({
 });
 ```
 
+#### Overwrite Formatting
+
+Bit-Log is designed to be easy to use and extremely flexible. It is therefore possible to influence the formatting of
+the output for each appender.
+
+```javascript
+configureLogging({
+  appender: {
+    CONSOLE: {
+      Class: ConsoleAppender,
+      formatLogLevel: (level: LogLevel, colored: boolean) => {
+        return 'what ever you want';
+      },
+      formatPrefix: (ts: Date, level: LogLevel, name: string, colored: boolean) => {
+        return 'what ever you want';
+      },
+      formatTimestamp: (date: Date) => {
+        return 'what ever you want';
+      }
+    },
+  },
+  root: {
+    appender: ['CONSOLE'],
+    level: 'INFO',
+  },
+});
+```
+
+In the source code you can see how the formatting interlocks. The method names are almost self-explanatory except
+perhaps the method `formatPrefix`.
+
+```typescript
+function formatPrefix(ts: Date, level: LogLevel, name: string, colored: boolean = false): string {
+  let formattedLevel;
+  if (colored) {
+    formattedLevel = this.formatLogLevel(level, colored).padStart(13, ' ');
+  } else {
+    formattedLevel = this.formatLogLevel(level).padStart(5, ' ');
+  }
+  return `${this.formatTimestamp(ts)} ${formattedLevel} [${truncateOrExtend(name, 20)}]:`;
+}
+```
+
+### `ConsoleAppender`
+
+As the name states, this appender writes to the console.  
+It has three properties.
+
+`colored: boolean`  
+Specifies whether logs should be formatted with colors. By default, this property is set to `false`.
+
+`pretty: boolean`  
+Specifies whether objects to be output should be formatted nicely, i.e. with indents and breaks.
+By default, this property is set to `false`.
+
+`useSpecificMethods: boolean`  
+The JavaScript console has specific methods that match the log levels, such as `console.info` or `console.error`.
+You can use these or `console.log`.  
+The specific methods may not appear in the browser console, such as `console.debug`.  
+By default, this property is set to `false`.
+
+### `FileAppender`
+
+This appender of course writes to a file and cannot be used in the browser environment.
+
+This implementation is *rolling*, as the name of the output file is calculated from the timestamp for each log event.
+This means that the appender switches to a new file after midnight.  
+If you do not want this, you can simply overwrite the `getTimestamp` method as described above. You can also implement
+an hourly rolling output in the same way.
+
+The FileAppender has the following properties.
+
+`baseName: string`  
+Specifies a base name for the output file. By default, this property is set to an empty string.
+
+The baseName can be empty as long as the `getTimestamp` method does not return an empty string.  
+You can therefore combine both, or use both individually.
+
+```text
+combined: MyLog-2024-05-13.log
+baseName only: MyLog.log
+timestamp only: 2024-05-13.log
+```
+
+`colored: boolean`  
+Specifies whether logs should be formatted with colors. By default, this property is set to `false`.
+
+`extension: string`  
+Specifies the file extension. By default, this property is set to `log`.
+
+`filePath: string`  
+Specifies the file path. By default, this property is set to the OS default temp folder plus `bit.log`.
+
+`pretty: boolean`  
+Specifies whether objects to be output should be formatted nicely, i.e. with indents and breaks.
+By default, this property is set to `false`.
+
 ## Todo
 
   - [x] Improve log output
   - [x] Documentation
-  - [ ] FileAppender
+  - [x] FileAppender

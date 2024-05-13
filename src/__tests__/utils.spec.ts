@@ -6,6 +6,7 @@ import {
   formatISO8601,
   formatLogLevel,
   formatPrefix,
+  getAllPropertiesAndMethods,
   getClassHierarchy,
   truncateMiddle,
   truncateOrExtend,
@@ -323,5 +324,59 @@ describe('test utils', () => {
         expect(e.message).toBe('object must not be added twice');
       }
     });
+  });
+});
+
+describe('test getAllProperties', () => {
+  class Parent {
+    message: string;
+
+    constructor(message: string) {
+      this.message = message;
+    }
+
+    toString(): string {
+      return `{'message': '${this.message}'}`;
+    }
+  }
+
+  class Child extends Parent {
+    code: number;
+
+    constructor(message: string, code: number) {
+      super(message);
+      this.code = code;
+    }
+
+    showMessage(): string {
+      return this.message;
+    }
+  }
+
+  it('should show all properties and functions from parent and child', () => {
+    const child = new Child('Test Message', 4711);
+    const allProperties = getAllPropertiesAndMethods(child);
+    expect(allProperties.length).toBe(6);
+    expect(allProperties).toContainEqual(['message', 'Test Message']);
+    expect(allProperties).toContainEqual(['code', 4711]);
+    expect(allProperties).toEqual(expect.arrayContaining([['toString', expect.any(Function)]]));
+    expect(allProperties).toEqual(expect.arrayContaining([['showMessage', expect.any(Function)]]));
+    expect(allProperties).toEqual(expect.arrayContaining([['constructor', expect.any(Function)]]));
+    expect(allProperties).toEqual(expect.arrayContaining([['constructor', expect.any(Function)]]));
+  });
+
+  it('should show all properties and functions for an Error object', () => {
+    const error = new Error('This is a test error');
+    const allProperties = getAllPropertiesAndMethods(error);
+    // allProperties.forEach(([key, elem]) => {
+    //   process.stdout.write(`${key}: ${elem}\n`);
+    // });
+    expect(allProperties).toContainEqual(['message', 'This is a test error']);
+    expect(allProperties).toContainEqual(['name', 'Error']);
+    expect(allProperties).toContainEqual(['stack', expect.any(String)]);
+    expect(allProperties).toEqual(expect.arrayContaining([['toString', expect.any(Function)]]));
+    expect(allProperties).toEqual(expect.arrayContaining([['constructor', expect.any(Function)]]));
+    // Oops, completely unexpected shadowed 'message' property that retains a useless empty value
+    expect(allProperties).toContainEqual(['message', '']);
   });
 });

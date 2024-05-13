@@ -164,7 +164,7 @@ function formatObject(
 ): string {
   ct.add(obj);
   const results: string[] = [];
-  for (const [key, elem] of getAllProperties(obj)) {
+  for (const [key, elem] of getAllPropertiesAndMethods(obj)) {
     if (typeof elem === 'object' && elem !== null && ct.has(elem)) {
       ct.setAsCircular(elem);
       const ref = ct.indexOf(elem);
@@ -265,29 +265,25 @@ export function formatPrefix(ts: Date, level: LogLevel, name: string, colored: b
 }
 
 /**
- * Get all properties of an object and don't care about enumerable or prototyp.
+ * Get all properties and methods of an object.
+ * <b>Attention:</b> don't be surprised, there are objects that have properties twice in the inheritance hierarchy,
+ * like the Error object's message property.
+ * Why does someone shadow a property? Perhaps there is a reason.
  *
  * @internal
  * @param {object} obj
  * @return {[string, unknown][]}
  */
-export function getAllProperties(obj: object): [string, unknown][] {
+export function getAllPropertiesAndMethods(obj: object): [string, unknown][] {
   const properties: [string, unknown][] = [];
-  const prototypChain: string[] = [];
   let currentObj = obj;
 
   while (currentObj !== Object.prototype && currentObj !== null) {
     Object.getOwnPropertyNames(currentObj).forEach((key) => {
-      if (prototypChain.length > 0) {
-        // @ts-expect-error I want it this way!
-        properties.push([`${prototypChain.join('.')}.${key}`, currentObj[key]]);
-      } else {
-        // @ts-expect-error I want it this way!
-        properties.push([key, currentObj[key]]);
-      }
+      // @ts-expect-error I want to access it this way!
+      properties.push([key, currentObj[key]]);
     });
     currentObj = Object.getPrototypeOf(currentObj);
-    prototypChain.push('prototyp');
   }
   return properties;
 }
