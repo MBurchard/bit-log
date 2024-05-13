@@ -188,6 +188,8 @@ Specifies the file extension. By default, this property is set to `log`.
 `filePath: string`  
 Specifies the file path. By default, this property is set to the OS default temp folder plus `bit.log`.
 
+**Attention:** For security reasons, the FileAppender does not create directories.
+
 `pretty: boolean`  
 Specifies whether objects to be output should be formatted nicely, i.e. with indents and breaks.
 By default, this property is set to `false`.
