@@ -5,7 +5,7 @@ import path from 'node:path';
 import {type ILogEvent, LogLevel} from '../../definitions.js';
 import {FileAppender, canBeAccessed, exists} from '../FileAppender.js';
 
-async function emptyDirectory(dirPath: string): Promise<boolean> {
+export async function emptyDirectory(dirPath: string): Promise<boolean> {
   try {
     await access(dirPath, constants.F_OK | constants.R_OK | constants.W_OK);
   } catch (err) {
@@ -56,7 +56,7 @@ describe('test FileAppender', () => {
     expect(appender.level).toBeUndefined();
     expect(appender.baseName).toBe('');
     expect(appender.extension).toBe('log');
-    expect(appender.filePath).toBe(path.join(os.tmpdir(), 'bit.log'));
+    expect(appender.filePath).toBe(logDir);
   });
 
   it('constructor with log level', () => {
