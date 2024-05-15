@@ -55,6 +55,10 @@
     "test": "jest",
     "docs": "typedoc"
   },
+  "optionalDependencies": {
+    "@types/better-sqlite3": "^7.6.10",
+    "better-sqlite3": "^10.0.0"
+  },
   "devDependencies": {
     "@antfu/eslint-config": "^2.18.0",
     "@tsconfig/node20": "^20.1.4",
