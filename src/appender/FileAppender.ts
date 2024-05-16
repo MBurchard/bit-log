@@ -15,7 +15,7 @@ import {AbstractBaseAppender} from './AbstractBaseAppender.js';
  * @param {string} timeStamp
  * @return {Promise<string | null>}
  */
-async function calcFullFilePath(
+export async function calcFullFilePath(
   filePath: string,
   baseName: string,
   extension: string,
