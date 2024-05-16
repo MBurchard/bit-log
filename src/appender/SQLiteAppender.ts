@@ -1,7 +1,7 @@
-import type {Database} from 'better-sqlite3';
-import DatabaseConstructor from 'better-sqlite3';
 import os from 'node:os';
 import path from 'node:path';
+import type {Database} from 'better-sqlite3';
+import DatabaseConstructor from 'better-sqlite3';
 import type {ILogEvent, LogLevel} from '../definitions.js';
 import {isPresent} from '../definitions.js';
 import {formatISO8601} from '../utils.js';
@@ -38,7 +38,7 @@ export class SQLiteAppender extends AbstractBaseAppender {
             LEVEL TEXT,
             loggerName TEXT,
             payload TEXT
-          )`
+          )`,
         );
         // @formatter:on
         return this.db;
@@ -61,9 +61,9 @@ export class SQLiteAppender extends AbstractBaseAppender {
       // @formatter:off
       const insert = db.prepare(
         `INSERT INTO Logs (timestamp, level, loggerName, payload)
-        VALUES (?, ?, ?, ?)`
+        VALUES (?, ?, ?, ?)`,
       );
-      const output: string[] = []
+      const output: string[] = [];
       if (typeof event.payload === 'function') {
         output.push(event.payload());
       } else {
