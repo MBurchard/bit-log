@@ -10,6 +10,7 @@ export default antfu({
 }, {
   rules: {
     'curly': 'off',
+    'regexp/strict': 'off',
     'style/brace-style': ['error', '1tbs'],
     'style/max-len': ['warn', {code: 120}],
     'style/object-curly-spacing': ['error', 'never'],
@@ -18,6 +19,7 @@ export default antfu({
 }, {
   files: ['**/*.md'],
   rules: {
+    'no-trailing-spaces': 'off',
     'style/max-len': 'off',
   },
 });
