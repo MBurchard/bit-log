@@ -34,8 +34,8 @@ export class SQLiteAppender extends AbstractBaseAppender {
         this.db.exec(
           `CREATE TABLE IF NOT EXISTS Logs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            TIMESTAMP DATETIME,
-            LEVEL TEXT,
+            timestamp DATETIME,
+            level TEXT,
             loggerName TEXT,
             payload TEXT
           )`,
