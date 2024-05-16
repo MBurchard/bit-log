@@ -19,7 +19,7 @@ export default antfu({
 }, {
   files: ['**/*.md'],
   rules: {
-    'no-trailing-spaces': 'off',
+    'style/no-trailing-spaces': 'off',
     'style/max-len': 'off',
   },
 });
