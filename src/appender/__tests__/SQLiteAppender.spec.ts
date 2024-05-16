@@ -111,4 +111,14 @@ describe('test SQLiteAppender', () => {
     expect(logEntry.payload).toEqual('Hallo functional Welt');
     db.close();
   });
+
+  it('should be robust against wrong timestamps', async () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const event = getDefaultEvent();
+    // @ts-expect-error I want to force an error.
+    event.timestamp = 'This is bad';
+    await appender.handle(event);
+    expect(consoleErrorSpy)
+      .toHaveBeenCalledWith('Error during SQLiteAppender.handle', new TypeError('date.getFullYear is not a function'));
+  });
 });
