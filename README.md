@@ -100,7 +100,7 @@ configureLogging({
 Bit-Log is designed to be easy to use and extremely flexible. It is therefore possible to influence the formatting of
 the output for each appender.
 
-```javascript
+```typescript
 configureLogging({
   appender: {
     CONSOLE: {
