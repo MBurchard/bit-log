@@ -319,6 +319,7 @@ export function isClass(clazz: NonNullable<unknown>): boolean {
   try {
     const str = `${clazz}`;
     return str.startsWith('class ');
+    // eslint-disable-next-line unused-imports/no-unused-vars
   } catch (e) {
     return false;
   }
