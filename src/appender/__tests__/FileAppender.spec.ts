@@ -8,6 +8,7 @@ import {FileAppender, canBeAccessed, exists} from '../FileAppender.js';
 export async function emptyDirectory(dirPath: string): Promise<boolean> {
   try {
     await access(dirPath, constants.F_OK | constants.R_OK | constants.W_OK);
+    // eslint-disable-next-line unused-imports/no-unused-vars
   } catch (err) {
     return false;
   }
