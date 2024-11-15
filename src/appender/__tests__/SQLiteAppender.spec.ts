@@ -1,8 +1,8 @@
+import type {ILogEvent} from '../../definitions.js';
 import {appendFile, mkdir, stat} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import DatabaseConstructor, {SqliteError} from 'better-sqlite3';
-import type {ILogEvent} from '../../definitions.js';
 import {LogLevel} from '../../definitions.js';
 import {exists} from '../FileAppender.js';
 import {SQLiteAppender} from '../SQLiteAppender.js';

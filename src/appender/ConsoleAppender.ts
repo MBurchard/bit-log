@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import type {ILogEvent} from '../definitions.js';
-import {LogLevel, isPresent} from '../definitions.js';
+import {isPresent, LogLevel} from '../definitions.js';
 import {AbstractBaseAppender} from './AbstractBaseAppender.js';
 
 export class ConsoleAppender extends AbstractBaseAppender {

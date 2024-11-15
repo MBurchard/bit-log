@@ -5,9 +5,9 @@
  * @author Martin Burchard
  */
 
-import {ConsoleAppender} from './appender/ConsoleAppender.js';
 import type {IAppender, ILogger, LoggingConfig} from './definitions.js';
-import {LogLevel, isAppenderConfig, isPresent, toLogLevel} from './definitions.js';
+import {ConsoleAppender} from './appender/ConsoleAppender.js';
+import {isAppenderConfig, isPresent, LogLevel, toLogLevel} from './definitions.js';
 import {Logger} from './logger.js';
 import {formatAny} from './utils.js';
 

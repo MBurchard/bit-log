@@ -3,7 +3,7 @@ import {access, appendFile, chmod, constants, mkdir, readdir, rm, stat} from 'no
 import os from 'node:os';
 import path from 'node:path';
 import {type ILogEvent, LogLevel} from '../../definitions.js';
-import {FileAppender, canBeAccessed, exists} from '../FileAppender.js';
+import {canBeAccessed, exists, FileAppender} from '../FileAppender.js';
 
 export async function emptyDirectory(dirPath: string): Promise<boolean> {
   try {

@@ -5,7 +5,7 @@
  * @author Martin Burchard
  */
 import type {IAppender, ILogEvent, ILogger} from './definitions.js';
-import {LogLevel, isPresent} from './definitions.js';
+import {isPresent, LogLevel} from './definitions.js';
 
 /**
  * A hierarchic Logger implementation

@@ -1,5 +1,5 @@
-import {Ansi} from '../../ansi.js';
 import type {ILogEvent} from '../../definitions.js';
+import {Ansi} from '../../ansi.js';
 import {LogLevel} from '../../definitions.js';
 import {ConsoleAppender} from '../ConsoleAppender.js';
 
@@ -198,8 +198,7 @@ describe('test ConsoleAppender overwrite formatting', () => {
   it('should log with a custom date format', async () => {
     const log = jest.spyOn(console, 'log');
     appender.formatTimestamp = (date: Date): string => {
-      return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString()
-        .padStart(2, '0')}.${date.getFullYear()}`;
+      return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`;
     };
     const event: ILogEvent = {
       level: LogLevel.INFO,
