@@ -272,10 +272,10 @@ describe('test utils', () => {
       };
       const result = formatAny(sth, true, true);
       expect(result).toBe(`{\n  class: ${Ansi.darkMagenta('[class ClassA]')},\n  obj: {\n    array: [\n      {\n` +
-      `        prop: ${Ansi.darkYellow('false')}\n      },\n      ${Ansi.darkCyan('123')},\n` +
-      `      ${Ansi.green('"Text"')}\n    ]\n  },\n  func: [${Ansi.blue('Function')} () => {...],\n` +
-      `  func2: [${Ansi.blue('Function')} function doSth() {...],\n` +
-      `  func3: [${Ansi.blue('Function')} func3() {...]\n}`);
+        `        prop: ${Ansi.darkYellow('false')}\n      },\n      ${Ansi.darkCyan('123')},\n` +
+        `      ${Ansi.green('"Text"')}\n    ]\n  },\n  func: [${Ansi.blue('Function')} () => {...],\n` +
+        `  func2: [${Ansi.blue('Function')} function doSth() {...],\n` +
+        `  func3: [${Ansi.blue('Function')} func3() {...]\n}`);
     });
 
     it('should format a Symbol', () => {
@@ -294,7 +294,7 @@ describe('test utils', () => {
       const parent = {prop: {child}};
       child.otherProp.parent = parent;
       expect(formatAny(parent, true, true)).toBe(`${Ansi.blue('<ref1>')}{\n  prop: {\n    child: {\n      ` +
-      `otherProp: {\n        parent: [${Ansi.cyan('Circular')} ${Ansi.blue('ref1')}]\n      }\n    }\n  }\n}`);
+        `otherProp: {\n        parent: [${Ansi.cyan('Circular')} ${Ansi.blue('ref1')}]\n      }\n    }\n  }\n}`);
     });
 
     it('should handle circular references in arrays', () => {
@@ -307,8 +307,8 @@ describe('test utils', () => {
       const array: unknown[] = [1, 'Test', true];
       array.push(array);
       expect(formatAny(array, true, true)).toBe(`${Ansi.blue('<ref1>')}[\n  ${Ansi.darkCyan(1)},\n  ` +
-      `${Ansi.green('"Test"')},\n  ${Ansi.darkYellow('true')},\n  [${Ansi.cyan('Circular')} ` +
-      `${Ansi.blue('ref1')}]\n]`);
+        `${Ansi.green('"Test"')},\n  ${Ansi.darkYellow('true')},\n  [${Ansi.cyan('Circular')} ` +
+        `${Ansi.blue('ref1')}]\n]`);
     });
   });
 

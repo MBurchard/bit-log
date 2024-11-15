@@ -1,7 +1,7 @@
+import type {ILogEvent, LogLevel} from '../definitions.js';
 import {access, appendFile, constants, stat} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import type {ILogEvent, LogLevel} from '../definitions.js';
 import {isPresent} from '../definitions.js';
 import {AbstractBaseAppender} from './AbstractBaseAppender.js';
 
@@ -128,8 +128,7 @@ export class FileAppender extends AbstractBaseAppender {
    * @return {string}
    */
   getTimestamp(date: Date): string {
-    return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString()
-      .padStart(2, '0')}`;
+    return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
   }
 
   async handle(event: ILogEvent): Promise<void> {

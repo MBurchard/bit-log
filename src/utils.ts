@@ -1,5 +1,5 @@
 import {Ansi} from './ansi.js';
-import {LogLevel, isPresent} from './definitions.js';
+import {isPresent, LogLevel} from './definitions.js';
 
 /**
  * @internal
