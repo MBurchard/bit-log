@@ -1,3 +1,4 @@
+import {describe, expect, it} from 'vitest';
 import {Ansi} from '../ansi.js';
 import {LogLevel} from '../definitions.js';
 import {
@@ -222,12 +223,12 @@ describe('test utils', () => {
     });
 
     it('should format a function', () => {
-      expect(formatAny(() => {})).toBe('[Function () => { }]');
+      expect(formatAny(() => {})).toBe('[Function () => {...]');
     });
 
     it('should format a function colored', () => {
       expect(formatAny(() => {}, false, true))
-        .toBe(`[${Ansi.blue('Function')} () => { }]`);
+        .toBe(`[${Ansi.blue('Function')} () => {...]`);
     });
 
     it('should format a long function', () => {

@@ -1,15 +1,17 @@
+import type {MockInstance} from 'vitest';
 import type {LoggingConfig} from '../definitions.js';
 import type {Logger} from '../logger.js';
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {AbstractBaseAppender} from '../appender/AbstractBaseAppender.js';
 import {ConsoleAppender} from '../appender/ConsoleAppender.js';
 import {LogLevel} from '../definitions.js';
 import {configureLogging, useLog} from '../index.js';
 
 describe('test usage', () => {
-  let spyConsole: jest.SpyInstance;
+  let spyConsole: MockInstance<{(...data: any[]): void; (message?: any, ...optionalParams: any[]): void}>;
 
   beforeEach(() => {
-    spyConsole = jest.spyOn(console, 'log').mockImplementation();
+    spyConsole = vi.spyOn(console, 'log').mockImplementation(() => {});
     configureLogging({
       appender: {
         CONSOLE: {
@@ -25,7 +27,7 @@ describe('test usage', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('should show Level as String', () => {
