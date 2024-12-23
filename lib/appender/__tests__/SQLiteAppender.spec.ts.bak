@@ -3,6 +3,7 @@ import {appendFile, mkdir, stat} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import DatabaseConstructor, {SqliteError} from 'better-sqlite3';
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {LogLevel} from '../../definitions.js';
 import {exists} from '../FileAppender.js';
 import {SQLiteAppender} from '../SQLiteAppender.js';
@@ -13,7 +14,7 @@ function getDefaultEvent(): ILogEvent {
     level: LogLevel.INFO,
     loggerName: 'foo.bar',
     payload: ['Hallo', 'Welt'],
-    timestamp: new Date('2024-05-08T12:30:45.678'),
+    timestamp: new Date(`2024-01-01T12:30:45.678`),
   };
 }
 
@@ -22,16 +23,14 @@ describe('test SQLiteAppender', () => {
   let appender: SQLiteAppender;
 
   beforeEach(async () => {
-    // create the logDir for test
     await mkdir(logDir, {recursive: true});
-    // create the existing logDir for test
     await emptyDirectory(logDir);
     appender = new SQLiteAppender();
     appender.filePath = logDir;
   });
 
   afterEach(() => {
-    jest.restoreAllMocks(); // Wiederherstellen aller Mocks nach jedem Test
+    vi.restoreAllMocks(); // Wiederherstellen aller Mocks nach jedem Test
   });
 
   it('check default properties', () => {
@@ -67,7 +66,7 @@ describe('test SQLiteAppender', () => {
   });
 
   it('should handle corrupt database', async () => {
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const existingFile = path.join(logDir, 'logging.db');
     await appendFile(existingFile, 'It\'s already there\n');
     // await chmod(existingFile, 0o444);
@@ -113,7 +112,7 @@ describe('test SQLiteAppender', () => {
   });
 
   it('should be robust against wrong timestamps', async () => {
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const event = getDefaultEvent();
     // @ts-expect-error I want to force an error.
     event.timestamp = 'This is bad';
