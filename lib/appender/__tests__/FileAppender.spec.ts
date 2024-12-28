@@ -26,7 +26,7 @@ export async function emptyDirectory(dirPath: string): Promise<boolean> {
   return false;
 }
 
-function getDefaultEvent(date: string): ILogEvent {
+export function getDefaultEvent(date: string = '2024-04-01'): ILogEvent {
   return {
     level: LogLevel.INFO,
     loggerName: 'foo.bar',
@@ -36,13 +36,11 @@ function getDefaultEvent(date: string): ILogEvent {
 }
 
 describe('test FileAppender', async () => {
-  let logDir: string;
+  const logDir = path.join(os.tmpdir(), 'bit.log');
   let appender: FileAppender;
 
   beforeEach(async () => {
-    if (logDir) {
-      await mkdir(logDir, {recursive: true});
-    }
+    await mkdir(logDir, {recursive: true});
     appender = new FileAppender();
   });
 
@@ -50,13 +48,10 @@ describe('test FileAppender', async () => {
     vi.restoreAllMocks();
     vi.resetAllMocks();
     vi.resetModules();
-    if (logDir) {
-      await emptyDirectory(logDir);
-    }
+    await emptyDirectory(logDir);
   });
 
   it('check default properties', () => {
-    logDir = path.join(os.tmpdir(), 'bit.log');
     expect(appender).not.toBeNull();
     expect(appender.level).toBeUndefined();
     expect(appender.baseName).toBe('');
@@ -70,7 +65,6 @@ describe('test FileAppender', async () => {
   });
 
   it('should create a logfile and add the logging', async () => {
-    logDir = path.join(os.tmpdir(), 'bit.log');
     const date = '2024-05-01';
     const event = getDefaultEvent(date);
     expect(appender.willHandle(event)).toBe(true);
@@ -82,7 +76,6 @@ describe('test FileAppender', async () => {
   });
 
   it('should work with an existing log file', async () => {
-    logDir = path.join(os.tmpdir(), 'bit.log');
     const date = '2024-05-02';
     const existingFile = path.join(logDir, `${date}.log`);
     await appendFile(existingFile, 'It\'s already there\n');
@@ -93,7 +86,6 @@ describe('test FileAppender', async () => {
   });
 
   it('should check if it can write to the file', async () => {
-    logDir = path.join(os.tmpdir(), 'bit.log');
     const date = '2024-05-03';
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const existingFile = path.join(logDir, `${date}.log`);
@@ -108,7 +100,6 @@ describe('test FileAppender', async () => {
   });
 
   it('should check if the full log file path is a directory', async () => {
-    logDir = path.join(os.tmpdir(), 'bit.log');
     const date = '2024-05-04';
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const existingDirectory = path.join(logDir, `${date}.log`);
@@ -170,7 +161,6 @@ describe('test FileAppender', async () => {
   });
 
   it('should combine baseName and timeStamp correctly', async () => {
-    logDir = path.join(os.tmpdir(), 'bit.log');
     const date = '2024-05-10';
     appender.baseName = 'test';
     await appender.handle(getDefaultEvent(date));
@@ -197,12 +187,10 @@ describe('test FileAppender', async () => {
   });
 
   it('test exists', async () => {
-    logDir = path.join(os.tmpdir(), 'bit.log');
     expect(await exists(path.join(logDir))).toBe(true);
   });
 
   it('should not handle the log event if level does not fit', async () => {
-    logDir = path.join(os.tmpdir(), 'bit.log');
     const date = '2024-05-12';
     appender = new FileAppender(LogLevel.INFO);
     const event = getDefaultEvent(date);
@@ -213,7 +201,6 @@ describe('test FileAppender', async () => {
   });
 
   it('should build the log info correctly when using a function', async () => {
-    logDir = path.join(os.tmpdir(), 'bit.log');
     const date = '2024-05-13';
     const event = getDefaultEvent(date);
     event.payload = () => {
@@ -238,7 +225,6 @@ describe('test FileAppender', async () => {
   });
 
   it('test multiple handles with different date and coloring', async () => {
-    logDir = path.join(os.tmpdir(), 'bit.log');
     appender.pretty = true;
     appender.colored = true;
     await appender.handle({

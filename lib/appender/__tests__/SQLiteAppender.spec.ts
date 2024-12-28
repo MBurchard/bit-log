@@ -1,4 +1,3 @@
-import type {ILogEvent} from '../../definitions.js';
 import {appendFile, mkdir, stat} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -7,15 +6,14 @@ import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {LogLevel} from '../../definitions.js';
 import {exists} from '../FileAppender.js';
 import {SQLiteAppender} from '../SQLiteAppender.js';
-import {emptyDirectory} from './FileAppender.spec.js';
+import {emptyDirectory, getDefaultEvent} from './FileAppender.spec.js';
 
-function getDefaultEvent(): ILogEvent {
-  return {
-    level: LogLevel.INFO,
-    loggerName: 'foo.bar',
-    payload: ['Hallo', 'Welt'],
-    timestamp: new Date(`2024-01-01T12:30:45.678`),
-  };
+interface LogEntry {
+  id: number;
+  timestamp: string;
+  level: string;
+  loggerName: string;
+  payload: string;
 }
 
 describe('test SQLiteAppender', () => {
@@ -23,14 +21,20 @@ describe('test SQLiteAppender', () => {
   let appender: SQLiteAppender;
 
   beforeEach(async () => {
-    await mkdir(logDir, {recursive: true});
-    await emptyDirectory(logDir);
+    if (logDir) {
+      await mkdir(logDir, {recursive: true});
+    }
     appender = new SQLiteAppender();
     appender.filePath = logDir;
   });
 
-  afterEach(() => {
-    vi.restoreAllMocks(); // Wiederherstellen aller Mocks nach jedem Test
+  afterEach(async () => {
+    vi.restoreAllMocks();
+    vi.resetAllMocks();
+    vi.resetModules();
+    if (logDir) {
+      await emptyDirectory(logDir);
+    }
   });
 
   it('check default properties', () => {
@@ -97,16 +101,11 @@ describe('test SQLiteAppender', () => {
     // @ts-expect-error there is a result with a count property.
     expect(result.count).toEqual(1);
 
-    const logEntry = db.prepare('SELECT * FROM Logs').get();
-    // @ts-expect-error there is a result with a count property.
+    const logEntry = db.prepare('SELECT * FROM Logs').get() as LogEntry;
     expect(logEntry.id).toEqual(1);
-    // @ts-expect-error there is a result with a count property.
-    expect(logEntry.timestamp).toMatch(/^2024-05-0[789]T\d{2}:\d{2}:45.678[+-]\d{2}:\d{2}$/);
-    // @ts-expect-error there is a result with a count property.
+    expect(logEntry.timestamp).toMatch(/^2024-04-01T\d{2}:\d{2}:45.678[+-]\d{2}:\d{2}$/);
     expect(logEntry.level).toEqual('INFO');
-    // @ts-expect-error there is a result with a count property.
     expect(logEntry.loggerName).toEqual('foo.bar');
-    // @ts-expect-error there is a result with a count property.
     expect(logEntry.payload).toEqual('Hallo functional Welt');
     db.close();
   });
