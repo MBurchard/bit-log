@@ -1,7 +1,7 @@
 import {access, appendFile, chmod, constants, mkdir, readdir, rm, stat} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from 'vitest';
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {type ILogEvent, LogLevel} from '../../definitions.js';
 import {exists, FileAppender} from '../FileAppender.js';
 
@@ -35,24 +35,28 @@ function getDefaultEvent(date: string): ILogEvent {
   };
 }
 
-describe('test FileAppender', () => {
-  const logDir = path.join(os.tmpdir(), 'bit.log');
+describe('test FileAppender', async () => {
+  let logDir: string;
   let appender: FileAppender;
 
-  beforeAll(async () => {
-    await mkdir(logDir, {recursive: true});
-    await emptyDirectory(logDir);
-  });
-
   beforeEach(async () => {
+    if (logDir) {
+      await mkdir(logDir, {recursive: true});
+    }
     appender = new FileAppender();
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     vi.restoreAllMocks();
+    vi.resetAllMocks();
+    vi.resetModules();
+    if (logDir) {
+      await emptyDirectory(logDir);
+    }
   });
 
   it('check default properties', () => {
+    logDir = path.join(os.tmpdir(), 'bit.log');
     expect(appender).not.toBeNull();
     expect(appender.level).toBeUndefined();
     expect(appender.baseName).toBe('');
@@ -66,6 +70,7 @@ describe('test FileAppender', () => {
   });
 
   it('should create a logfile and add the logging', async () => {
+    logDir = path.join(os.tmpdir(), 'bit.log');
     const date = '2024-05-01';
     const event = getDefaultEvent(date);
     expect(appender.willHandle(event)).toBe(true);
@@ -77,6 +82,7 @@ describe('test FileAppender', () => {
   });
 
   it('should work with an existing log file', async () => {
+    logDir = path.join(os.tmpdir(), 'bit.log');
     const date = '2024-05-02';
     const existingFile = path.join(logDir, `${date}.log`);
     await appendFile(existingFile, 'It\'s already there\n');
@@ -87,6 +93,7 @@ describe('test FileAppender', () => {
   });
 
   it('should check if it can write to the file', async () => {
+    logDir = path.join(os.tmpdir(), 'bit.log');
     const date = '2024-05-03';
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const existingFile = path.join(logDir, `${date}.log`);
@@ -101,6 +108,7 @@ describe('test FileAppender', () => {
   });
 
   it('should check if the full log file path is a directory', async () => {
+    logDir = path.join(os.tmpdir(), 'bit.log');
     const date = '2024-05-04';
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const existingDirectory = path.join(logDir, `${date}.log`);
@@ -162,6 +170,7 @@ describe('test FileAppender', () => {
   });
 
   it('should combine baseName and timeStamp correctly', async () => {
+    logDir = path.join(os.tmpdir(), 'bit.log');
     const date = '2024-05-10';
     appender.baseName = 'test';
     await appender.handle(getDefaultEvent(date));
@@ -188,10 +197,12 @@ describe('test FileAppender', () => {
   });
 
   it('test exists', async () => {
+    logDir = path.join(os.tmpdir(), 'bit.log');
     expect(await exists(path.join(logDir))).toBe(true);
   });
 
   it('should not handle the log event if level does not fit', async () => {
+    logDir = path.join(os.tmpdir(), 'bit.log');
     const date = '2024-05-12';
     appender = new FileAppender(LogLevel.INFO);
     const event = getDefaultEvent(date);
@@ -202,6 +213,7 @@ describe('test FileAppender', () => {
   });
 
   it('should build the log info correctly when using a function', async () => {
+    logDir = path.join(os.tmpdir(), 'bit.log');
     const date = '2024-05-13';
     const event = getDefaultEvent(date);
     event.payload = () => {
@@ -226,6 +238,7 @@ describe('test FileAppender', () => {
   });
 
   it('test multiple handles with different date and coloring', async () => {
+    logDir = path.join(os.tmpdir(), 'bit.log');
     appender.pretty = true;
     appender.colored = true;
     await appender.handle({
