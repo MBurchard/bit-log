@@ -1,4 +1,5 @@
 import type {ILogEvent} from '../../definitions.js';
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {Ansi} from '../../ansi.js';
 import {LogLevel} from '../../definitions.js';
 import {ConsoleAppender} from '../ConsoleAppender.js';
@@ -11,7 +12,7 @@ describe('test ConsoleAppender', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks(); // Wiederherstellen aller Mocks nach jedem Test
+    vi.restoreAllMocks(); // Wiederherstellen aller Mocks nach jedem Test
   });
 
   it('check default properties', () => {
@@ -29,17 +30,17 @@ describe('test ConsoleAppender', () => {
     // given
     const now = new Date();
     appender.useSpecificMethods = true;
-    const debug = jest.spyOn(console, 'debug').mockImplementation(() => {
+    const debug = vi.spyOn(console, 'debug').mockImplementation(() => {
     });
-    const error = jest.spyOn(console, 'error').mockImplementation(() => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {
     });
-    const info = jest.spyOn(console, 'info').mockImplementation(() => {
+    const info = vi.spyOn(console, 'info').mockImplementation(() => {
     });
-    const log = jest.spyOn(console, 'log').mockImplementation(() => {
+    const log = vi.spyOn(console, 'log').mockImplementation(() => {
     });
-    const trace = jest.spyOn(console, 'trace').mockImplementation(() => {
+    const trace = vi.spyOn(console, 'trace').mockImplementation(() => {
     });
-    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {
     });
 
     // when
@@ -70,7 +71,7 @@ describe('test ConsoleAppender', () => {
     // given
     const now = new Date();
     // noinspection DuplicatedCode
-    const log = jest.spyOn(console, 'log').mockImplementation(() => {
+    const log = vi.spyOn(console, 'log').mockImplementation(() => {
     });
 
     // when
@@ -96,7 +97,7 @@ describe('test ConsoleAppender', () => {
     const now = new Date();
     appender.level = LogLevel.INFO;
     // noinspection DuplicatedCode
-    const log = jest.spyOn(console, 'log').mockImplementation(() => {
+    const log = vi.spyOn(console, 'log').mockImplementation(() => {
     });
 
     // when
@@ -155,7 +156,7 @@ describe('test ConsoleAppender', () => {
   });
 
   it('should have colored output', async () => {
-    const log = jest.spyOn(console, 'log');
+    const log = vi.spyOn(console, 'log');
     appender.colored = true;
     await appender.handle({
       level: LogLevel.INFO,
@@ -176,11 +177,11 @@ describe('test ConsoleAppender overwrite formatting', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks(); // Wiederherstellen aller Mocks nach jedem Test
+    vi.restoreAllMocks(); // Wiederherstellen aller Mocks nach jedem Test
   });
 
   it('should use default ISO 8601 date format', async () => {
-    const log = jest.spyOn(console, 'log');
+    const log = vi.spyOn(console, 'log');
     const event: ILogEvent = {
       level: LogLevel.INFO,
       timestamp: new Date('2024-05-08T12:30:45.678'),
@@ -196,9 +197,11 @@ describe('test ConsoleAppender overwrite formatting', () => {
   });
 
   it('should log with a custom date format', async () => {
-    const log = jest.spyOn(console, 'log');
+    const log = vi.spyOn(console, 'log');
     appender.formatTimestamp = (date: Date): string => {
-      return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`;
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      return `${day}.${month}.${date.getFullYear()}`;
     };
     const event: ILogEvent = {
       level: LogLevel.INFO,

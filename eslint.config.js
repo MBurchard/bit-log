@@ -11,6 +11,7 @@ export default antfu({
   rules: {
     'curly': 'off',
     'regexp/strict': 'off',
+    'style/block-spacing': ['error', 'never'],
     'style/brace-style': ['error', '1tbs'],
     'style/max-len': ['warn', {code: 120}],
     'style/object-curly-spacing': ['error', 'never'],

@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import {describe, expect, it} from 'vitest';
 import {Ansi} from '../ansi.js'; // Stellen Sie sicher, dass der Dateipfad korrekt ist
 
 describe('ansi Colors', () => {

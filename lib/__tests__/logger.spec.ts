@@ -1,4 +1,6 @@
-import type {IAppender} from '../definitions.js';
+import type {MockInstance} from 'vitest';
+import type {IAppender, ILogEvent} from '../definitions.js';
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {LogLevel} from '../definitions.js';
 import {Logger} from '../logger.js';
 
@@ -8,13 +10,13 @@ describe('test logger', () => {
   beforeEach(() => {
     mockAppender = {
       level: LogLevel.INFO,
-      handle: jest.fn().mockResolvedValue(undefined),
-      willHandle: jest.fn().mockReturnValue(true),
+      handle: vi.fn().mockResolvedValue(undefined),
+      willHandle: vi.fn().mockReturnValue(true),
     };
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   describe('initialization', () => {
@@ -82,7 +84,7 @@ describe('test logger', () => {
     it('added appender should be used', () => {
       // given
       logger.addAppender('MockAppender', mockAppender);
-      const spyEmit = jest.spyOn(logger, 'emit');
+      const spyEmit = vi.spyOn(logger, 'emit');
 
       // when
       logger.info('test info');
@@ -112,10 +114,11 @@ describe('test logger', () => {
     });
 
     it('appender exception during handle is caught', async () => {
-      (mockAppender.handle as jest.Mock).mockResolvedValue(Promise.reject(new Error('Reject for some reason')));
+      (mockAppender.handle as ReturnType<typeof vi.fn>)
+        .mockResolvedValue(Promise.reject(new Error('Reject for some reason')));
 
       logger.addAppender('MockAppender', mockAppender);
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
       expect(() => logger.info('test info')).not.toThrow();
 
@@ -136,7 +139,7 @@ describe('test logger', () => {
 
     it('should get the log event', () => {
       const logger = new Logger('foo', root, LogLevel.INFO);
-      const spyEmit = jest.spyOn(root, 'emit');
+      const spyEmit = vi.spyOn(root, 'emit');
 
       const now = Date.now();
       logger.info('Test info');
@@ -156,11 +159,11 @@ describe('test logger', () => {
 
   describe('logging methods', () => {
     let logger: Logger;
-    let spyEmit: jest.SpyInstance;
+    let spyEmit: MockInstance<(event: ILogEvent) => boolean>;
 
     beforeEach(() => {
       logger = new Logger('TestLogger', undefined, LogLevel.TRACE);
-      spyEmit = jest.spyOn(logger, 'emit');
+      spyEmit = vi.spyOn(logger, 'emit');
     });
 
     // noinspection DuplicatedCode
@@ -232,14 +235,14 @@ describe('test logger', () => {
     });
 
     it('should execute log method parameter', () => {
-      const mockLog = jest.fn().mockReturnValue('jest mock log function');
+      const mockLog = vi.fn().mockReturnValue('jest mock log function');
       logger.debug(mockLog);
       expect(mockLog).toHaveBeenCalledTimes(1);
     });
 
     it('should not execute log method parameter, if log level is to low', () => {
       logger.level = LogLevel.ERROR;
-      const mockLog = jest.fn().mockReturnValue('jest mock log function');
+      const mockLog = vi.fn().mockReturnValue('jest mock log function');
       logger.debug(mockLog);
       expect(mockLog).toHaveBeenCalledTimes(0);
     });

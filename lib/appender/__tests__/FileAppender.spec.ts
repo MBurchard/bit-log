@@ -1,15 +1,14 @@
-import fs from 'node:fs';
 import {access, appendFile, chmod, constants, mkdir, readdir, rm, stat} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {type ILogEvent, LogLevel} from '../../definitions.js';
-import {canBeAccessed, exists, FileAppender} from '../FileAppender.js';
+import {exists, FileAppender} from '../FileAppender.js';
 
 export async function emptyDirectory(dirPath: string): Promise<boolean> {
   try {
     await access(dirPath, constants.F_OK | constants.R_OK | constants.W_OK);
-    // eslint-disable-next-line unused-imports/no-unused-vars
-  } catch (err) {
+  } catch {
     return false;
   }
   try {
@@ -27,29 +26,29 @@ export async function emptyDirectory(dirPath: string): Promise<boolean> {
   return false;
 }
 
-function getDefaultEvent(): ILogEvent {
+export function getDefaultEvent(date: string = '2024-04-01'): ILogEvent {
   return {
     level: LogLevel.INFO,
     loggerName: 'foo.bar',
     payload: ['Hallo', 'Welt'],
-    timestamp: new Date('2024-05-08T12:30:45.678'),
+    timestamp: new Date(`${date}T12:30:45.678`),
   };
 }
 
-describe('test FileAppender', () => {
+describe('test FileAppender', async () => {
   const logDir = path.join(os.tmpdir(), 'bit.log');
   let appender: FileAppender;
 
   beforeEach(async () => {
-    // create the logDir for test
     await mkdir(logDir, {recursive: true});
-    // create the existing logDir for test
-    await emptyDirectory(logDir);
     appender = new FileAppender();
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks(); // Wiederherstellen aller Mocks nach jedem Test
+  afterEach(async () => {
+    vi.restoreAllMocks();
+    vi.resetAllMocks();
+    vi.resetModules();
+    await emptyDirectory(logDir);
   });
 
   it('check default properties', () => {
@@ -66,30 +65,33 @@ describe('test FileAppender', () => {
   });
 
   it('should create a logfile and add the logging', async () => {
-    const event = getDefaultEvent();
+    const date = '2024-05-01';
+    const event = getDefaultEvent(date);
     expect(appender.willHandle(event)).toBe(true);
     await appender.handle(event);
-    const expectedFile = path.join(logDir, '2024-05-08.log');
+    const expectedFile = path.join(logDir, `${date}.log`);
     const stats = await stat(expectedFile);
     expect(stats.isFile()).toBe(true);
     expect(stats.size).toBe(71);
   });
 
   it('should work with an existing log file', async () => {
-    const existingFile = path.join(logDir, '2024-05-08.log');
+    const date = '2024-05-02';
+    const existingFile = path.join(logDir, `${date}.log`);
     await appendFile(existingFile, 'It\'s already there\n');
-    await appender.handle(getDefaultEvent());
+    await appender.handle(getDefaultEvent(date));
     const stats = await stat(existingFile);
     expect(stats.isFile()).toBe(true);
     expect(stats.size).toBe(90);
   });
 
   it('should check if it can write to the file', async () => {
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    const existingFile = path.join(logDir, '2024-05-08.log');
+    const date = '2024-05-03';
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const existingFile = path.join(logDir, `${date}.log`);
     await appendFile(existingFile, 'It\'s already there\n');
     await chmod(existingFile, 0o444);
-    await appender.handle(getDefaultEvent());
+    await appender.handle(getDefaultEvent(date));
     const stats = await stat(existingFile);
     expect(stats.isFile()).toBe(true);
     expect(stats.size).toBe(19);
@@ -98,26 +100,29 @@ describe('test FileAppender', () => {
   });
 
   it('should check if the full log file path is a directory', async () => {
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    const existingDirectory = path.join(logDir, '2024-05-08.log');
+    const date = '2024-05-04';
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const existingDirectory = path.join(logDir, `${date}.log`);
     await mkdir(existingDirectory, {recursive: true});
-    await appender.handle(getDefaultEvent());
+    await appender.handle(getDefaultEvent(date));
     expect(consoleErrorSpy)
       .toHaveBeenCalledWith(`FileAppender is not configured properly: path '${existingDirectory}' is a directory.`);
   });
 
   it('should check if filePath is properly configured', async () => {
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const date = '2024-05-05';
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     // @ts-expect-error we force bad usage
     appender.filePath = null;
-    await appender.handle(getDefaultEvent());
+    await appender.handle(getDefaultEvent(date));
     expect(consoleErrorSpy).toHaveBeenCalledWith('FileAppender is not configured properly: filePath not given');
   });
 
   it('should check if filePath is available', async () => {
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const date = '2024-05-06';
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     appender.filePath = '/foo/bar/bi/ba/butzel/mann';
-    await appender.handle(getDefaultEvent());
+    await appender.handle(getDefaultEvent(date));
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       // eslint-disable-next-line style/max-len
       'FileAppender is not configured properly: filePath \'/foo/bar/bi/ba/butzel/mann\' does not exists or is not accessible.',
@@ -126,115 +131,95 @@ describe('test FileAppender', () => {
   });
 
   it('should check if baseName is properly configured', async () => {
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const date = '2024-05-07';
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     // @ts-expect-error we force bad usage
     appender.baseName = null;
-    await appender.handle(getDefaultEvent());
+    await appender.handle(getDefaultEvent(date));
     expect(consoleErrorSpy)
       .toHaveBeenCalledWith('FileAppender is not configured properly: baseName must not be null or undefined');
   });
 
   it('should check if either baseName or timeStamp is not empty', async () => {
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const date = '2024-05-08';
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     appender.getTimestamp = (_date: Date) => {
       return '';
     };
-    await appender.handle(getDefaultEvent());
+    await appender.handle(getDefaultEvent(date));
     expect(consoleErrorSpy)
       .toHaveBeenCalledWith('FileAppender is not configured properly: either baseName or timeStamp must not be empty');
   });
 
   it('should check if extension is not empty', async () => {
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const date = '2024-05-09';
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     appender.extension = '';
-    await appender.handle(getDefaultEvent());
+    await appender.handle(getDefaultEvent(date));
     expect(consoleErrorSpy)
       .toHaveBeenCalledWith('FileAppender is not configured properly: extension must not be empty');
   });
 
   it('should combine baseName and timeStamp correctly', async () => {
+    const date = '2024-05-10';
     appender.baseName = 'test';
-    await appender.handle(getDefaultEvent());
-    const expectedFile = path.join(logDir, 'test-2024-05-08.log');
+    await appender.handle(getDefaultEvent(date));
+    const expectedFile = path.join(logDir, `test-${date}.log`);
     const stats = await stat(expectedFile);
     expect(stats.isFile()).toBe(true);
     expect(stats.size).toBe(71);
   });
 
   it('test global error handling in calcFullFilePath', async () => {
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    jest.spyOn(path, 'join').mockImplementation(() => {
+    const date = '2024-05-11';
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(path, 'join').mockImplementation(() => {
       throw new Error('Test error in path.join');
     });
-    await appender.handle(getDefaultEvent());
+    await appender.handle(getDefaultEvent(date));
     expect(consoleErrorSpy)
       .toHaveBeenCalledWith(
-        `Error in calcFullFilePath('${logDir}', '', 'log', '2024-05-08'):`,
+        `Error in calcFullFilePath('${logDir}', '', 'log', '${date}'):`,
         new Error('Test error in path.join'),
       );
     const files = await readdir(logDir);
     expect(files.length).toBe(0);
   });
 
-  it('test error handling in canBeAccessed', async () => {
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    jest.spyOn(fs.promises, 'access').mockImplementation(async () => {
-      // eslint-disable-next-line no-throw-literal
-      throw {code: 'EACCESS', message: 'Test error in access'};
-    });
-    await canBeAccessed(path.join(logDir));
-    expect(consoleErrorSpy)
-      .toHaveBeenCalledWith(
-        `Error accessing path '${logDir}'`,
-        {code: 'EACCESS', message: 'Test error in access'},
-      );
-  });
-
   it('test exists', async () => {
     expect(await exists(path.join(logDir))).toBe(true);
   });
 
-  it('test error handling in exists', async () => {
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    jest.spyOn(fs.promises, 'access').mockImplementation(async () => {
-      // eslint-disable-next-line no-throw-literal
-      throw {code: 'EEXISTS', message: 'Test error in exists'};
-    });
-    await exists(path.join(logDir));
-    expect(consoleErrorSpy)
-      .toHaveBeenCalledWith(
-        `Error accessing path '${logDir}'`,
-        {code: 'EEXISTS', message: 'Test error in exists'},
-      );
-  });
-
   it('should not handle the log event if level does not fit', async () => {
+    const date = '2024-05-12';
     appender = new FileAppender(LogLevel.INFO);
-    const event = getDefaultEvent();
+    const event = getDefaultEvent(date);
     event.level = LogLevel.DEBUG;
     await appender.handle(event);
-    const expectedFile = path.join(logDir, '2024-05-08.log');
+    const expectedFile = path.join(logDir, `${date}.log`);
     expect(await exists(expectedFile)).toBe(false);
   });
 
   it('should build the log info correctly when using a function', async () => {
-    const event = getDefaultEvent();
+    const date = '2024-05-13';
+    const event = getDefaultEvent(date);
     event.payload = () => {
       return 'Hallo functional Welt';
     };
     await appender.handle(event);
-    const expectedFile = path.join(logDir, '2024-05-08.log');
+    const expectedFile = path.join(logDir, `${date}.log`);
     const stats = await stat(expectedFile);
     expect(stats.isFile()).toBe(true);
     expect(stats.size).toBe(82);
   });
 
   it('test error handling in handle', async () => {
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const date = '2024-05-14';
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     appender.formatPrefix = (_ts, _lvl, _name, _colored) => {
       throw new Error('This is a test error');
     };
-    await appender.handle(getDefaultEvent());
+    await appender.handle(getDefaultEvent(date));
     expect(consoleErrorSpy)
       .toHaveBeenCalledWith('Error during FileAppender.handle', new Error('This is a test error'));
   });

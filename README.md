@@ -21,7 +21,7 @@ try {
 
 ### Configuration
 
-The configuration can be carried out at any time while the code is running; multiple calls and therefore changes are
+The configuration can be carried out at any time while the code is running, multiple calls and therefore changes are
 also possible.
 
 Logging is configured as follows by default:

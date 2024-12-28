@@ -1,4 +1,5 @@
 import type {IAppender} from '../definitions.js';
+import {describe, expect, it} from 'vitest';
 import {isAppenderConfig, isPresent, LogLevel, toLogLevel} from '../definitions.js';
 
 describe('test definitions', () => {
