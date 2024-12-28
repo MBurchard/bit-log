@@ -1,4 +1,4 @@
-import {describe, expect, it} from 'vitest';
+import {describe, expect, it, vi} from 'vitest';
 import {Ansi} from '../ansi.js';
 import {LogLevel} from '../definitions.js';
 import {
@@ -72,6 +72,22 @@ describe('test utils', () => {
   it('formatISO8601', () => {
     const date = new Date();
     expect(formatISO8601(date)).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}[+-]\d{2}:\d{2}$/);
+  });
+
+  it('formats ISO8601 correctly with a positive timezone offset', () => {
+    const mockDate = new Date('2024-12-23T12:34:56.789Z');
+    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(-120);
+
+    const result = formatISO8601(mockDate);
+    expect(result).toBe('2024-12-23T13:34:56.789+02:00');
+  });
+
+  it('formats ISO8601 correctly with a negative timezone offset', () => {
+    const mockDate = new Date('2024-12-23T12:34:56.789Z');
+    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(+300);
+
+    const result = formatISO8601(mockDate);
+    expect(result).toBe('2024-12-23T13:34:56.789-05:00');
   });
 
   it('truncateMiddle if string is shorter then the given limit', () => {
@@ -223,12 +239,24 @@ describe('test utils', () => {
     });
 
     it('should format a function', () => {
-      expect(formatAny(() => {})).toBe('[Function () => {...]');
+      // this mock is necessary because vitest manipulates the source code...
+      const originalToString = Function.prototype.toString;
+      // eslint-disable-next-line no-extend-native
+      Function.prototype.toString = vi.fn(() => '() => {}');
+      expect(formatAny(() => {})).toBe('[Function () => {}]');
+      // eslint-disable-next-line no-extend-native
+      Function.prototype.toString = originalToString;
     });
 
     it('should format a function colored', () => {
+      // this mock is necessary because vitest manipulates the source code...
+      const originalToString = Function.prototype.toString;
+      // eslint-disable-next-line no-extend-native
+      Function.prototype.toString = vi.fn(() => '() => {}');
       expect(formatAny(() => {}, false, true))
-        .toBe(`[${Ansi.blue('Function')} () => {...]`);
+        .toBe(`[${Ansi.blue('Function')} () => {}]`);
+      // eslint-disable-next-line no-extend-native
+      Function.prototype.toString = originalToString;
     });
 
     it('should format a long function', () => {
