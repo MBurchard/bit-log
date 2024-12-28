@@ -1,3 +1,4 @@
+import timezoneMock from 'timezone-mock';
 import {describe, expect, it, vi} from 'vitest';
 import {Ansi} from '../ansi.js';
 import {LogLevel} from '../definitions.js';
@@ -75,19 +76,23 @@ describe('test utils', () => {
   });
 
   it('formats ISO8601 correctly with a positive timezone offset', () => {
-    const mockDate = new Date('2024-12-23T12:34:56.789Z');
-    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(-120);
+    timezoneMock.register('Etc/GMT-2');
+    const date = new Date('2024-07-01T12:34:56.789Z');
 
-    const result = formatISO8601(mockDate);
-    expect(result).toBe('2024-12-23T13:34:56.789+02:00');
+    const result = formatISO8601(date);
+    expect(result).toBe('2024-07-01T14:34:56.789+02:00');
+
+    timezoneMock.unregister();
   });
 
   it('formats ISO8601 correctly with a negative timezone offset', () => {
-    const mockDate = new Date('2024-12-23T12:34:56.789Z');
-    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(+300);
+    timezoneMock.register('Etc/GMT+5');
+    const date = new Date('2024-12-23T12:34:56.789Z');
 
-    const result = formatISO8601(mockDate);
-    expect(result).toBe('2024-12-23T13:34:56.789-05:00');
+    const result = formatISO8601(date);
+    expect(result).toBe('2024-12-23T07:34:56.789-05:00');
+
+    timezoneMock.unregister();
   });
 
   it('truncateMiddle if string is shorter then the given limit', () => {
