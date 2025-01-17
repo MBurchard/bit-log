@@ -5,6 +5,8 @@
  * @author Martin Burchard
  */
 
+export type Nullable<T> = T | null | undefined;
+
 /**
  * Checks if the value is 'something' but neither null nor undefined.
  *
