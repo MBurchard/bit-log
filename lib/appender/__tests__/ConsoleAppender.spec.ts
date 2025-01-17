@@ -1,7 +1,6 @@
-import type {ILogEvent} from '../../definitions.js';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {Ansi} from '../../ansi.js';
-import {LogLevel} from '../../definitions.js';
+import {type ILogEvent, LogLevel} from '../../definitions.js';
 import {ConsoleAppender} from '../ConsoleAppender.js';
 
 describe('test ConsoleAppender', () => {
@@ -165,7 +164,8 @@ describe('test ConsoleAppender', () => {
       payload: ['Text', 42, false, {prop: 'Test'}],
     });
     expect(log).toHaveBeenCalledTimes(1);
-    expect(log).toHaveBeenCalledWith(expect.anything(), 'Text', '42', 'false', `{prop: ${Ansi.green('"Test"')}}`);
+    expect(log)
+      .toHaveBeenCalledWith(expect.anything(), 'Text', '42', 'false', `{ prop: ${Ansi.darkGreen('\'Test\'')} }`);
   });
 });
 

@@ -3,14 +3,14 @@ import {access, appendFile, chmod, constants, mkdir, readdir, rm, stat} from 'no
 import os from 'node:os';
 import path from 'node:path';
 import {afterEach, beforeEach, describe, expect, it, type TestContext, vi} from 'vitest';
-import {type ILogEvent, LogLevel} from '../../definitions.js';
+import {type ILogEvent, LogLevel, type Nullable} from '../../definitions.js';
 import {exists, FileAppender} from '../FileAppender.js';
 
 export interface CustomTestContext extends TestContext {
   logDir: string;
 }
 
-export function genLogDirName(testName: string | null | undefined): string {
+export function genLogDirName(testName: Nullable<string>): string {
   if (!testName) {
     return `${process.hrtime.bigint()}`;
   }

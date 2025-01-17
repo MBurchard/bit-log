@@ -8,7 +8,7 @@ import {
   formatISO8601,
   formatLogLevel,
   formatPrefix,
-  getAllPropertiesAndMethods,
+  getAllEntries,
   getClassHierarchy,
   truncateMiddle,
   truncateOrExtend,
@@ -45,6 +45,7 @@ describe('test utils', () => {
     expect(formatLogLevel(LogLevel.OFF, true)).toBe('');
   });
 
+  // noinspection DuplicatedCode
   it('formatLogLevel TRACE without color', () => {
     expect(formatLogLevel(LogLevel.TRACE)).toBe('TRACE');
   });
@@ -187,45 +188,51 @@ describe('test utils', () => {
     });
 
     it('should format an array', () => {
-      expect(formatAny([null, undefined, 'Test', false, 200])).toBe('[null, undefined, "Test", false, 200]');
+      const arr = [null, undefined, 'Test', false, 200, 123456789012345678901234567890n];
+      expect(formatAny(arr)).toBe('[ null, undefined, \'Test\', false, 200, 123456789012345678901234567890 ]');
     });
 
-    // it('should format an array with a string containing "', () => {
-    //   expect(formatAny(['Hallo "Welt"'])).toBe('["Hallo \\"Welt\\""]');
-    // });
-
     it('should format an array colored', () => {
-      expect(formatAny([null, undefined, 'Test', false, 200], false, true))
-        .toBe(`[${Ansi.bold('null')}, ${Ansi.bold('undefined')}, ${Ansi.green('"Test"')}, ${Ansi
-          .darkYellow('false')}, ${Ansi.darkCyan('200')}]`);
+      const arr = [null, undefined, 'Test', false, 200, 123456789012345678901234567890n];
+      expect(formatAny(arr, false, true))
+        .toBe(`[ ${Ansi.bold('null')}, ${Ansi.darkGray('undefined')}, ${Ansi.darkGreen('\'Test\'')}, ${Ansi
+          .darkYellow('false')}, ${Ansi.darkCyan('200')}, ${Ansi.cyan('123456789012345678901234567890')} ]`);
     });
 
     it('should format an array pretty', () => {
       expect(formatAny([null, undefined, 'Test', false, 200], true))
-        .toBe('[\n  null,\n  undefined,\n  "Test",\n  false,\n  200\n]');
+        .toBe('[\n  null,\n  undefined,\n  \'Test\',\n  false,\n  200\n]');
+    });
+
+    it('should format a Set', () => {
+      const set = new Set([null, undefined, 'Test', false, 200, 123456789012345678901234567890n]);
+      expect(formatAny(set)).toBe('Set(6) { null, undefined, \'Test\', false, 200, 123456789012345678901234567890 }');
+    });
+
+    it('should format a Map', () => {
+      const map = new Map([['key1', 'value1'], ['key2', 'value2']]);
+      expect(formatAny(map)).toBe('Map(2) { \'key1\' => \'value1\', \'key2\' => \'value2\' }');
     });
 
     it('should format an object', () => {
-      const result = formatAny({key: 'value', num: 12.333, bool: false, bad: null, worse: undefined});
-      expect(result)
-        .toBe('{key: "value", num: 12.333, bool: false, bad: null, worse: undefined}');
+      const obj = {key: 'value', num: 12.333, bool: false, bad: null, worse: undefined};
+      expect(formatAny(obj)).toBe('{ key: \'value\', num: 12.333, bool: false, bad: null, worse: undefined }');
     });
 
     it('should format an object colored', () => {
-      const result = formatAny({key: 'value', num: 12.333, bool: false, bad: null}, false, true);
-      expect(result)
-        .toBe(`{key: ${Ansi.green('"value"')}, num: ${Ansi.darkCyan('12.333')}, bool: ${Ansi
-          .darkYellow('false')}, bad: ${Ansi.bold('null')}}`);
+      const obj = {key: 'value', num: 12.333, bool: false, bad: null};
+      expect(formatAny(obj, false, true)).toBe(`{ key: ${Ansi.darkGreen('\'value\'')}, num: ${Ansi
+        .darkCyan('12.333')}, bool: ${Ansi.darkYellow('false')}, bad: ${Ansi.bold('null')} }`);
     });
 
     it('should format an object with an internal object', () => {
-      const result = formatAny({child: {prop: true}});
-      expect(result).toBe('{child: {prop: true}}');
+      const obj = {child: {prop: true}};
+      expect(formatAny(obj)).toBe('{ child: { prop: true } }');
     });
 
     it('should format an object with an internal Array', () => {
       const result = formatAny({child: [1, 2, 3]});
-      expect(result).toBe('{child: [1, 2, 3]}');
+      expect(result).toBe('{ child: [ 1, 2, 3 ] }');
     });
 
     it('should format an object with an internal object pretty', () => {
@@ -305,22 +312,37 @@ describe('test utils', () => {
         },
       };
       const result = formatAny(sth, true, true);
-      expect(result).toBe(`{\n  class: ${Ansi.darkMagenta('[class ClassA]')},\n  obj: {\n    array: [\n      {\n` +
-        `        prop: ${Ansi.darkYellow('false')}\n      },\n      ${Ansi.darkCyan('123')},\n` +
-        `      ${Ansi.green('"Text"')}\n    ]\n  },\n  func: [${Ansi.blue('Function')} () => {...],\n` +
-        `  func2: [${Ansi.blue('Function')} function doSth() {...],\n` +
-        `  func3: [${Ansi.blue('Function')} func3() {...]\n}`);
+      expect(result).toBe(`{
+  class: ${Ansi.darkMagenta('[class ClassA]')},
+  obj: {
+    array: [
+      {
+        prop: ${Ansi.darkYellow('false')}
+      },
+      ${Ansi.darkCyan('123')},
+      ${Ansi.darkGreen('\'Text\'')}
+    ]
+  },
+  func: [${Ansi.blue('Function')} () => {...],
+  func2: [${Ansi.blue('Function')} function doSth() {...],
+  func3: [${Ansi.blue('Function')} func3() {...]
+}`);
     });
 
     it('should format a Symbol', () => {
-      expect(formatAny(Symbol('test'))).toBe('symbol');
+      expect(formatAny(Symbol('test'))).toBe('Symbol(test)');
+    });
+
+    it('should format a Symbol colored', () => {
+      expect(formatAny(Symbol('test'), false, true))
+        .toBe(`${Ansi.magenta('Symbol(')}test${Ansi.magenta(')')}`);
     });
 
     it('should handle circular references in objects', () => {
       const child = {otherProp: {parent: {}}};
       const parent = {prop: {child}};
       child.otherProp.parent = parent;
-      expect(formatAny(parent)).toBe('<ref1>{prop: {child: {otherProp: {parent: [Circular ref1]}}}}');
+      expect(formatAny(parent)).toBe('<ref1>{ prop: { child: { otherProp: { parent: [Circular ref1] } } } }');
     });
 
     it('should handle circular references in objects colored', () => {
@@ -334,14 +356,14 @@ describe('test utils', () => {
     it('should handle circular references in arrays', () => {
       const array: unknown[] = [1, 'Test', true];
       array.push(array);
-      expect(formatAny(array)).toBe('<ref1>[1, "Test", true, [Circular ref1]]');
+      expect(formatAny(array)).toBe('<ref1>[ 1, \'Test\', true, [Circular ref1] ]');
     });
 
     it('should handle circular references in arrays colored', () => {
       const array: unknown[] = [1, 'Test', true];
       array.push(array);
       expect(formatAny(array, true, true)).toBe(`${Ansi.blue('<ref1>')}[\n  ${Ansi.darkCyan(1)},\n  ` +
-        `${Ansi.green('"Test"')},\n  ${Ansi.darkYellow('true')},\n  [${Ansi.cyan('Circular')} ` +
+        `${Ansi.darkGreen('\'Test\'')},\n  ${Ansi.darkYellow('true')},\n  [${Ansi.cyan('Circular')} ` +
         `${Ansi.blue('ref1')}]\n]`);
     });
   });
@@ -389,8 +411,7 @@ describe('test getAllProperties', () => {
 
   it('should show all properties and functions from parent and child', () => {
     const child = new Child('Test Message', 4711);
-    const allProperties = getAllPropertiesAndMethods(child);
-    expect(allProperties.length).toBe(6);
+    const allProperties = getAllEntries(child);
     expect(allProperties).toContainEqual(['message', 'Test Message']);
     expect(allProperties).toContainEqual(['code', 4711]);
     expect(allProperties).toEqual(expect.arrayContaining([['toString', expect.any(Function)]]));
@@ -401,16 +422,11 @@ describe('test getAllProperties', () => {
 
   it('should show all properties and functions for an Error object', () => {
     const error = new Error('This is a test error');
-    const allProperties = getAllPropertiesAndMethods(error);
-    // allProperties.forEach(([key, elem]) => {
-    //   process.stdout.write(`${key}: ${elem}\n`);
-    // });
+    const allProperties = getAllEntries(error);
     expect(allProperties).toContainEqual(['message', 'This is a test error']);
     expect(allProperties).toContainEqual(['name', 'Error']);
     expect(allProperties).toContainEqual(['stack', expect.any(String)]);
     expect(allProperties).toEqual(expect.arrayContaining([['toString', expect.any(Function)]]));
     expect(allProperties).toEqual(expect.arrayContaining([['constructor', expect.any(Function)]]));
-    // Oops, completely unexpected shadowed 'message' property that retains a useless empty value
-    expect(allProperties).toContainEqual(['message', '']);
   });
 });
