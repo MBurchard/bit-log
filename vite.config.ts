@@ -13,7 +13,6 @@ export default defineConfig({
       entry: 'lib/index.ts',
       formats: ['es'],
     },
-
     rollupOptions: {
       external: [/^node:.*/, 'better-sqlite3'],
       input: Object.fromEntries(
