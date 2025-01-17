@@ -77,29 +77,35 @@ export function formatAny(
   inner: number = 0,
   ct: CircularTracker = new CircularTracker(),
 ): string {
-  // noinspection SuspiciousTypeOfGuard
-  if (!isPresent(value) || typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
-    // Should we colorize string, number and boolean, even if they are not in an object or array, but stand alone?
-    if (inner === 0) {
-      return `${value}`;
-    }
-    const result = typeof value === 'string' ? `"${value}"` : `${value}`;
-    if (colored) {
-      if (typeof value === 'string') {
-        return Ansi.green(result);
-      }
-      if (typeof value === 'number') {
-        return Ansi.darkCyan(result);
-      }
-      if (typeof value === 'boolean') {
-        return Ansi.darkYellow(result);
-      }
-      return Ansi.bold(result);
-    }
-    return result;
+  if (inner === 0 && (value === undefined || value === null || typeof value === 'bigint' ||
+    typeof value === 'boolean' || typeof value === 'number' || typeof value === 'string')) {
+    return `${value}`;
+  }
+  if (value === undefined) {
+    return colored ? Ansi.darkGray(value) : `${value}`;
+  }
+  if (value === null) {
+    return colored ? Ansi.bold(value) : `${value}`;
+  }
+  if (typeof value === 'symbol') {
+    return colored ?
+      `${Ansi.magenta('Symbol(')}${value.description}${Ansi.magenta(')')}` :
+      `Symbol(${value.description})`;
+  }
+  if (typeof value === 'bigint') {
+    return colored ? Ansi.cyan(`${value}`) : `${value}`;
+  }
+  if (typeof value === 'number') {
+    return colored ? Ansi.darkCyan(value) : `${value}`;
+  }
+  if (typeof value === 'boolean') {
+    return colored ? Ansi.darkYellow(`${value}`) : `${value}`;
+  }
+  if (typeof value === 'string') {
+    return colored ? Ansi.darkGreen(`'${value}'`) : `'${value}'`;
   }
   if (Array.isArray(value)) {
-    return formatArray(value, pretty, colored, inner, ct);
+    return formatArrayLike(value, pretty, colored, inner, ct);
   }
   if (typeof value === 'object') {
     return formatObject(value, pretty, colored, inner, ct);
@@ -123,16 +129,16 @@ export function formatAny(
   return `${typeof value}`;
 }
 
-function formatArray(
-  array: Array<unknown>,
+function formatArrayLike(
+  arrayLike: Array<unknown> | Set<unknown>,
   pretty: boolean = false,
   colored: boolean = false,
   inner: number = 0,
   ct: CircularTracker,
 ): string {
-  ct.add(array);
+  ct.add(arrayLike);
   const results: string[] = [];
-  for (const elem of array) {
+  for (const elem of arrayLike) {
     if (isPresent(elem) && ct.has(elem)) {
       ct.setAsCircular(elem);
       const ref = ct.indexOf(elem);
@@ -145,14 +151,17 @@ function formatArray(
     }
   }
   let ref = '';
-  if (ct.isCircular(array)) {
-    ref = `<ref${ct.indexOf(array)}>`;
+  if (ct.isCircular(arrayLike)) {
+    ref = `<ref${ct.indexOf(arrayLike)}>`;
   }
   if (pretty) {
     const indent = ' '.repeat((inner + 1) * 2);
     return `${ref ? Ansi.blue(ref) : ''}[\n${indent}${results.join(`,\n${indent}`)}\n${' '.repeat((inner) * 2)}]`;
   }
-  return `${ref}[${results.join(', ')}]`;
+  if (arrayLike instanceof Set) {
+    return `${ref}Set(${arrayLike.size}) { ${results.join(', ')} }`;
+  }
+  return `${ref}[ ${results.join(', ')} ]`;
 }
 
 function formatObject(
@@ -162,9 +171,12 @@ function formatObject(
   inner: number = 0,
   ct: CircularTracker,
 ): string {
+  if (obj instanceof Set) {
+    return formatArrayLike(obj, pretty, colored, inner, ct);
+  }
   ct.add(obj);
   const results: string[] = [];
-  for (const [key, elem] of getAllPropertiesAndMethods(obj)) {
+  for (const [key, elem] of getAllEntries(obj)) {
     if (typeof elem === 'object' && elem !== null && ct.has(elem)) {
       ct.setAsCircular(elem);
       const ref = ct.indexOf(elem);
@@ -173,7 +185,11 @@ function formatObject(
         `[Circular ref${ref}]`
       }`);
     } else {
-      results.push(`${key}: ${formatAny(elem, pretty, colored, inner + 1, ct)}`);
+      if (obj instanceof Map) {
+        results.push(`\'${key}\' => ${formatAny(elem, pretty, colored, inner + 1, ct)}`);
+      } else {
+        results.push(`${key}: ${formatAny(elem, pretty, colored, inner + 1, ct)}`);
+      }
     }
   }
   let ref = '';
@@ -184,7 +200,10 @@ function formatObject(
     const indent = ' '.repeat((inner + 1) * 2);
     return `${ref ? Ansi.blue(ref) : ''}{\n${indent}${results.join(`,\n${indent}`)}\n${' '.repeat((inner) * 2)}}`;
   }
-  return `${ref}{${results.join(', ')}}`;
+  if (obj instanceof Map) {
+    return `${ref}Map(${obj.size}) { ${results.join(', ')} }`;
+  }
+  return `${ref}{ ${results.join(', ')} }`;
 }
 
 /**
@@ -274,14 +293,31 @@ export function formatPrefix(ts: Date, level: LogLevel, name: string, colored: b
  * @param {object} obj
  * @return {[string, unknown][]}
  */
-export function getAllPropertiesAndMethods(obj: object): [string, unknown][] {
+export function getAllEntries(obj: object): [string, unknown][] | MapIterator<[string, unknown]> {
+  if (obj instanceof Map) {
+    return obj.entries();
+  }
   const properties: [string, unknown][] = [];
   let currentObj = obj;
 
   while (currentObj !== Object.prototype && currentObj !== null) {
     Object.getOwnPropertyNames(currentObj).forEach((key) => {
-      // @ts-expect-error I want to access it this way!
-      properties.push([key, currentObj[key]]);
+      let value;
+      try {
+        const descriptor = Object.getOwnPropertyDescriptor(currentObj, key);
+        if (descriptor) {
+          if ('value' in descriptor) {
+            value = descriptor.value;
+          } else {
+            value = descriptor.get ? descriptor.get.call(currentObj) : 'Property Descriptor has no get method!!!';
+          }
+        } else {
+          value = 'Property inaccessible';
+        }
+      } catch {
+        value = 'Property inaccessible';
+      }
+      properties.push([key, value]);
     });
     currentObj = Object.getPrototypeOf(currentObj);
   }

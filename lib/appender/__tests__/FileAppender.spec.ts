@@ -1,9 +1,21 @@
+import crypto from 'node:crypto';
 import {access, appendFile, chmod, constants, mkdir, readdir, rm, stat} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
-import {type ILogEvent, LogLevel} from '../../definitions.js';
+import {afterEach, beforeEach, describe, expect, it, type TestContext, vi} from 'vitest';
+import {type ILogEvent, LogLevel, type Nullable} from '../../definitions.js';
 import {exists, FileAppender} from '../FileAppender.js';
+
+export interface CustomTestContext extends TestContext {
+  logDir: string;
+}
+
+export function genLogDirName(testName: Nullable<string>): string {
+  if (!testName) {
+    return `${process.hrtime.bigint()}`;
+  }
+  return `${process.hrtime.bigint()}${crypto.createHash('md5').update(testName).digest('hex')}`;
+}
 
 export async function emptyDirectory(dirPath: string): Promise<boolean> {
   try {
@@ -36,27 +48,31 @@ export function getDefaultEvent(date: string = '2024-04-01'): ILogEvent {
 }
 
 describe('test FileAppender', async () => {
-  const logDir = path.join(os.tmpdir(), 'bit.log');
   let appender: FileAppender;
 
-  beforeEach(async () => {
-    await mkdir(logDir, {recursive: true});
+  beforeEach(async (ctx: CustomTestContext) => {
+    ctx.logDir = path.join(os.tmpdir(), 'bit.log', genLogDirName(ctx.task.name));
+    await mkdir(ctx.logDir, {recursive: true});
     appender = new FileAppender();
+    appender.filePath = ctx.logDir;
   });
 
-  afterEach(async () => {
+  afterEach(async (ctx: CustomTestContext) => {
     vi.restoreAllMocks();
     vi.resetAllMocks();
     vi.resetModules();
-    await emptyDirectory(logDir);
+    if (ctx.logDir) {
+      await emptyDirectory(ctx.logDir);
+    }
   });
 
-  it('check default properties', () => {
+  it('check default properties', (ctx: CustomTestContext) => {
+    console.warn('Log Directory:', ctx.logDir);
     expect(appender).not.toBeNull();
     expect(appender.level).toBeUndefined();
     expect(appender.baseName).toBe('');
     expect(appender.extension).toBe('log');
-    expect(appender.filePath).toBe(logDir);
+    expect(appender.filePath).toBe(ctx.logDir);
   });
 
   it('constructor with log level', () => {
@@ -64,20 +80,20 @@ describe('test FileAppender', async () => {
     expect(appender.level).toBe(LogLevel.INFO);
   });
 
-  it('should create a logfile and add the logging', async () => {
+  it('should create a logfile and add the logging', async (ctx: CustomTestContext) => {
     const date = '2024-05-01';
     const event = getDefaultEvent(date);
     expect(appender.willHandle(event)).toBe(true);
     await appender.handle(event);
-    const expectedFile = path.join(logDir, `${date}.log`);
+    const expectedFile = path.join(ctx.logDir, `${date}.log`);
     const stats = await stat(expectedFile);
     expect(stats.isFile()).toBe(true);
     expect(stats.size).toBe(71);
   });
 
-  it('should work with an existing log file', async () => {
+  it('should work with an existing log file', async (ctx: CustomTestContext) => {
     const date = '2024-05-02';
-    const existingFile = path.join(logDir, `${date}.log`);
+    const existingFile = path.join(ctx.logDir, `${date}.log`);
     await appendFile(existingFile, 'It\'s already there\n');
     await appender.handle(getDefaultEvent(date));
     const stats = await stat(existingFile);
@@ -85,10 +101,10 @@ describe('test FileAppender', async () => {
     expect(stats.size).toBe(90);
   });
 
-  it('should check if it can write to the file', async () => {
+  it('should check if it can write to the file', async (ctx: CustomTestContext) => {
     const date = '2024-05-03';
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const existingFile = path.join(logDir, `${date}.log`);
+    const existingFile = path.join(ctx.logDir, `${date}.log`);
     await appendFile(existingFile, 'It\'s already there\n');
     await chmod(existingFile, 0o444);
     await appender.handle(getDefaultEvent(date));
@@ -99,10 +115,10 @@ describe('test FileAppender', async () => {
       .toHaveBeenCalledWith(`FileAppender is not configured properly: path '${existingFile}' can not be accessed.`);
   });
 
-  it('should check if the full log file path is a directory', async () => {
+  it('should check if the full log file path is a directory', async (ctx: CustomTestContext) => {
     const date = '2024-05-04';
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const existingDirectory = path.join(logDir, `${date}.log`);
+    const existingDirectory = path.join(ctx.logDir, `${date}.log`);
     await mkdir(existingDirectory, {recursive: true});
     await appender.handle(getDefaultEvent(date));
     expect(consoleErrorSpy)
@@ -160,17 +176,17 @@ describe('test FileAppender', async () => {
       .toHaveBeenCalledWith('FileAppender is not configured properly: extension must not be empty');
   });
 
-  it('should combine baseName and timeStamp correctly', async () => {
+  it('should combine baseName and timeStamp correctly', async (ctx: CustomTestContext) => {
     const date = '2024-05-10';
     appender.baseName = 'test';
     await appender.handle(getDefaultEvent(date));
-    const expectedFile = path.join(logDir, `test-${date}.log`);
+    const expectedFile = path.join(ctx.logDir, `test-${date}.log`);
     const stats = await stat(expectedFile);
     expect(stats.isFile()).toBe(true);
     expect(stats.size).toBe(71);
   });
 
-  it('test global error handling in calcFullFilePath', async () => {
+  it('test global error handling in calcFullFilePath', async (ctx: CustomTestContext) => {
     const date = '2024-05-11';
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     vi.spyOn(path, 'join').mockImplementation(() => {
@@ -179,35 +195,35 @@ describe('test FileAppender', async () => {
     await appender.handle(getDefaultEvent(date));
     expect(consoleErrorSpy)
       .toHaveBeenCalledWith(
-        `Error in calcFullFilePath('${logDir}', '', 'log', '${date}'):`,
+        `Error in calcFullFilePath('${ctx.logDir}', '', 'log', '${date}'):`,
         new Error('Test error in path.join'),
       );
-    const files = await readdir(logDir);
+    const files = await readdir(ctx.logDir);
     expect(files.length).toBe(0);
   });
 
-  it('test exists', async () => {
-    expect(await exists(path.join(logDir))).toBe(true);
+  it('test exists', async (ctx: CustomTestContext) => {
+    expect(await exists(path.join(ctx.logDir))).toBe(true);
   });
 
-  it('should not handle the log event if level does not fit', async () => {
+  it('should not handle the log event if level does not fit', async (ctx: CustomTestContext) => {
     const date = '2024-05-12';
     appender = new FileAppender(LogLevel.INFO);
     const event = getDefaultEvent(date);
     event.level = LogLevel.DEBUG;
     await appender.handle(event);
-    const expectedFile = path.join(logDir, `${date}.log`);
+    const expectedFile = path.join(ctx.logDir, `${date}.log`);
     expect(await exists(expectedFile)).toBe(false);
   });
 
-  it('should build the log info correctly when using a function', async () => {
+  it('should build the log info correctly when using a function', async (ctx: CustomTestContext) => {
     const date = '2024-05-13';
     const event = getDefaultEvent(date);
     event.payload = () => {
       return 'Hallo functional Welt';
     };
     await appender.handle(event);
-    const expectedFile = path.join(logDir, `${date}.log`);
+    const expectedFile = path.join(ctx.logDir, `${date}.log`);
     const stats = await stat(expectedFile);
     expect(stats.isFile()).toBe(true);
     expect(stats.size).toBe(82);
@@ -224,7 +240,7 @@ describe('test FileAppender', async () => {
       .toHaveBeenCalledWith('Error during FileAppender.handle', new Error('This is a test error'));
   });
 
-  it('test multiple handles with different date and coloring', async () => {
+  it('test multiple handles with different date and coloring', async (ctx: CustomTestContext) => {
     appender.pretty = true;
     appender.colored = true;
     await appender.handle({
@@ -254,7 +270,7 @@ describe('test FileAppender', async () => {
       payload: ['Hallo', 'Welt'],
       timestamp: new Date('2024-05-08T12:30:45.678'),
     });
-    const expectedFile = path.join(logDir, '2024-05-08.log');
+    const expectedFile = path.join(ctx.logDir, '2024-05-08.log');
     const stats = await stat(expectedFile);
     expect(stats.isFile()).toBe(true);
     expect(stats.size).toBe(79);
