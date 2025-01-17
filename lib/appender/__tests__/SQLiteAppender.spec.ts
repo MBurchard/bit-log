@@ -76,7 +76,7 @@ describe('test SQLiteAppender', () => {
     // await chmod(existingFile, 0o444);
     await appender.handle(getDefaultEvent());
     expect(consoleErrorSpy)
-      .toHaveBeenCalledWith('Error during SQLiteAppender.initDB', new SqliteError('file is not a database', ''));
+      .toHaveBeenCalledWith('Error during SQLiteAppender.initDB', new SqliteError('file is not a database', 'SQLITE_NOTADB'));
   });
 
   it('should not handle if the log level does not match', async () => {
