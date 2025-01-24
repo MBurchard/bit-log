@@ -140,7 +140,6 @@ export class Logger implements ILogger {
    * If this logger has no registered appender or none of the appender want to handle the LogEvent, it is passed "up"
    * to a possibly existing parent logger.
    *
-   * @internal
    * @param {ILogEvent} event
    * @return {boolean} true if a registered handler will potentially handle this log event
    */
