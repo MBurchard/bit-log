@@ -38,6 +38,10 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
+  "optionalDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "better-sqlite3": "^11.8.1"
+  },
   "devDependencies": {
     "@antfu/eslint-config": "^4.13.2",
     "@tsconfig/node20": "^20.1.5",
