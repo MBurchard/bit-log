@@ -21,7 +21,7 @@ export abstract class AbstractBaseAppender implements IAppender {
 
   formatTimestamp = formatISO8601;
 
-  abstract handle(event: ILogEvent): Promise<void>;
+  abstract handle(event: ILogEvent): void;
 
   willHandle(event: ILogEvent): boolean {
     return !isPresent(this.level) || event.level >= this.level;
