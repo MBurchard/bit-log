@@ -193,21 +193,3 @@ Specifies the file path. By default, this property is set to the OS default temp
 `pretty: boolean`  
 Specifies whether objects to be output should be formatted nicely, i.e. with indents and breaks.
 By default, this property is set to `false`.
-
-### `SQLiteAppender`
-
-With this appender, I just wanted to demonstrate more possibilities.  
-Of course, you can use it, or you can use it as a template.  
-
-The required dependencies `better-sqlite3` and `@types/better-sqlite3` are defined as **optionalDependencies**.
-
-And of course this appender cannot be used in the browser either.
-
-## Todo
-
-  - [x] Improve log output
-  - [x] Documentation
-  - [x] FileAppender
-  - [ ] Should the stack trace really be supported for every log entry?
-
-## Feel free to give me feedback or start a discussion.
