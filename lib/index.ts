@@ -33,7 +33,7 @@ function configureAppender(logger: Logger, appender: string[] | undefined) {
     for (const appenderName of appender) {
       if (appenderName in AppenderRegistry) {
         if (!(appenderName in logger.appender)) {
-          log.info(`registering appender '${appenderName}' to logger '${loggerName}'`);
+          log.debug(`registering appender '${appenderName}' to logger '${loggerName}'`);
           logger.addAppender(appenderName, AppenderRegistry[appenderName], true);
         }
       } else {
@@ -43,12 +43,12 @@ function configureAppender(logger: Logger, appender: string[] | undefined) {
     for (const appenderName in logger.appender) {
       if (!appender.includes(appenderName)) {
         delete logger.appender[appenderName];
-        log.info(`appender '${appenderName}' was removed from logger '${loggerName}'`);
+        log.debug(`appender '${appenderName}' was removed from logger '${loggerName}'`);
       }
     }
   } else {
     for (const appenderName in logger.appender) {
-      log.info(`appender '${appenderName}' was removed from logger '${loggerName}'`);
+      log.debug(`appender '${appenderName}' was removed from logger '${loggerName}'`);
       delete logger.appender[appenderName];
     }
   }
@@ -81,7 +81,7 @@ export function configureLogging(config: LoggingConfig): void {
             log.debug('found existing appender:', appenderName, 'search and replace it');
             for (const [loggerName, logger] of Object.entries(LoggerRegistry)) {
               if (appenderName in logger.appender) {
-                log.info('Replace appender', appenderName, 'in logger', loggerName || 'ROOT');
+                log.debug('Replace appender', appenderName, 'in logger', loggerName || 'ROOT');
                 logger.addAppender(appenderName, instance, true);
               }
             }
@@ -101,7 +101,7 @@ export function configureLogging(config: LoggingConfig): void {
     if (isPresent(config.root.level)) {
       const level = toLogLevel(config.root.level);
       if (root.level !== level) {
-        log.info('changing ROOT logger level from', LogLevel[root.level], 'to', LogLevel[level]);
+        log.debug('changing ROOT logger level from', LogLevel[root.level], 'to', LogLevel[level]);
         root.level = level;
       }
     }
