@@ -82,6 +82,14 @@ export interface ILogger {
   debug: ((...args: unknown[]) => void) & ((msg: () => string) => void);
 
   /**
+   * Used to emit an externally created LogEvent directly.
+   *
+   * @param {ILogEvent} event
+   * @return {boolean}
+   */
+  emit: (event: ILogEvent) => boolean;
+
+  /**
    * Used to log an error message.<br>
    *
    * @see {@link debug}
