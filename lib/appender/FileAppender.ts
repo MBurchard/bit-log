@@ -114,6 +114,7 @@ export class FileAppender extends AbstractBaseAppender {
   extension: string = 'log';
   filePath: string = path.join(os.tmpdir(), 'bit.log');
   pretty: boolean = false;
+  private logQueue = Promise.resolve();
 
   constructor(level?: LogLevel) {
     super();
@@ -128,13 +129,25 @@ export class FileAppender extends AbstractBaseAppender {
    * @return {string}
    */
   getTimestamp(date: Date): string {
-    return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+    return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate()
+      .toString()
+      .padStart(2, '0')}`;
   }
 
   async handle(event: ILogEvent): Promise<void> {
     if (!this.willHandle(event)) {
       return;
     }
+    const currentWrite = this.logQueue.then(() => this.writeToFile(event));
+
+    this.logQueue = currentWrite.catch((err) => {
+      console.error('Error writing LogEvent to file:', err);
+    });
+
+    return currentWrite;
+  }
+
+  async writeToFile(event: ILogEvent): Promise<void> {
     const fullFilePath =
       await calcFullFilePath(this.filePath, this.baseName, this.extension, this.getTimestamp(event.timestamp));
     if (!isPresent(fullFilePath)) {

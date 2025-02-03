@@ -10,6 +10,7 @@ import {
   formatPrefix,
   getAllEntries,
   getClassHierarchy,
+  isClass,
   truncateMiddle,
   truncateOrExtend,
 } from '../utils.js';
@@ -428,5 +429,70 @@ describe('test getAllProperties', () => {
     expect(allProperties).toContainEqual(['stack', expect.any(String)]);
     expect(allProperties).toEqual(expect.arrayContaining([['toString', expect.any(Function)]]));
     expect(allProperties).toEqual(expect.arrayContaining([['constructor', expect.any(Function)]]));
+  });
+});
+
+describe('getAllEntries - missing getter', () => {
+  it('should return "Property Descriptor has no get method!!!" for a property with only a setter', () => {
+    const obj: Record<string, unknown> = {};
+    // eslint-disable-next-line accessor-pairs
+    Object.defineProperty(obj, 'prop', {
+      set() {}, // nur setter, kein getter!
+      enumerable: true,
+      configurable: true,
+    });
+
+    const entries = getAllEntries(obj) as [string, unknown][];
+    const entry = entries.find(([key]) => key === 'prop');
+    expect(entry).toBeDefined();
+    expect(entry![1]).toBe('Property Descriptor has no get method!!!');
+  });
+});
+
+describe('getAllEntries - descriptor throws error', () => {
+  it('should return "Property inaccessible" when getOwnPropertyDescriptor throws an error', () => {
+    const target = {prop: 'value'};
+    const proxy = new Proxy(target, {
+      getOwnPropertyDescriptor(_target, prop) {
+        if (prop === 'prop')
+          throw new Error('Test error');
+        return Reflect.getOwnPropertyDescriptor(target, prop);
+      },
+    });
+
+    const entries = getAllEntries(proxy) as [string, unknown][];
+    const entry = entries.find(([key]) => key === 'prop');
+    expect(entry).toBeDefined();
+    expect(entry![1]).toBe('Property inaccessible');
+  });
+});
+
+describe('getAllEntries - undefined descriptor', () => {
+  it('should return "Property inaccessible" when getOwnPropertyDescriptor returns undefined', () => {
+    const target = {prop: 'value'};
+    const proxy = new Proxy(target, {
+      getOwnPropertyDescriptor(_target, prop) {
+        if (prop === 'prop')
+          return undefined;
+        return Reflect.getOwnPropertyDescriptor(target, prop);
+      },
+    });
+
+    const entries = getAllEntries(proxy) as [string, unknown][];
+    const entry = entries.find(([key]) => key === 'prop');
+    expect(entry).toBeDefined();
+    expect(entry![1]).toBe('Property inaccessible');
+  });
+});
+
+describe('isClass', () => {
+  it('should return false if toString throws an error', () => {
+    const badObject = {
+      toString() {
+        throw new Error('Test error');
+      },
+    };
+
+    expect(isClass(badObject)).toBe(false);
   });
 });
