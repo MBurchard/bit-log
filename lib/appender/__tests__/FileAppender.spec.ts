@@ -1,9 +1,11 @@
+import type {TestContext} from 'vitest';
+import type {ILogEvent, Nullable} from '../../definitions.js';
 import crypto from 'node:crypto';
 import {access, appendFile, chmod, constants, mkdir, readdir, rm, stat} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import {afterEach, beforeEach, describe, expect, it, type TestContext, vi} from 'vitest';
-import {type ILogEvent, LogLevel, type Nullable} from '../../definitions.js';
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
+import {LogLevel} from '../../definitions.js';
 import {exists, FileAppender} from '../FileAppender.js';
 
 export interface CustomTestContext extends TestContext {

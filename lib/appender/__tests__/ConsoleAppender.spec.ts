@@ -1,6 +1,7 @@
+import type {ILogEvent} from '../../definitions.js';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {Ansi} from '../../ansi.js';
-import {type ILogEvent, LogLevel} from '../../definitions.js';
+import {LogLevel} from '../../definitions.js';
 import {ConsoleAppender} from '../ConsoleAppender.js';
 
 describe('test ConsoleAppender', () => {
