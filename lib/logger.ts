@@ -145,9 +145,11 @@ export class Logger implements ILogger {
    */
   emit(event: ILogEvent): boolean {
     let handled = false;
-    for (const [_, appender] of Object.entries(this.appender)) {
+    for (const [appenderName, appender] of Object.entries(this.appender)) {
       if (appender.willHandle(event)) {
-        appender.handle(event);
+        appender.handle(event).catch((reason) => {
+          console.error(`error in appender.handle of ${appenderName}`, reason);
+        });
         handled = true;
       }
     }

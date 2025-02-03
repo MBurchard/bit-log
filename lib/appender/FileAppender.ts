@@ -134,13 +134,17 @@ export class FileAppender extends AbstractBaseAppender {
       .padStart(2, '0')}`;
   }
 
-  handle(event: ILogEvent): void {
+  async handle(event: ILogEvent): Promise<void> {
     if (!this.willHandle(event)) {
       return;
     }
-    this.logQueue = this.logQueue
-      .then(() => this.writeToFile(event))
-      .catch(reason => console.error('error writing LogEvent to file:', reason));
+    const currentWrite = this.logQueue.then(() => this.writeToFile(event));
+
+    this.logQueue = currentWrite.catch((err) => {
+      console.error('Error writing LogEvent to file:', err);
+    });
+
+    return currentWrite;
   }
 
   async writeToFile(event: ILogEvent): Promise<void> {

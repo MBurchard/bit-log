@@ -174,7 +174,7 @@ export interface IAppender {
    * @async
    * @param {ILogEvent} event
    */
-  handle: (event: ILogEvent) => void;
+  handle: (event: ILogEvent) => Promise<void>;
 
   /**
    * Method to check whether the appender is likely to process the LogEvent.<br>
