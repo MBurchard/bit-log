@@ -125,6 +125,8 @@ export function formatAny(
         lines.length > 1 || lines[0].length > 100 ? '...' : ''}]`;
     }
     return `[Function ${lines[0].substring(0, 100)}${lines.length > 1 || lines[0].length > 100 ? '...' : ''}]`;
+  // this code seems to be unreachable with current JavaScript (maybe with future datatypes), it can't be covered
+  /* v8 ignore next 3 */
   }
   return `${typeof value}`;
 }

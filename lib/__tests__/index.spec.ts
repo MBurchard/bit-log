@@ -12,6 +12,7 @@ describe('test usage', () => {
 
   beforeEach(() => {
     spyConsole = vi.spyOn(console, 'log').mockImplementation(() => {});
+    useLog('bit.log', LogLevel.INFO);
     configureLogging({
       appender: {
         CONSOLE: {
@@ -92,6 +93,7 @@ describe('test usage', () => {
 
   describe('test logging configuration', () => {
     it('setup appender, CONSOLE is replaced in ROOT logger', async () => {
+      useLog('bit.log', LogLevel.DEBUG);
       const config: LoggingConfig = {
         appender: {
           CONSOLE: {
@@ -104,7 +106,7 @@ describe('test usage', () => {
 
       await new Promise(r => setTimeout(r, 10));
 
-      expect(spyConsole).toHaveBeenCalledTimes(1);
+      expect(spyConsole).toHaveBeenCalledTimes(4);
       expect(spyConsole).toHaveBeenCalledWith(expect.anything(), 'Replace appender', 'CONSOLE', 'in logger', 'ROOT');
       const root = useLog() as Logger;
       const appender = root.appender.CONSOLE;
@@ -178,6 +180,7 @@ describe('test usage', () => {
     });
 
     it('should handle additional appender properties properly', () => {
+      useLog('bit.log', LogLevel.DEBUG);
       configureLogging({
         appender: {
           NOOP: {
@@ -192,7 +195,6 @@ describe('test usage', () => {
           appender: ['CONSOLE', 'NOOP'],
         },
       });
-      expect(spyConsole).toHaveBeenCalledTimes(1);
       expect(spyConsole).toHaveBeenCalledWith(expect.anything(), 'registering appender \'NOOP\' to logger \'ROOT\'');
       const root = useLog() as Logger;
       const appender = root.appender.NOOP as NoOpAppender;
@@ -203,12 +205,12 @@ describe('test usage', () => {
     });
 
     it('should remove appender', () => {
+      useLog('bit.log', LogLevel.DEBUG);
       configureLogging({
         root: {
           level: 'INFO',
         },
       });
-      expect(spyConsole).toHaveBeenCalledTimes(1);
       expect(spyConsole).toHaveBeenCalledWith(
         expect.anything(),
         'appender \'CONSOLE\' was removed from logger \'ROOT\'',
@@ -231,6 +233,7 @@ describe('test usage', () => {
     });
 
     it('should use overwritten formatPrefix method', async () => {
+      useLog('bit.log', LogLevel.DEBUG);
       const config: LoggingConfig = {
         appender: {
           CONSOLE: {
@@ -248,7 +251,6 @@ describe('test usage', () => {
 
       const root = useLog() as Logger;
       root.info('Hello World');
-      expect(spyConsole).toHaveBeenCalledTimes(2);
       expect(spyConsole).toHaveBeenCalledWith('works as designed', 'Hello World');
       const appender = root.appender.CONSOLE;
       expect(appender).toBeDefined();

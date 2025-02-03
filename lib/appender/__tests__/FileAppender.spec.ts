@@ -1,7 +1,7 @@
 import type {TestContext} from 'vitest';
 import type {ILogEvent, Nullable} from '../../definitions.js';
 import crypto from 'node:crypto';
-import {access, appendFile, chmod, constants, mkdir, readdir, rm, stat} from 'node:fs/promises';
+import {access, appendFile, chmod, constants, mkdir, readdir, readFile, rm, stat} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
@@ -276,5 +276,43 @@ describe('test FileAppender', async () => {
     const stats = await stat(expectedFile);
     expect(stats.isFile()).toBe(true);
     expect(stats.size).toBe(79);
+  });
+
+  it('should handle multiple log events under load and preserve order', async (ctx: CustomTestContext) => {
+    const date = '2024-06-01';
+    const numEvents = 10000;
+    const events: ILogEvent[] = [];
+
+    for (let i = 0; i < numEvents; i++) {
+      events.push({
+        level: LogLevel.INFO,
+        loggerName: 'load.test',
+        payload: [`Event ${i}`],
+        timestamp: new Date(`${date}T12:30:45.678`),
+      });
+    }
+
+    await Promise.all(events.map(event => appender.handle(event)));
+
+    const logFile = path.join(ctx.logDir, `${date}.log`);
+    const content = await readFile(logFile, 'utf-8');
+    const lines = content.split('\n').filter(line => line.trim() !== '');
+
+    expect(lines.length).toBe(numEvents);
+
+    for (let i = 0; i < numEvents; i++) {
+      expect(lines[i]).toContain(`Event ${i}`);
+    }
+  });
+
+  it('should call console.error when writeToFile rejects (logQueue catch block)', async () => {
+    const simulatedError = new Error('Simulated failure');
+    appender.writeToFile = vi.fn(() => Promise.reject(simulatedError));
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const dummyEvent = getDefaultEvent('2024-06-15');
+
+    await expect(appender.handle(dummyEvent)).rejects.toThrow(simulatedError);
+    expect(consoleSpy).toHaveBeenCalledWith('Error writing LogEvent to file:', simulatedError);
   });
 });
