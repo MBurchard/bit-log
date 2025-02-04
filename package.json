@@ -27,9 +27,9 @@
     "dist"
   ],
   "engines": {
-    "node": ">=20",
-    "pnpm": ">=9",
-    "npm": ">=10"
+    "node": ">=22",
+    "pnpm": ">=10",
+    "npm": ">=11"
   },
   "scripts": {
     "build": "vite build",
