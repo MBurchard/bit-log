@@ -1,3 +1,4 @@
+import type {CustomTestContext} from './FileAppender.spec.js';
 import {appendFile, mkdir, stat} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -6,7 +7,7 @@ import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {LogLevel} from '../../definitions.js';
 import {exists} from '../FileAppender.js';
 import {SQLiteAppender} from '../SQLiteAppender.js';
-import {type CustomTestContext, emptyDirectory, genLogDirName, getDefaultEvent} from './FileAppender.spec.js';
+import {emptyDirectory, genLogDirName, getDefaultEvent} from './FileAppender.spec.js';
 
 interface LogEntry {
   id: number;
