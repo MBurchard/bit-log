@@ -23,4 +23,9 @@ export default antfu({
     'style/no-trailing-spaces': 'off',
     'style/max-len': 'off',
   },
+}, {
+  files: ['package.json'],
+  rules: {
+    'style/max-len': 'off',
+  },
 });
