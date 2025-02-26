@@ -9,13 +9,14 @@ export default antfu({
   },
 }, {
   rules: {
-    'curly': 'off',
+    curly: 'off',
     'regexp/strict': 'off',
     'style/block-spacing': ['error', 'never'],
     'style/brace-style': ['error', '1tbs'],
     'style/max-len': ['warn', {code: 120}],
     'style/object-curly-spacing': ['error', 'never'],
     'style/operator-linebreak': ['error', 'after'],
+    'style/quote-props': ['error', 'as-needed', {unnecessary: true}],
   },
 }, {
   files: ['**/*.md'],
@@ -24,7 +25,7 @@ export default antfu({
     'style/max-len': 'off',
   },
 }, {
-  files: ['package.json'],
+  files: ['**/package.json'],
   rules: {
     'style/max-len': 'off',
   },
