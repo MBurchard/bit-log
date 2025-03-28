@@ -4,8 +4,8 @@
  * @file A hierarchic Logger implementation
  * @author Martin Burchard
  */
-import type {IAppender, ILogEvent, ILogger, LogLevelType} from './definitions.js';
-import {isPresent, LogLevel} from './definitions.js';
+import type {IAppender, ILogEvent, ILogger, LogLevel} from './definitions.js';
+import {isPresent, toLogLevel} from './definitions.js';
 
 /**
  * A hierarchic Logger implementation
@@ -15,7 +15,7 @@ import {isPresent, LogLevel} from './definitions.js';
 export class Logger implements ILogger {
   private readonly parent?: ILogger;
   readonly appender: Record<string, IAppender> = {};
-  level: LogLevelType;
+  level: LogLevel;
   readonly name: string;
 
   /**
@@ -24,15 +24,15 @@ export class Logger implements ILogger {
    * @internal
    * @param {string} name the logger name, '' is the root logger
    * @param {Logger} parent All except the root logger have a parent
-   * @param {LogLevelType} level defaults to LogLevel.ERROR
+   * @param {LogLevel} level defaults to ERROR
    */
-  constructor(name: string, parent?: ILogger, level?: LogLevelType) {
+  constructor(name: string, parent?: ILogger, level?: LogLevel) {
     this.name = name;
     this.parent = parent;
-    this.level = level ?? parent?.level ?? LogLevel.ERROR;
+    this.level = level ?? parent?.level ?? 'ERROR';
   }
 
-  private logEvent(level: LogLevelType, ...args: unknown[]) {
+  private logEvent(level: LogLevel, ...args: unknown[]) {
     if (!this.shouldLog(level)) {
       return;
     }
@@ -57,11 +57,11 @@ export class Logger implements ILogger {
    * Checks if the given LogLevel is processed by this or a parent logger.
    *
    * @private
-   * @param {LogLevelType} level
+   * @param {LogLevel} level
    * @return {boolean} true if this LogLevel should be logged
    */
-  shouldLog(level: LogLevelType): boolean {
-    return level >= this.level;
+  shouldLog(level: LogLevel): boolean {
+    return toLogLevel(level) >= toLogLevel(this.level);
   }
 
   /**
@@ -97,7 +97,7 @@ export class Logger implements ILogger {
   }
 
   /**
-   * Log something with LogLevel.DEBUG.
+   * Log something with LogLevelValue.DEBUG.
    * This method has the same signature as the well-known console.log.
    * Typical loggers or appender will probably, like console.log, combine the given parameters into a string.
    * Of course, this depends on the implementation of the registered appender.
@@ -107,7 +107,7 @@ export class Logger implements ILogger {
    * @param args
    */
   debug(...args: unknown[]) {
-    this.logEvent(LogLevel.DEBUG, ...args);
+    this.logEvent('DEBUG', ...args);
   }
 
   /**
@@ -115,7 +115,7 @@ export class Logger implements ILogger {
    * @param args
    */
   error(...args: unknown[]) {
-    this.logEvent(LogLevel.ERROR, ...args);
+    this.logEvent('ERROR', ...args);
   }
 
   /**
@@ -123,7 +123,7 @@ export class Logger implements ILogger {
    * @param args
    */
   fatal(...args: unknown[]) {
-    this.logEvent(LogLevel.FATAL, ...args);
+    this.logEvent('FATAL', ...args);
   }
 
   /**
@@ -131,7 +131,7 @@ export class Logger implements ILogger {
    * @param args
    */
   info(...args: unknown[]) {
-    this.logEvent(LogLevel.INFO, ...args);
+    this.logEvent('INFO', ...args);
   }
 
   /**
@@ -164,7 +164,7 @@ export class Logger implements ILogger {
    * @param args
    */
   trace(...args: unknown[]) {
-    this.logEvent(LogLevel.TRACE, ...args);
+    this.logEvent('TRACE', ...args);
   }
 
   /**
@@ -172,6 +172,6 @@ export class Logger implements ILogger {
    * @param args
    */
   warn(...args: unknown[]) {
-    this.logEvent(LogLevel.WARN, ...args);
+    this.logEvent('WARN', ...args);
   }
 }

@@ -1,7 +1,6 @@
 import type {MockInstance} from 'vitest';
 import type {IAppender, ILogEvent} from '../definitions.js';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
-import {LogLevel} from '../definitions.js';
 import {Logger} from '../logger.js';
 
 describe('test logger', () => {
@@ -9,7 +8,7 @@ describe('test logger', () => {
 
   beforeEach(() => {
     mockAppender = {
-      level: LogLevel.INFO,
+      level: 'INFO',
       handle: vi.fn().mockResolvedValue(undefined),
       willHandle: vi.fn().mockReturnValue(true),
     };
@@ -23,19 +22,19 @@ describe('test logger', () => {
     it('without loglevel', () => {
       const logger = new Logger('');
       expect(logger.name).toBe('');
-      expect(logger.level).toBe(LogLevel.ERROR);
+      expect(logger.level).toBe('ERROR');
     });
 
     it('with loglevel', () => {
-      const logger = new Logger('foo.bar', undefined, LogLevel.INFO);
+      const logger = new Logger('foo.bar', undefined, 'INFO');
       expect(logger.name).toBe('foo.bar');
-      expect(logger.level).toBe(LogLevel.INFO);
+      expect(logger.level).toBe('INFO');
     });
 
     it('with loglevel from parent', () => {
-      const parent = new Logger('', undefined, LogLevel.INFO);
+      const parent = new Logger('', undefined, 'INFO');
       const child = new Logger('foo', parent);
-      expect(child.level).toBe(LogLevel.INFO);
+      expect(child.level).toBe('INFO');
     });
   });
 
@@ -43,7 +42,7 @@ describe('test logger', () => {
     let logger: Logger;
 
     beforeEach(() => {
-      logger = new Logger('foo.bar', undefined, LogLevel.INFO);
+      logger = new Logger('foo.bar', undefined, 'INFO');
     });
 
     it('add new appender', () => {
@@ -68,7 +67,7 @@ describe('test logger', () => {
       const name = 'TestAppender';
       logger.addAppender(name, mockAppender);
       const appender2: IAppender = {
-        level: LogLevel.DEBUG,
+        level: 'DEBUG',
         handle: async () => {
         },
         willHandle: () => {
@@ -134,11 +133,11 @@ describe('test logger', () => {
     let root: Logger;
 
     beforeEach(() => {
-      root = new Logger('', undefined, LogLevel.TRACE);
+      root = new Logger('', undefined, 'TRACE');
     });
 
     it('should get the log event', () => {
-      const logger = new Logger('foo', root, LogLevel.INFO);
+      const logger = new Logger('foo', root, 'INFO');
       const spyEmit = vi.spyOn(root, 'emit');
 
       const now = Date.now();
@@ -146,7 +145,7 @@ describe('test logger', () => {
 
       expect(spyEmit).toHaveBeenCalledTimes(1);
       expect(spyEmit).toHaveBeenCalledWith({
-        level: LogLevel.INFO,
+        level: 'INFO',
         loggerName: 'foo',
         payload: ['Test info'],
         timestamp: expect.any(Date),
@@ -162,7 +161,7 @@ describe('test logger', () => {
     let spyEmit: MockInstance<(event: ILogEvent) => boolean>;
 
     beforeEach(() => {
-      logger = new Logger('TestLogger', undefined, LogLevel.TRACE);
+      logger = new Logger('TestLogger', undefined, 'TRACE');
       spyEmit = vi.spyOn(logger, 'emit');
     });
 
@@ -171,7 +170,7 @@ describe('test logger', () => {
       logger.trace('test trace');
       expect(spyEmit).toHaveBeenCalledTimes(1);
       expect(spyEmit).toHaveBeenCalledWith({
-        level: LogLevel.TRACE,
+        level: 'TRACE',
         loggerName: 'TestLogger',
         payload: ['test trace'],
         timestamp: expect.any(Date),
@@ -182,7 +181,7 @@ describe('test logger', () => {
       logger.debug('test debug');
       expect(spyEmit).toHaveBeenCalledTimes(1);
       expect(spyEmit).toHaveBeenCalledWith({
-        level: LogLevel.DEBUG,
+        level: 'DEBUG',
         loggerName: 'TestLogger',
         payload: ['test debug'],
         timestamp: expect.any(Date),
@@ -194,7 +193,7 @@ describe('test logger', () => {
       logger.info('test info');
       expect(spyEmit).toHaveBeenCalledTimes(1);
       expect(spyEmit).toHaveBeenCalledWith({
-        level: LogLevel.INFO,
+        level: 'INFO',
         loggerName: 'TestLogger',
         payload: ['test info'],
         timestamp: expect.any(Date),
@@ -205,7 +204,7 @@ describe('test logger', () => {
       logger.warn('test warn');
       expect(spyEmit).toHaveBeenCalledTimes(1);
       expect(spyEmit).toHaveBeenCalledWith({
-        level: LogLevel.WARN,
+        level: 'WARN',
         loggerName: 'TestLogger',
         payload: ['test warn'],
         timestamp: expect.any(Date),
@@ -216,7 +215,7 @@ describe('test logger', () => {
       logger.error('test error', new Error('CustomError'));
       expect(spyEmit).toHaveBeenCalledTimes(1);
       expect(spyEmit).toHaveBeenCalledWith({
-        level: LogLevel.ERROR,
+        level: 'ERROR',
         loggerName: 'TestLogger',
         payload: ['test error', new Error('CustomError')],
         timestamp: expect.any(Date),
@@ -227,7 +226,7 @@ describe('test logger', () => {
       logger.fatal('test fatal');
       expect(spyEmit).toHaveBeenCalledTimes(1);
       expect(spyEmit).toHaveBeenCalledWith({
-        level: LogLevel.FATAL,
+        level: 'FATAL',
         loggerName: 'TestLogger',
         payload: ['test fatal'],
         timestamp: expect.any(Date),
@@ -241,7 +240,7 @@ describe('test logger', () => {
     });
 
     it('should not execute log method parameter, if log level is to low', () => {
-      logger.level = LogLevel.ERROR;
+      logger.level = 'ERROR';
       const mockLog = vi.fn().mockReturnValue('jest mock log function');
       logger.debug(mockLog);
       expect(mockLog).toHaveBeenCalledTimes(0);

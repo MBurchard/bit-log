@@ -1,7 +1,6 @@
 import type {ILogEvent} from '../../definitions.js';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {Ansi} from '../../ansi.js';
-import {LogLevel} from '../../definitions.js';
 import {ConsoleAppender} from '../ConsoleAppender.js';
 
 describe('test ConsoleAppender', () => {
@@ -22,8 +21,8 @@ describe('test ConsoleAppender', () => {
   });
 
   it('constructor with log level', () => {
-    appender = new ConsoleAppender(LogLevel.INFO);
-    expect(appender.level).toBe(LogLevel.INFO);
+    appender = new ConsoleAppender('INFO');
+    expect(appender.level).toBe('INFO');
   });
 
   it('logs with specific console methods', async () => {
@@ -45,12 +44,12 @@ describe('test ConsoleAppender', () => {
 
     // when
     // noinspection DuplicatedCode
-    await appender.handle({level: LogLevel.TRACE, timestamp: now, loggerName: 'foo.bar', payload: ['test trace']});
-    await appender.handle({level: LogLevel.DEBUG, timestamp: now, loggerName: 'foo.bar', payload: ['test debug']});
-    await appender.handle({level: LogLevel.INFO, timestamp: now, loggerName: 'foo.bar', payload: ['test info']});
-    await appender.handle({level: LogLevel.WARN, timestamp: now, loggerName: 'foo.bar', payload: ['test warn']});
-    await appender.handle({level: LogLevel.ERROR, timestamp: now, loggerName: 'foo.bar', payload: ['test error']});
-    await appender.handle({level: LogLevel.FATAL, timestamp: now, loggerName: 'foo.bar', payload: ['test fatal']});
+    await appender.handle({level: 'TRACE', timestamp: now, loggerName: 'foo.bar', payload: ['test trace']});
+    await appender.handle({level: 'DEBUG', timestamp: now, loggerName: 'foo.bar', payload: ['test debug']});
+    await appender.handle({level: 'INFO', timestamp: now, loggerName: 'foo.bar', payload: ['test info']});
+    await appender.handle({level: 'WARN', timestamp: now, loggerName: 'foo.bar', payload: ['test warn']});
+    await appender.handle({level: 'ERROR', timestamp: now, loggerName: 'foo.bar', payload: ['test error']});
+    await appender.handle({level: 'FATAL', timestamp: now, loggerName: 'foo.bar', payload: ['test fatal']});
 
     // then
     expect(trace).toHaveBeenCalledTimes(1);
@@ -75,12 +74,12 @@ describe('test ConsoleAppender', () => {
     });
 
     // when
-    await appender.handle({level: LogLevel.TRACE, timestamp: now, loggerName: 'foo.bar', payload: ['test trace']});
-    await appender.handle({level: LogLevel.DEBUG, timestamp: now, loggerName: 'foo.bar', payload: ['test debug']});
-    await appender.handle({level: LogLevel.INFO, timestamp: now, loggerName: 'foo.bar', payload: ['test info']});
-    await appender.handle({level: LogLevel.WARN, timestamp: now, loggerName: 'foo.bar', payload: ['test warn']});
-    await appender.handle({level: LogLevel.ERROR, timestamp: now, loggerName: 'foo.bar', payload: ['test error']});
-    await appender.handle({level: LogLevel.FATAL, timestamp: now, loggerName: 'foo.bar', payload: ['test fatal']});
+    await appender.handle({level: 'TRACE', timestamp: now, loggerName: 'foo.bar', payload: ['test trace']});
+    await appender.handle({level: 'DEBUG', timestamp: now, loggerName: 'foo.bar', payload: ['test debug']});
+    await appender.handle({level: 'INFO', timestamp: now, loggerName: 'foo.bar', payload: ['test info']});
+    await appender.handle({level: 'WARN', timestamp: now, loggerName: 'foo.bar', payload: ['test warn']});
+    await appender.handle({level: 'ERROR', timestamp: now, loggerName: 'foo.bar', payload: ['test error']});
+    await appender.handle({level: 'FATAL', timestamp: now, loggerName: 'foo.bar', payload: ['test fatal']});
 
     // then
     expect(log).toHaveBeenCalledTimes(6);
@@ -95,14 +94,14 @@ describe('test ConsoleAppender', () => {
   it('do not log if loglevel does not match', async () => {
     // given
     const now = new Date();
-    appender.level = LogLevel.INFO;
+    appender.level = 'INFO';
     // noinspection DuplicatedCode
     const log = vi.spyOn(console, 'log').mockImplementation(() => {
     });
 
     // when
     await appender.handle({
-      level: LogLevel.DEBUG,
+      level: 'DEBUG',
       timestamp: now,
       loggerName: 'foo.bar',
       payload: () => {
@@ -110,7 +109,7 @@ describe('test ConsoleAppender', () => {
       },
     });
     await appender.handle({
-      level: LogLevel.INFO,
+      level: 'INFO',
       timestamp: now,
       loggerName: 'foo.bar',
       payload: () => {
@@ -125,9 +124,9 @@ describe('test ConsoleAppender', () => {
 
   it('willHandle returns false', () => {
     // given
-    appender.level = LogLevel.INFO;
+    appender.level = 'INFO';
     const event: ILogEvent = {
-      level: LogLevel.DEBUG,
+      level: 'DEBUG',
       timestamp: new Date(),
       loggerName: 'foo.bar',
       payload: ['test debug'],
@@ -141,9 +140,9 @@ describe('test ConsoleAppender', () => {
 
   it('willHandle returns true', () => {
     // given
-    appender.level = LogLevel.INFO;
+    appender.level = 'INFO';
     const event: ILogEvent = {
-      level: LogLevel.INFO,
+      level: 'INFO',
       timestamp: new Date(),
       loggerName: 'foo.bar',
       payload: ['test debug'],
@@ -159,7 +158,7 @@ describe('test ConsoleAppender', () => {
     const log = vi.spyOn(console, 'log');
     appender.colored = true;
     await appender.handle({
-      level: LogLevel.INFO,
+      level: 'INFO',
       timestamp: new Date(),
       loggerName: 'foo.bar',
       payload: ['Text', 42, false, {prop: 'Test'}],
@@ -184,7 +183,7 @@ describe('test ConsoleAppender overwrite formatting', () => {
   it('should use default ISO 8601 date format', async () => {
     const log = vi.spyOn(console, 'log');
     const event: ILogEvent = {
-      level: LogLevel.INFO,
+      level: 'INFO',
       timestamp: new Date('2024-05-08T12:30:45.678'),
       loggerName: 'foo.bar',
       payload: ['test info'],
@@ -205,7 +204,7 @@ describe('test ConsoleAppender overwrite formatting', () => {
       return `${day}.${month}.${date.getFullYear()}`;
     };
     const event: ILogEvent = {
-      level: LogLevel.INFO,
+      level: 'INFO',
       timestamp: new Date('2024-05-08T12:30:45.678'),
       loggerName: 'foo.bar',
       payload: ['test info'],

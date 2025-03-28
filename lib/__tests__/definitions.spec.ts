@@ -1,6 +1,6 @@
 import type {IAppender} from '../definitions.js';
 import {describe, expect, it} from 'vitest';
-import {isAppenderConfig, isPresent, LogLevel, toLogLevel} from '../definitions.js';
+import {isAppenderConfig, isPresent, toLogLevel, toLogLevelString} from '../definitions.js';
 
 describe('test definitions', () => {
   it('isAppenderConfig', () => {
@@ -23,24 +23,21 @@ describe('test definitions', () => {
     expect(isPresent(0)).toBe(true);
   });
 
-  it('toLogLevel', () => {
+  it('should convert values correctly to LogLevel', () => {
     expect(toLogLevel(undefined)).toBeUndefined();
-    expect(toLogLevel('ERROR')).toBe(LogLevel.ERROR);
-    expect(toLogLevel(LogLevel.DEBUG)).toBe(LogLevel.DEBUG);
-    expect(toLogLevel(30)).toBe(LogLevel.WARN);
-    try {
-      // @ts-expect-error for test
-      toLogLevel('foobar');
-    } catch (e) {
-      expect(e).toBeInstanceOf(Error);
-      expect(e.message).toBe('not a valid LogLevel: \'foobar\'');
-    }
-    try {
-      // @ts-expect-error for test
-      toLogLevel(12);
-    } catch (e) {
-      expect(e).toBeInstanceOf(Error);
-      expect(e.message).toBe('not a valid LogLevel: \'12\'');
-    }
+    expect(toLogLevel(null)).toBeUndefined();
+    expect(toLogLevel('ERROR')).toBe(40);
+    expect(toLogLevel(30)).toBe(30);
+    // @ts-expect-error for test
+    expect(toLogLevel('foobar')).toBeUndefined();
+    expect(toLogLevel(12)).toBe(12);
+  });
+
+  it('should show LogLevel as string', () => {
+    expect(toLogLevelString('ERROR')).toBe('ERROR');
+    expect(toLogLevelString(10)).toBe('DEBUG');
+    expect(toLogLevelString(-1)).toBe('TRACE');
+    expect(toLogLevelString(9)).toBe('TRACE');
+    expect(toLogLevelString(999)).toBe('FATAL');
   });
 });

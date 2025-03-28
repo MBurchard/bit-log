@@ -1,13 +1,13 @@
 /* eslint-disable no-console */
-import type {ILogEvent, LogLevelType} from '../definitions.js';
-import {isPresent, LogLevel} from '../definitions.js';
+import type {ILogEvent, LogLevel} from '../definitions.js';
+import {isPresent, toLogLevelString} from '../definitions.js';
 import {AbstractBaseAppender} from './AbstractBaseAppender.js';
 
 export class ConsoleAppender extends AbstractBaseAppender {
   colored: boolean = false;
   pretty: boolean = false;
 
-  constructor(level?: LogLevelType) {
+  constructor(level?: LogLevel) {
     super();
     if (isPresent(level)) {
       this.level = level;
@@ -36,23 +36,23 @@ export class ConsoleAppender extends AbstractBaseAppender {
     }
     let loggingMethod = console.log;
     if (this._useSpecificMethods) {
-      switch (event.level) {
-        case LogLevel.DEBUG:
+      switch (toLogLevelString(event.level)) {
+        case 'DEBUG':
           loggingMethod = console.debug;
           break;
-        case LogLevel.ERROR:
+        case 'ERROR':
           loggingMethod = console.error;
           break;
-        case LogLevel.FATAL:
+        case 'FATAL':
           loggingMethod = console.error;
           break;
-        case LogLevel.INFO:
+        case 'INFO':
           loggingMethod = console.info;
           break;
-        case LogLevel.TRACE:
+        case 'TRACE':
           loggingMethod = console.trace;
           break;
-        case LogLevel.WARN:
+        case 'WARN':
           loggingMethod = console.warn;
           break;
       }

@@ -1,10 +1,9 @@
 import type {MockInstance} from 'vitest';
-import type {LoggingConfig, LogLevelType} from '../definitions.js';
+import type {LoggingConfig, LogLevel} from '../definitions.js';
 import type {Logger} from '../logger.js';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {AbstractBaseAppender} from '../appender/AbstractBaseAppender.js';
 import {ConsoleAppender} from '../appender/ConsoleAppender.js';
-import {LogLevel, LogLevelName} from '../definitions.js';
 import {configureLogging, useLog} from '../index.js';
 
 describe('test usage', () => {
@@ -12,7 +11,7 @@ describe('test usage', () => {
 
   beforeEach(() => {
     spyConsole = vi.spyOn(console, 'log').mockImplementation(() => {});
-    useLog('bit.log', LogLevel.INFO);
+    useLog('bit.log', 'INFO');
     configureLogging({
       appender: {
         CONSOLE: {
@@ -29,12 +28,6 @@ describe('test usage', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
-  });
-
-  it('should show Level as String', () => {
-    const level = LogLevel.DEBUG;
-    const txt = `Test: ${LogLevelName[level]}`;
-    expect(txt).toBe('Test: DEBUG');
   });
 
   describe('test default configuration', () => {
@@ -61,7 +54,7 @@ describe('test usage', () => {
     it('default root logger', () => {
       const logger = useLog();
       expect(logger).toEqual({
-        level: LogLevel.INFO,
+        level: 'INFO',
         name: '',
         parent: undefined,
         appender: {
@@ -74,15 +67,15 @@ describe('test usage', () => {
       const logger = useLog('foo.bar');
       expect(logger).toEqual({
         appender: {},
-        level: LogLevel.INFO,
+        level: 'INFO',
         name: 'foo.bar',
         parent: {
           appender: {},
-          level: LogLevel.INFO,
+          level: 'INFO',
           name: 'foo',
           parent: {
             appender: expect.anything(),
-            level: LogLevel.INFO,
+            level: 'INFO',
             name: '',
             parent: undefined,
           },
@@ -93,12 +86,12 @@ describe('test usage', () => {
 
   describe('test logging configuration', () => {
     it('setup appender, CONSOLE is replaced in ROOT logger', async () => {
-      useLog('bit.log', LogLevel.DEBUG);
+      useLog('bit.log', 'DEBUG');
       const config: LoggingConfig = {
         appender: {
           CONSOLE: {
             Class: ConsoleAppender,
-            level: LogLevel.DEBUG,
+            level: 'DEBUG',
           },
         },
       };
@@ -111,7 +104,7 @@ describe('test usage', () => {
       const root = useLog() as Logger;
       const appender = root.appender.CONSOLE;
       expect(appender).toBeDefined();
-      expect(appender.level).toBe(LogLevel.DEBUG);
+      expect(appender.level).toBe('DEBUG');
     });
 
     it('appender may throw errors on initialization', () => {
@@ -169,7 +162,7 @@ describe('test usage', () => {
       configureLogging({
         root: {
           appender: ['FILE'],
-          level: LogLevel.INFO,
+          level: 'INFO',
         },
       });
       expect(spyConsole).toHaveBeenCalledTimes(1);
@@ -180,7 +173,7 @@ describe('test usage', () => {
     });
 
     it('should handle additional appender properties properly', () => {
-      useLog('bit.log', LogLevel.DEBUG);
+      useLog('bit.log', 'DEBUG');
       configureLogging({
         appender: {
           NOOP: {
@@ -205,7 +198,7 @@ describe('test usage', () => {
     });
 
     it('should remove appender', () => {
-      useLog('bit.log', LogLevel.DEBUG);
+      useLog('bit.log', 'DEBUG');
       configureLogging({
         root: {
           level: 'INFO',
@@ -228,18 +221,18 @@ describe('test usage', () => {
       const foo = useLog('foo');
       const bar = useLog('foo.bar');
       // because the root logger has level INFO at the moment when foo logger has been created
-      expect(foo.level).toBe(LogLevel.INFO);
-      expect(bar.level).toBe(LogLevel.DEBUG);
+      expect(foo.level).toBe('INFO');
+      expect(bar.level).toBe('DEBUG');
     });
 
     it('should use overwritten formatPrefix method', async () => {
-      useLog('bit.log', LogLevel.DEBUG);
+      useLog('bit.log', 'DEBUG');
       const config: LoggingConfig = {
         appender: {
           CONSOLE: {
             Class: ConsoleAppender,
-            level: LogLevel.DEBUG,
-            formatPrefix: (_ts: Date, _level: LogLevelType, _name: string, _colored: boolean = false): string => {
+            level: 'DEBUG',
+            formatPrefix: (_ts: Date, _level: LogLevel, _name: string, _colored: boolean = false): string => {
               return 'works as designed';
             },
           },
@@ -254,7 +247,7 @@ describe('test usage', () => {
       expect(spyConsole).toHaveBeenCalledWith('works as designed', 'Hello World');
       const appender = root.appender.CONSOLE;
       expect(appender).toBeDefined();
-      expect(appender.level).toBe(LogLevel.DEBUG);
+      expect(appender.level).toBe('DEBUG');
     });
   });
 });

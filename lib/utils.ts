@@ -1,6 +1,6 @@
-import type {LogLevelType} from './definitions.js';
+import type {LogLevel} from './definitions.js';
 import {Ansi} from './ansi.js';
-import {isPresent, LogLevel, LogLevelName} from './definitions.js';
+import {isPresent, toLogLevelString} from './definitions.js';
 
 /**
  * @internal
@@ -126,8 +126,8 @@ export function formatAny(
         lines.length > 1 || lines[0].length > 100 ? '...' : ''}]`;
     }
     return `[Function ${lines[0].substring(0, 100)}${lines.length > 1 || lines[0].length > 100 ? '...' : ''}]`;
-  // this code seems to be unreachable with current JavaScript (maybe with future datatypes), it can't be covered
-  /* v8 ignore next 3 */
+    // this code seems to be unreachable with current JavaScript (maybe with future datatypes), it can't be covered
+    /* v8 ignore next 3 */
   }
   return `${typeof value}`;
 }
@@ -243,26 +243,28 @@ export function formatISO8601(date: Date): string {
  * @param level
  * @param colored
  */
-export function formatLogLevel(level: LogLevelType, colored: boolean = false): string {
-  if (colored) {
-    switch (level) {
-      case LogLevel.DEBUG:
-        return Ansi.gray('DEBUG');
-      case LogLevel.ERROR:
-        return Ansi.red('ERROR');
-      case LogLevel.FATAL:
-        return Ansi.magenta('FATAL');
-      case LogLevel.INFO:
-        return Ansi.green('INFO');
-      case LogLevel.TRACE:
-        return Ansi.darkGray('TRACE');
-      case LogLevel.WARN:
-        return Ansi.yellow('WARN');
-      default:
-        return '';
-    }
+export function formatLogLevel(level: LogLevel, colored: boolean = false): string {
+  const name = toLogLevelString(level);
+  if (!colored) {
+    return name;
   }
-  return LogLevelName[level];
+
+  switch (name) {
+    case 'DEBUG':
+      return Ansi.gray(name);
+    case 'ERROR':
+      return Ansi.red(name);
+    case 'FATAL':
+      return Ansi.magenta(name);
+    case 'INFO':
+      return Ansi.green(name);
+    case 'TRACE':
+      return Ansi.darkGray(name);
+    case 'WARN':
+      return Ansi.yellow(name);
+    default:
+      return name;
+  }
 }
 
 /**
@@ -276,7 +278,7 @@ export function formatLogLevel(level: LogLevelType, colored: boolean = false): s
  * @param {boolean} colored
  * @return {string}
  */
-export function formatPrefix(ts: Date, level: LogLevelType, name: string, colored: boolean = false): string {
+export function formatPrefix(ts: Date, level: LogLevel, name: string, colored: boolean = false): string {
   let formattedLevel;
   if (colored) {
     formattedLevel = formatLogLevel(level, colored).padStart(13, ' ');

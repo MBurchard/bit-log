@@ -5,7 +5,6 @@ import {access, appendFile, chmod, constants, mkdir, readdir, readFile, rm, stat
 import os from 'node:os';
 import path from 'node:path';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
-import {LogLevel} from '../../definitions.js';
 import {exists, FileAppender} from '../FileAppender.js';
 
 export interface CustomTestContext extends TestContext {
@@ -42,7 +41,7 @@ export async function emptyDirectory(dirPath: string): Promise<boolean> {
 
 export function getDefaultEvent(date: string = '2024-04-01'): ILogEvent {
   return {
-    level: LogLevel.INFO,
+    level: 'INFO',
     loggerName: 'foo.bar',
     payload: ['Hallo', 'Welt'],
     timestamp: new Date(`${date}T12:30:45.678`),
@@ -78,8 +77,8 @@ describe('test FileAppender', async () => {
   });
 
   it('constructor with log level', () => {
-    appender = new FileAppender(LogLevel.INFO);
-    expect(appender.level).toBe(LogLevel.INFO);
+    appender = new FileAppender('INFO');
+    expect(appender.level).toBe('INFO');
   });
 
   it('should create a logfile and add the logging', async (ctx: CustomTestContext) => {
@@ -219,9 +218,9 @@ describe('test FileAppender', async () => {
 
   it('should not handle the log event if level does not fit', async (ctx: CustomTestContext) => {
     const date = '2024-05-12';
-    appender = new FileAppender(LogLevel.INFO);
+    appender = new FileAppender('INFO');
     const event = getDefaultEvent(date);
-    event.level = LogLevel.DEBUG;
+    event.level = 'DEBUG';
     await appender.handle(event);
     const expectedFile = path.join(ctx.logDir, `${date}.log`);
     expect(await exists(expectedFile)).toBe(false);
@@ -255,7 +254,7 @@ describe('test FileAppender', async () => {
     appender.pretty = true;
     appender.colored = true;
     await appender.handle({
-      level: LogLevel.INFO,
+      level: 'INFO',
       loggerName: 'foo.bar',
       payload: ['Hallo Welt:', 100, false, {
         k1: true,
@@ -269,14 +268,14 @@ describe('test FileAppender', async () => {
       throw new Error('This is a test error');
     } catch (err) {
       await appender.handle({
-        level: LogLevel.ERROR,
+        level: 'ERROR',
         loggerName: 'foo.bar',
         payload: ['Error somewhere in your code:', err],
         timestamp: new Date('2024-05-09T17:59:59.444'),
       });
     }
     await appender.handle({
-      level: LogLevel.INFO,
+      level: 'INFO',
       loggerName: 'foo.bar',
       payload: ['Hallo', 'Welt'],
       timestamp: new Date('2024-05-08T12:30:45.678'),
@@ -294,7 +293,7 @@ describe('test FileAppender', async () => {
 
     for (let i = 0; i < numEvents; i++) {
       events.push({
-        level: LogLevel.INFO,
+        level: 'INFO',
         loggerName: 'load.test',
         payload: [`Event ${i}`],
         timestamp: new Date(`${date}T12:30:45.678`),

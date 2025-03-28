@@ -17,14 +17,9 @@ export function isPresent<T>(value: T): value is NonNullable<T> {
 }
 
 /**
- * Log level type strings.
- */
-export type LogLevelString = 'DEBUG' | 'ERROR' | 'FATAL' | 'INFO' | 'OFF' | 'TRACE' | 'WARN';
-
-/**
  * Log level definition.
  */
-export const LogLevel = {
+const LogLevelMap = {
   TRACE: 0,
   DEBUG: 10,
   INFO: 20,
@@ -34,35 +29,32 @@ export const LogLevel = {
   OFF: 1000,
 } as const;
 
-export type LogLevelType = (typeof LogLevel)[keyof typeof LogLevel];
+export type LogLevel = keyof typeof LogLevelMap | number;
 
-export const LogLevelName = Object.fromEntries(
-  Object.entries(LogLevel).map(([k, v]) => [v, k]),
-) as Record<(typeof LogLevel)[keyof typeof LogLevel], keyof typeof LogLevel>;
-
-/**
- * Get LogLevel for the given log level string.
- *
- * @internal
- * @param {LogLevelString | LogLevel} value
- * @throws {Error} an error if the given string is not a valid LogLevel
- */
-export function toLogLevel(value: undefined): undefined;
-export function toLogLevel(value: LogLevelString | LogLevelType): LogLevelType;
-export function toLogLevel(value: LogLevelString | LogLevelType | undefined): LogLevelType | undefined {
-  if (value === undefined) {
-    return undefined;
-  }
-  if (typeof value === 'string' && value in LogLevel) {
-    return LogLevel[value];
-  }
+export function toLogLevel(value: undefined | null): undefined;
+export function toLogLevel(value: LogLevel): LogLevel;
+export function toLogLevel(value: LogLevel | undefined | null): LogLevel | undefined {
   if (typeof value === 'number') {
-    const values = Object.values(LogLevel);
-    if (values.includes(value)) {
-      return value;
+    return value;
+  }
+  if (typeof value === 'string') {
+    return LogLevelMap[value as keyof typeof LogLevelMap];
+  }
+  return undefined;
+}
+
+export function toLogLevelString(level: LogLevel): string {
+  if (typeof level === 'string') {
+    return level;
+  }
+
+  for (const [key, num] of Object.entries(LogLevelMap).reverse()) {
+    if (level >= num) {
+      return key;
     }
   }
-  throw new Error(`not a valid LogLevel: '${value}'`);
+
+  return `TRACE`;
 }
 
 /**
@@ -73,7 +65,7 @@ export interface ILogger {
   /**
    * the logLevel set for this Logger
    */
-  level?: LogLevelType;
+  level?: LogLevel;
 
   /**
    * the name or namespace for this logger<br>
@@ -122,7 +114,7 @@ export interface ILogger {
    * @param {LogLevel} level
    * @return {boolean}
    */
-  shouldLog: (level: LogLevelType) => boolean;
+  shouldLog: (level: LogLevel) => boolean;
 
   /**
    * Used to log a trace message.<br>
@@ -144,7 +136,7 @@ export interface ILogEvent {
   /**
    * LogLevel of the triggering logger
    */
-  level: LogLevelType;
+  level: LogLevel;
   /**
    * Name(space) of the triggering logger
    */
@@ -167,7 +159,7 @@ export interface IAppender {
   /**
    * The level that the appender will handle
    */
-  level?: LogLevelType;
+  level?: LogLevel;
 
   /**
    * Some appender may need a close method at the end
@@ -196,7 +188,7 @@ export interface IAppender {
  */
 export interface AppenderConfig {
   Class: new () => IAppender;
-  level?: LogLevelType | LogLevelString;
+  level?: LogLevel;
 
   [key: string]: undefined | NonNullable<unknown>;
 }
@@ -215,7 +207,7 @@ export function isAppenderConfig<T extends AppenderConfig>(sth: NonNullable<T>):
  * Logger configuration
  */
 export interface LoggerConfig {
-  level: LogLevelType | LogLevelString;
+  level: LogLevel;
   appender?: string[];
 }
 
