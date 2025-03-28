@@ -1,4 +1,4 @@
-import type {ILogEvent, LogLevel} from '../definitions.js';
+import type {ILogEvent, LogLevelType} from '../definitions.js';
 import {access, appendFile, constants, stat} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -116,7 +116,7 @@ export class FileAppender extends AbstractBaseAppender {
   pretty: boolean = false;
   private logQueue = Promise.resolve();
 
-  constructor(level?: LogLevel) {
+  constructor(level?: LogLevelType) {
     super();
     if (isPresent(level)) {
       this.level = level;

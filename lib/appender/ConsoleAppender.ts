@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import type {ILogEvent} from '../definitions.js';
+import type {ILogEvent, LogLevelType} from '../definitions.js';
 import {isPresent, LogLevel} from '../definitions.js';
 import {AbstractBaseAppender} from './AbstractBaseAppender.js';
 
@@ -7,7 +7,7 @@ export class ConsoleAppender extends AbstractBaseAppender {
   colored: boolean = false;
   pretty: boolean = false;
 
-  constructor(level?: LogLevel) {
+  constructor(level?: LogLevelType) {
     super();
     if (isPresent(level)) {
       this.level = level;
