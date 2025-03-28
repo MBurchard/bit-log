@@ -5,16 +5,16 @@
  * @author Martin Burchard
  */
 
-import type {IAppender, ILogger, LoggingConfig, LogLevelType} from './definitions.js';
+import type {IAppender, ILogger, LoggingConfig, LogLevel} from './definitions.js';
 import {ConsoleAppender} from './appender/ConsoleAppender.js';
-import {isAppenderConfig, isPresent, LogLevel, LogLevelName, toLogLevel} from './definitions.js';
+import {isAppenderConfig, isPresent} from './definitions.js';
 import {Logger} from './logger.js';
 import {formatAny} from './utils.js';
 
 const LoggerRegistry: Record<string, Logger> = {};
 const AppenderRegistry: Record<string, IAppender> = {};
 
-const log = useLog('bit.log', LogLevel.INFO);
+const log = useLog('bit.log', 'INFO');
 configureLogging({
   appender: {
     CONSOLE: {
@@ -69,7 +69,7 @@ export function configureLogging(config: LoggingConfig): void {
         try {
           const instance = new appenderConfig.Class();
           if (isPresent(appenderConfig.level)) {
-            instance.level = toLogLevel(appenderConfig.level);
+            instance.level = appenderConfig.level;
           }
           for (const [key, value] of Object.entries(appenderConfig)) {
             if (key !== 'class' && key !== 'level' && isPresent(value)) {
@@ -99,9 +99,9 @@ export function configureLogging(config: LoggingConfig): void {
     log.debug('configure ROOT logger');
     const root = useLog() as Logger;
     if (isPresent(config.root.level)) {
-      const level = toLogLevel(config.root.level);
+      const level = config.root.level;
       if (root.level !== level) {
-        log.debug('changing ROOT logger level from', LogLevelName[root.level], 'to', LogLevelName[level]);
+        log.debug('changing ROOT logger level from', root.level, 'to', level);
         root.level = level;
       }
     }
@@ -110,7 +110,7 @@ export function configureLogging(config: LoggingConfig): void {
   if (isPresent(config.logger)) {
     log.debug('configure additional loggers');
     for (const [loggerName, loggerConfig] of Object.entries(config.logger)) {
-      const logger = useLog(loggerName, toLogLevel(loggerConfig.level)) as Logger;
+      const logger = useLog(loggerName, loggerConfig.level) as Logger;
       configureAppender(logger, loggerConfig.appender);
     }
   }
@@ -122,7 +122,7 @@ export function configureLogging(config: LoggingConfig): void {
  * @param {string} name
  * @param {LogLevel} level optional, if not given the level from a parent logger is used
  */
-export function useLog(name: string = '', level?: LogLevelType): ILogger {
+export function useLog(name: string = '', level?: LogLevel): ILogger {
   if (!(name in LoggerRegistry)) {
     if (name === '' || name === 'root') {
       LoggerRegistry[''] = new Logger('');
