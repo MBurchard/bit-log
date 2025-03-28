@@ -1,10 +1,10 @@
 import type {MockInstance} from 'vitest';
-import type {LoggingConfig} from '../definitions.js';
+import type {LoggingConfig, LogLevelType} from '../definitions.js';
 import type {Logger} from '../logger.js';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {AbstractBaseAppender} from '../appender/AbstractBaseAppender.js';
 import {ConsoleAppender} from '../appender/ConsoleAppender.js';
-import {LogLevel} from '../definitions.js';
+import {LogLevel, LogLevelName} from '../definitions.js';
 import {configureLogging, useLog} from '../index.js';
 
 describe('test usage', () => {
@@ -33,7 +33,7 @@ describe('test usage', () => {
 
   it('should show Level as String', () => {
     const level = LogLevel.DEBUG;
-    const txt = `Test: ${LogLevel[level]}`;
+    const txt = `Test: ${LogLevelName[level]}`;
     expect(txt).toBe('Test: DEBUG');
   });
 
@@ -239,7 +239,7 @@ describe('test usage', () => {
           CONSOLE: {
             Class: ConsoleAppender,
             level: LogLevel.DEBUG,
-            formatPrefix: (_ts: Date, _level: LogLevel, _name: string, _colored: boolean = false): string => {
+            formatPrefix: (_ts: Date, _level: LogLevelType, _name: string, _colored: boolean = false): string => {
               return 'works as designed';
             },
           },

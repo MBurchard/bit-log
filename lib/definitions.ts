@@ -24,15 +24,21 @@ export type LogLevelString = 'DEBUG' | 'ERROR' | 'FATAL' | 'INFO' | 'OFF' | 'TRA
 /**
  * Log level definition.
  */
-export enum LogLevel {
-  TRACE = 0,
-  DEBUG = 10,
-  INFO = 20,
-  WARN = 30,
-  ERROR = 40,
-  FATAL = 50,
-  OFF = 1000,
-}
+export const LogLevel = {
+  TRACE: 0,
+  DEBUG: 10,
+  INFO: 20,
+  WARN: 30,
+  ERROR: 40,
+  FATAL: 50,
+  OFF: 1000,
+} as const;
+
+export type LogLevelType = (typeof LogLevel)[keyof typeof LogLevel];
+
+export const LogLevelName = Object.fromEntries(
+  Object.entries(LogLevel).map(([k, v]) => [v, k]),
+) as Record<(typeof LogLevel)[keyof typeof LogLevel], keyof typeof LogLevel>;
 
 /**
  * Get LogLevel for the given log level string.
@@ -42,8 +48,8 @@ export enum LogLevel {
  * @throws {Error} an error if the given string is not a valid LogLevel
  */
 export function toLogLevel(value: undefined): undefined;
-export function toLogLevel(value: LogLevelString | LogLevel): LogLevel;
-export function toLogLevel(value: LogLevelString | LogLevel | undefined): LogLevel | undefined {
+export function toLogLevel(value: LogLevelString | LogLevelType): LogLevelType;
+export function toLogLevel(value: LogLevelString | LogLevelType | undefined): LogLevelType | undefined {
   if (value === undefined) {
     return undefined;
   }
@@ -67,7 +73,7 @@ export interface ILogger {
   /**
    * the logLevel set for this Logger
    */
-  level?: LogLevel;
+  level?: LogLevelType;
 
   /**
    * the name or namespace for this logger<br>
@@ -116,7 +122,7 @@ export interface ILogger {
    * @param {LogLevel} level
    * @return {boolean}
    */
-  shouldLog: (level: LogLevel) => boolean;
+  shouldLog: (level: LogLevelType) => boolean;
 
   /**
    * Used to log a trace message.<br>
@@ -138,7 +144,7 @@ export interface ILogEvent {
   /**
    * LogLevel of the triggering logger
    */
-  level: LogLevel;
+  level: LogLevelType;
   /**
    * Name(space) of the triggering logger
    */
@@ -161,7 +167,7 @@ export interface IAppender {
   /**
    * The level that the appender will handle
    */
-  level?: LogLevel;
+  level?: LogLevelType;
 
   /**
    * Some appender may need a close method at the end
@@ -190,7 +196,7 @@ export interface IAppender {
  */
 export interface AppenderConfig {
   Class: new () => IAppender;
-  level?: LogLevel | LogLevelString;
+  level?: LogLevelType | LogLevelString;
 
   [key: string]: undefined | NonNullable<unknown>;
 }
@@ -209,7 +215,7 @@ export function isAppenderConfig<T extends AppenderConfig>(sth: NonNullable<T>):
  * Logger configuration
  */
 export interface LoggerConfig {
-  level: LogLevel | LogLevelString;
+  level: LogLevelType | LogLevelString;
   appender?: string[];
 }
 

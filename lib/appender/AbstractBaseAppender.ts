@@ -1,15 +1,15 @@
-import type {IAppender, ILogEvent, LogLevel} from '../definitions.js';
+import type {IAppender, ILogEvent, LogLevelType} from '../definitions.js';
 import {isPresent} from '../definitions.js';
 import {formatAny, formatISO8601, formatLogLevel, truncateOrExtend} from '../utils.js';
 
 export abstract class AbstractBaseAppender implements IAppender {
-  level?: LogLevel;
+  level?: LogLevelType;
 
   formatAny = formatAny;
 
   formatLogLevel = formatLogLevel;
 
-  formatPrefix(ts: Date, level: LogLevel, name: string, colored: boolean = false): string {
+  formatPrefix(ts: Date, level: LogLevelType, name: string, colored: boolean = false): string {
     let formattedLevel;
     if (colored) {
       formattedLevel = this.formatLogLevel(level, colored).padStart(13, ' ');

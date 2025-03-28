@@ -1,5 +1,6 @@
+import type {LogLevelType} from './definitions.js';
 import {Ansi} from './ansi.js';
-import {isPresent, LogLevel} from './definitions.js';
+import {isPresent, LogLevel, LogLevelName} from './definitions.js';
 
 /**
  * @internal
@@ -242,7 +243,7 @@ export function formatISO8601(date: Date): string {
  * @param level
  * @param colored
  */
-export function formatLogLevel(level: LogLevel, colored: boolean = false): string {
+export function formatLogLevel(level: LogLevelType, colored: boolean = false): string {
   if (colored) {
     switch (level) {
       case LogLevel.DEBUG:
@@ -261,7 +262,7 @@ export function formatLogLevel(level: LogLevel, colored: boolean = false): strin
         return '';
     }
   }
-  return LogLevel[level];
+  return LogLevelName[level];
 }
 
 /**
@@ -275,7 +276,7 @@ export function formatLogLevel(level: LogLevel, colored: boolean = false): strin
  * @param {boolean} colored
  * @return {string}
  */
-export function formatPrefix(ts: Date, level: LogLevel, name: string, colored: boolean = false): string {
+export function formatPrefix(ts: Date, level: LogLevelType, name: string, colored: boolean = false): string {
   let formattedLevel;
   if (colored) {
     formattedLevel = formatLogLevel(level, colored).padStart(13, ' ');

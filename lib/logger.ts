@@ -4,7 +4,7 @@
  * @file A hierarchic Logger implementation
  * @author Martin Burchard
  */
-import type {IAppender, ILogEvent, ILogger} from './definitions.js';
+import type {IAppender, ILogEvent, ILogger, LogLevelType} from './definitions.js';
 import {isPresent, LogLevel} from './definitions.js';
 
 /**
@@ -15,7 +15,7 @@ import {isPresent, LogLevel} from './definitions.js';
 export class Logger implements ILogger {
   private readonly parent?: ILogger;
   readonly appender: Record<string, IAppender> = {};
-  level: LogLevel;
+  level: LogLevelType;
   readonly name: string;
 
   /**
@@ -24,15 +24,15 @@ export class Logger implements ILogger {
    * @internal
    * @param {string} name the logger name, '' is the root logger
    * @param {Logger} parent All except the root logger have a parent
-   * @param {LogLevel} level defaults to LogLevel.ERROR
+   * @param {LogLevelType} level defaults to LogLevel.ERROR
    */
-  constructor(name: string, parent?: ILogger, level?: LogLevel) {
+  constructor(name: string, parent?: ILogger, level?: LogLevelType) {
     this.name = name;
     this.parent = parent;
     this.level = level ?? parent?.level ?? LogLevel.ERROR;
   }
 
-  private logEvent(level: LogLevel, ...args: unknown[]) {
+  private logEvent(level: LogLevelType, ...args: unknown[]) {
     if (!this.shouldLog(level)) {
       return;
     }
@@ -57,10 +57,10 @@ export class Logger implements ILogger {
    * Checks if the given LogLevel is processed by this or a parent logger.
    *
    * @private
-   * @param {LogLevel} level
+   * @param {LogLevelType} level
    * @return {boolean} true if this LogLevel should be logged
    */
-  shouldLog(level: LogLevel): boolean {
+  shouldLog(level: LogLevelType): boolean {
     return level >= this.level;
   }
 
