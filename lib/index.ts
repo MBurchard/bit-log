@@ -5,9 +5,9 @@
  * @author Martin Burchard
  */
 
-import type {IAppender, ILogger, LoggingConfig} from './definitions.js';
+import type {IAppender, ILogger, LoggingConfig, LogLevelType} from './definitions.js';
 import {ConsoleAppender} from './appender/ConsoleAppender.js';
-import {isAppenderConfig, isPresent, LogLevel, toLogLevel} from './definitions.js';
+import {isAppenderConfig, isPresent, LogLevel, LogLevelName, toLogLevel} from './definitions.js';
 import {Logger} from './logger.js';
 import {formatAny} from './utils.js';
 
@@ -101,7 +101,7 @@ export function configureLogging(config: LoggingConfig): void {
     if (isPresent(config.root.level)) {
       const level = toLogLevel(config.root.level);
       if (root.level !== level) {
-        log.debug('changing ROOT logger level from', LogLevel[root.level], 'to', LogLevel[level]);
+        log.debug('changing ROOT logger level from', LogLevelName[root.level], 'to', LogLevelName[level]);
         root.level = level;
       }
     }
@@ -122,7 +122,7 @@ export function configureLogging(config: LoggingConfig): void {
  * @param {string} name
  * @param {LogLevel} level optional, if not given the level from a parent logger is used
  */
-export function useLog(name: string = '', level?: LogLevel): ILogger {
+export function useLog(name: string = '', level?: LogLevelType): ILogger {
   if (!(name in LoggerRegistry)) {
     if (name === '' || name === 'root') {
       LoggerRegistry[''] = new Logger('');

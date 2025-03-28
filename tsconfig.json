@@ -12,7 +12,8 @@
     "stripInternal": true,
 
     /* Linting */
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "erasableSyntaxOnly": true
   },
   "include": ["lib/**/*.ts"],
   "exclude": ["**/*.spec.ts", "**/*.test.ts", "node_modules", "dist", "coverage"]

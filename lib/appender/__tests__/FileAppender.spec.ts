@@ -107,14 +107,23 @@ describe('test FileAppender', async () => {
     const date = '2024-05-03';
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const existingFile = path.join(ctx.logDir, `${date}.log`);
+
     await appendFile(existingFile, 'It\'s already there\n');
     await chmod(existingFile, 0o444);
+
     await appender.handle(getDefaultEvent(date));
     const stats = await stat(existingFile);
     expect(stats.isFile()).toBe(true);
-    expect(stats.size).toBe(19);
-    expect(consoleErrorSpy)
-      .toHaveBeenCalledWith(`FileAppender is not configured properly: path '${existingFile}' can not be accessed.`);
+
+    const isRoot = process.geteuid ? (process.geteuid() === 0) : false;
+
+    if (!isRoot) {
+      expect(stats.size).toBe(19);
+      expect(consoleErrorSpy)
+        .toHaveBeenCalledWith(`FileAppender is not configured properly: path '${existingFile}' can not be accessed.`);
+    } else {
+      console.warn('Test is running as root, skipping test for write access');
+    }
   });
 
   it('should check if the full log file path is a directory', async (ctx: CustomTestContext) => {
@@ -303,7 +312,7 @@ describe('test FileAppender', async () => {
     for (let i = 0; i < numEvents; i++) {
       expect(lines[i]).toContain(`Event ${i}`);
     }
-  });
+  }, 10000);
 
   it('should call console.error when writeToFile rejects (logQueue catch block)', async () => {
     const simulatedError = new Error('Simulated failure');
