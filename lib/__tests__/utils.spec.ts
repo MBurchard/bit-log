@@ -12,6 +12,7 @@ import {
   isClass,
   truncateMiddle,
   truncateOrExtend,
+  truncateOrExtendLeft,
 } from '../utils.js';
 
 describe('test utils', () => {
@@ -150,6 +151,16 @@ describe('test utils', () => {
     const date = new Date('2024-05-08T12:30:45.678');
     expect(formatPrefix(date, 'INFO', 'foo.bar'))
       .toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}[+-]\d{2}:\d{2}\s{2}INFO\s\[.{20}]:$/);
+  });
+
+  it('truncateOrExtendLeft pads string if shorter than target length', () => {
+    const result = truncateOrExtendLeft('foo.ts', 10);
+    expect(result).toBe('foo.ts    ');
+  });
+
+  it('truncateOrExtendLeft truncates left side and adds ellipsis', () => {
+    const result = truncateOrExtendLeft('/long/path/to/file.ts', 10);
+    expect(result).toBe('…o/file.ts');
   });
 
   describe('test getClassHierarchy', () => {
