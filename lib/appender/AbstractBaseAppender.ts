@@ -1,6 +1,6 @@
 import type {IAppender, ILogEvent, LogLevel} from '../definitions.js';
 import {isPresent} from '../definitions.js';
-import {formatAny, formatISO8601, formatLogLevel, truncateOrExtend} from '../utils.js';
+import {formatAny, formatISO8601, formatLogLevel, truncateOrExtend, truncateOrExtendLeft} from '../utils.js';
 
 export abstract class AbstractBaseAppender implements IAppender {
   level?: LogLevel;
@@ -9,14 +9,21 @@ export abstract class AbstractBaseAppender implements IAppender {
 
   formatLogLevel = formatLogLevel;
 
-  formatPrefix(ts: Date, level: LogLevel, name: string, colored: boolean = false): string {
-    let formattedLevel;
-    if (colored) {
-      formattedLevel = this.formatLogLevel(level, colored).padStart(13, ' ');
-    } else {
-      formattedLevel = this.formatLogLevel(level).padStart(5, ' ');
+  formatPrefix(event: ILogEvent, colored: boolean = false): string {
+    const levelStr = this.formatLogLevel(event.level, colored);
+    const paddedLevel = colored ? levelStr.padStart(13, ' ') : levelStr.padStart(5, ' ');
+    const name = truncateOrExtend(event.loggerName, 20);
+    const timestamp = this.formatTimestamp(event.timestamp);
+
+    let callSite = '';
+    if (event.callSite) {
+      const line = String(event.callSite.line).padStart(4, ' ');
+      const column = String(event.callSite.column).padStart(2, ' ');
+      const path = truncateOrExtendLeft(event.callSite.file, 50);
+      callSite = ` (${path}:${line}:${column})`;
     }
-    return `${this.formatTimestamp(ts)} ${formattedLevel} [${truncateOrExtend(name, 20)}]:`;
+
+    return `${timestamp} ${paddedLevel} [${name}]${callSite}:`;
   }
 
   formatTimestamp = formatISO8601;
