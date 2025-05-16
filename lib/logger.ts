@@ -52,6 +52,21 @@ export class Logger implements ILogger {
       payload,
       timestamp: new Date(),
     };
+
+    if (this.includeCallSite) {
+      // eslint-disable-next-line unicorn/error-message
+      const stack = new Error().stack?.split('\n');
+      const raw = stack?.[3]?.trim();
+      const match = raw?.match(/([^\s()]+):(\d+):(\d+)/);
+      if (match) {
+        event.callSite = {
+          file: match[1],
+          line: Number(match[2]),
+          column: Number(match[3]),
+        };
+      }
+    }
+
     this.emit(event);
   }
 
