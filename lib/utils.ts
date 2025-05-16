@@ -394,8 +394,9 @@ export function truncateMiddle(str: string, length: number, replacement: string 
  * @internal
  * @param str The input string to be truncated or extended.
  * @param length The desired exact length of the resulting string.
+ * @param replacement The replacement string for the middle part (default is '…').
  * @returns The truncated or extended string.
  */
-export function truncateOrExtend(str: string, length: number): string {
-  return truncateMiddle(str, length).padEnd(length, ' ');
+export function truncateOrExtend(str: string, length: number, replacement: string = '…'): string {
+  return truncateMiddle(str, length, replacement).padEnd(length, ' ');
 }
