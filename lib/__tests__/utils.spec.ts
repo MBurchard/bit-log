@@ -12,6 +12,7 @@ import {
   isClass,
   truncateMiddle,
   truncateOrExtend,
+  truncateOrExtendLeft,
 } from '../utils.js';
 
 describe('test utils', () => {
@@ -105,7 +106,23 @@ describe('test utils', () => {
   });
 
   it('truncateMiddle if string is longer then the given limit', () => {
-    expect(truncateMiddle('longer then', 10)).toBe('long...hen');
+    expect(truncateMiddle('longer then', 10)).toBe('longe…then');
+  });
+
+  it('test truncateMiddle with length 1', () => {
+    expect(truncateMiddle('Foobar', 1)).toBe('…');
+  });
+
+  it('test truncateMiddle with length 2', () => {
+    expect(truncateMiddle('Foobar', 2)).toBe('F…');
+  });
+
+  it('test truncateMiddle with length 3', () => {
+    expect(truncateMiddle('Foobar', 3)).toBe('F…r');
+  });
+
+  it('test truncateMiddle with length 4', () => {
+    expect(truncateMiddle('Foobar', 4)).toBe('Fo…r');
   });
 
   it('truncateOrExtend if string is shorter then the given limit', () => {
@@ -134,6 +151,16 @@ describe('test utils', () => {
     const date = new Date('2024-05-08T12:30:45.678');
     expect(formatPrefix(date, 'INFO', 'foo.bar'))
       .toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}[+-]\d{2}:\d{2}\s{2}INFO\s\[.{20}]:$/);
+  });
+
+  it('truncateOrExtendLeft pads string if shorter than target length', () => {
+    const result = truncateOrExtendLeft('foo.ts', 10);
+    expect(result).toBe('foo.ts    ');
+  });
+
+  it('truncateOrExtendLeft truncates left side and adds ellipsis', () => {
+    const result = truncateOrExtendLeft('/long/path/to/file.ts', 10);
+    expect(result).toBe('…o/file.ts');
   });
 
   describe('test getClassHierarchy', () => {

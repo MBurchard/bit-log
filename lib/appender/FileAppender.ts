@@ -154,7 +154,7 @@ export class FileAppender extends AbstractBaseAppender {
       return;
     }
     try {
-      const output = [this.formatPrefix(event.timestamp, event.level, event.loggerName, this.colored)];
+      const output = [this.formatPrefix(event, this.colored)];
       if (typeof event.payload === 'function') {
         output.push(event.payload());
       } else {

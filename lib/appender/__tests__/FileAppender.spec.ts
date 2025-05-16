@@ -242,7 +242,7 @@ describe('test FileAppender', async () => {
   it('test error handling in handle', async () => {
     const date = '2024-05-14';
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    appender.formatPrefix = (_ts, _lvl, _name, _colored) => {
+    appender.formatPrefix = (_event, _colored) => {
       throw new Error('This is a test error');
     };
     await appender.handle(getDefaultEvent(date));

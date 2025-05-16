@@ -372,9 +372,9 @@ export function isClass(clazz: NonNullable<unknown>): boolean {
  *
  * @param str The input string to be truncated.
  * @param length The desired maximum length of the resulting string.
- * @param replacement The replacement string for the middle part (default is '...').
+ * @param replacement The replacement string for the middle part (default is '…').
  */
-export function truncateMiddle(str: string, length: number, replacement: string = '...'): string {
+export function truncateMiddle(str: string, length: number, replacement: string = '…'): string {
   if (str.length <= length) {
     return str;
   }
@@ -394,8 +394,27 @@ export function truncateMiddle(str: string, length: number, replacement: string 
  * @internal
  * @param str The input string to be truncated or extended.
  * @param length The desired exact length of the resulting string.
+ * @param replacement The replacement string for the middle part (default is '…').
  * @returns The truncated or extended string.
  */
-export function truncateOrExtend(str: string, length: number): string {
-  return truncateMiddle(str, length).padEnd(length, ' ');
+export function truncateOrExtend(str: string, length: number, replacement: string = '…'): string {
+  return truncateMiddle(str, length, replacement).padEnd(length, ' ');
+}
+
+/**
+ * Truncates a string from the left if it exceeds the desired length; otherwise, extends the resulting string by
+ * padding it at the end to achieve the exact desired length.
+ * The truncated string will retain the rightmost characters, prefixed with the given replacement.
+ *
+ * @internal
+ * @param str The input string to be truncated or extended.
+ * @param length The desired exact length of the resulting string.
+ * @param replacement The replacement string for the truncated part (default is '…').
+ * @returns The truncated or extended string.
+ */
+export function truncateOrExtendLeft(str: string, length: number, replacement: string = '…'): string {
+  if (str.length <= length) {
+    return str.padEnd(length, ' ');
+  }
+  return `${replacement}${str.slice(-(length - replacement.length))}`;
 }
