@@ -372,9 +372,9 @@ export function isClass(clazz: NonNullable<unknown>): boolean {
  *
  * @param str The input string to be truncated.
  * @param length The desired maximum length of the resulting string.
- * @param replacement The replacement string for the middle part (default is '...').
+ * @param replacement The replacement string for the middle part (default is '…').
  */
-export function truncateMiddle(str: string, length: number, replacement: string = '...'): string {
+export function truncateMiddle(str: string, length: number, replacement: string = '…'): string {
   if (str.length <= length) {
     return str;
   }

@@ -105,7 +105,7 @@ describe('test utils', () => {
   });
 
   it('truncateMiddle if string is longer then the given limit', () => {
-    expect(truncateMiddle('longer then', 10)).toBe('long...hen');
+    expect(truncateMiddle('longer then', 10)).toBe('longe…then');
   });
 
   it('truncateOrExtend if string is shorter then the given limit', () => {
