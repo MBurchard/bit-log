@@ -105,12 +105,14 @@ export function configureLogging(config: LoggingConfig): void {
         root.level = level;
       }
     }
+    root.includeCallSite = config.root.includeCallSite ?? false;
     configureAppender(root, config.root.appender);
   }
   if (isPresent(config.logger)) {
     log.debug('configure additional loggers');
     for (const [loggerName, loggerConfig] of Object.entries(config.logger)) {
       const logger = useLog(loggerName, loggerConfig.level) as Logger;
+      logger.includeCallSite = loggerConfig.includeCallSite ?? false;
       configureAppender(logger, loggerConfig.appender);
     }
   }

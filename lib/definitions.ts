@@ -63,6 +63,11 @@ export function toLogLevelString(level: LogLevel): string {
 export interface ILogger {
 
   /**
+   * If true, the logger will capture and attach call site information to each log event.
+   */
+  readonly includeCallSite?: boolean;
+
+  /**
    * the logLevel set for this Logger
    */
   level?: LogLevel;
@@ -132,6 +137,15 @@ export interface ILogger {
 }
 
 export interface ILogEvent {
+
+  /**
+   * Optional Info about the call site of the logger
+   */
+  callSite?: {
+    file: string;
+    line: number;
+    column: number;
+  };
 
   /**
    * LogLevel of the triggering logger
@@ -207,6 +221,7 @@ export function isAppenderConfig<T extends AppenderConfig>(sth: NonNullable<T>):
  * Logger configuration
  */
 export interface LoggerConfig {
+  includeCallSite?: boolean;
   level: LogLevel;
   appender?: string[];
 }

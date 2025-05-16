@@ -13,10 +13,11 @@ import {isPresent, toLogLevel} from './definitions.js';
  * @internal
  */
 export class Logger implements ILogger {
-  private readonly parent?: ILogger;
   readonly appender: Record<string, IAppender> = {};
+  includeCallSite: boolean = false;
   level: LogLevel;
   readonly name: string;
+  private readonly parent?: ILogger;
 
   /**
    * This Constructor is not intended to be used externally.
@@ -29,6 +30,7 @@ export class Logger implements ILogger {
   constructor(name: string, parent?: ILogger, level?: LogLevel) {
     this.name = name;
     this.parent = parent;
+    this.includeCallSite = parent?.includeCallSite ?? false;
     this.level = level ?? parent?.level ?? 'ERROR';
   }
 
