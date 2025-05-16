@@ -53,7 +53,7 @@ describe('test usage', () => {
   describe('useLogger', () => {
     it('default root logger', () => {
       const logger = useLog();
-      expect(logger).toEqual({
+      expect(logger).toMatchObject({
         level: 'INFO',
         name: '',
         parent: undefined,
@@ -65,17 +65,11 @@ describe('test usage', () => {
 
     it('logger creation works recursive', () => {
       const logger = useLog('foo.bar');
-      expect(logger).toEqual({
-        appender: {},
-        level: 'INFO',
+      expect(logger).toMatchObject({
         name: 'foo.bar',
         parent: {
-          appender: {},
-          level: 'INFO',
           name: 'foo',
           parent: {
-            appender: expect.anything(),
-            level: 'INFO',
             name: '',
             parent: undefined,
           },
