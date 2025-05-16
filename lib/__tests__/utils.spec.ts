@@ -108,6 +108,22 @@ describe('test utils', () => {
     expect(truncateMiddle('longer then', 10)).toBe('longe…then');
   });
 
+  it('test truncateMiddle with length 1', () => {
+    expect(truncateMiddle('Foobar', 1)).toBe('…');
+  });
+
+  it('test truncateMiddle with length 2', () => {
+    expect(truncateMiddle('Foobar', 2)).toBe('F…');
+  });
+
+  it('test truncateMiddle with length 3', () => {
+    expect(truncateMiddle('Foobar', 3)).toBe('F…r');
+  });
+
+  it('test truncateMiddle with length 4', () => {
+    expect(truncateMiddle('Foobar', 4)).toBe('Fo…r');
+  });
+
   it('truncateOrExtend if string is shorter then the given limit', () => {
     expect(truncateOrExtend('to short', 10)).toBe('to short  ');
   });
