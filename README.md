@@ -39,9 +39,37 @@ configureLogging({
   },
 });
 ```
+
+#### The Call Site
+
+In some environments one wants to know where the log event was created.  
+Since version 0.8.0 the call site is supported.  
+Since this is a bit expensive, as the stack trace must be created, it is not activated by default.  
+To enable it, you can use the property `includeCallSite`.
+
+```javascript
+configureLogging({
+  appender: {
+    CONSOLE: {
+      Class: ConsoleAppender,
+    },
+  },
+  root: {
+    appender: ['CONSOLE'],
+    includeCallSite: true,
+    level: 'DEBUG',
+  },
+});
+```
+
+As always, it can be set at any time and for any Logger. The choice is yours.
+Bear in mind, if you set it too late for the root logger, it will not be available for the loggers that are created
+before.
+
 #### Additional Loggers
 
 You can configure any number of additional hierarchical loggers.
+
 ```javascript
 configureLogging({
   logger: {
@@ -51,12 +79,15 @@ configureLogging({
   },
 });
 ```
+
 After this configuration you have 3 loggers, all of which can be used as required.
+
 ```javascript
 const log = useLog(); // get the root logger
 const fooLogger = useLog('foo');
 const barLogger = useLog('foo.bar');
 ```
+
 All three loggers are using the existing ConsoleAppender, which is registered on the root logger.
 
 However, you do not have to preconfigure the loggers. You can get new hierarchical loggers at any time, which then take
@@ -77,6 +108,7 @@ If you use one of the logging methods of a logger, a LogEvent is created. This i
 appender takes care of it. If this has happened, it is not passed up further.
 
 You could add a hypothetical SQLiteAppender to the root logger this way:
+
 ```javascript
 configureLogging({
   appender: {
@@ -127,14 +159,21 @@ In the source code you can see how the formatting interlocks. The method names a
 perhaps the method `formatPrefix`.
 
 ```typescript
-function formatPrefix(ts: Date, level: LogLevel, name: string, colored: boolean = false): string {
-  let formattedLevel;
-  if (colored) {
-    formattedLevel = this.formatLogLevel(level, colored).padStart(13, ' ');
-  } else {
-    formattedLevel = this.formatLogLevel(level).padStart(5, ' ');
+function formatPrefix(event: ILogEvent, colored: boolean = false): string {
+  const levelStr = this.formatLogLevel(event.level, colored);
+  const paddedLevel = colored ? levelStr.padStart(13, ' ') : levelStr.padStart(5, ' ');
+  const name = truncateOrExtend(event.loggerName, 20);
+  const timestamp = this.formatTimestamp(event.timestamp);
+
+  let callSite = '';
+  if (event.callSite) {
+    const line = String(event.callSite.line).padStart(4, ' ');
+    const column = String(event.callSite.column).padStart(2, ' ');
+    const path = truncateOrExtendLeft(event.callSite.file, 50);
+    callSite = ` (${path}:${line}:${column})`;
   }
-  return `${this.formatTimestamp(ts)} ${formattedLevel} [${truncateOrExtend(name, 20)}]:`;
+
+  return `${timestamp} ${paddedLevel} [${name}]${callSite}:`;
 }
 ```
 
