@@ -62,7 +62,7 @@ configureLogging({
 });
 ```
 
-As always, it can be set at any time and for any Logger. The choice is yours.
+As always, it can be set at any time and for any Logger. The choice is yours.  
 Bear in mind, if you set it too late for the root logger, it will not be available for the loggers that are created
 before.
 

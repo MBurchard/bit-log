@@ -79,7 +79,7 @@ export interface ILogger {
 
   /**
    * Used to log a debug message.<br>
-   * The signature is well known from console.log,<br>
+   * The signature is well-known from console.log,<br>
    * The registered appender are finally responsible for handling these args.
    */
   debug: ((...args: unknown[]) => void) & ((msg: () => string) => void);
@@ -181,7 +181,7 @@ export interface IAppender {
   close?: () => void;
 
   /**
-   * This method does what ever is needed for that specific appender.
+   * This method does whatever is needed for that specific appender.
    *
    * @async
    * @param {ILogEvent} event
