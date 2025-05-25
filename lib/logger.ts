@@ -14,10 +14,26 @@ import {isPresent, toLogLevel} from './definitions.js';
  */
 export class Logger implements ILogger {
   readonly appender: Record<string, IAppender> = {};
-  includeCallSite: boolean = false;
-  level: LogLevel;
+  private _includeCallSite?: boolean;
+  private _level?: LogLevel;
   readonly name: string;
   private readonly parent?: ILogger;
+
+  get includeCallSite(): boolean {
+    return this._includeCallSite ?? this.parent?.includeCallSite ?? false;
+  }
+
+  set includeCallSite(include: boolean) {
+    this._includeCallSite = include;
+  }
+
+  get level(): LogLevel {
+    return this._level ?? this.parent?.level ?? 'ERROR';
+  }
+
+  set level(level: LogLevel) {
+    this._level = toLogLevel(level);
+  }
 
   /**
    * This Constructor is not intended to be used externally.
@@ -30,8 +46,7 @@ export class Logger implements ILogger {
   constructor(name: string, parent?: ILogger, level?: LogLevel) {
     this.name = name;
     this.parent = parent;
-    this.includeCallSite = parent?.includeCallSite ?? false;
-    this.level = level ?? parent?.level ?? 'ERROR';
+    this._level = level;
   }
 
   private logEvent(level: LogLevel, ...args: unknown[]) {
@@ -83,7 +98,7 @@ export class Logger implements ILogger {
 
   /**
    * Add an appender.
-   * Appender is only added, if the given name is not already registered at this logger instance or if overwrite is set
+   * Appender is only added if the given name is not already registered at this logger instance or if overwrite is set
    * to true
    *
    * @param {string} appenderName name that is used to register the appender
@@ -100,7 +115,7 @@ export class Logger implements ILogger {
   }
 
   /**
-   * Remove the appender, that has been registered before with that given name.
+   * Remove the appender that has been registered before with that given name.
    *
    * @param {string} appenderName
    * @return {boolean} true if the appender has been removed, false if the given name was not registered
