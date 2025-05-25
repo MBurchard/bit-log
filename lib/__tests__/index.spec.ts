@@ -4,6 +4,7 @@ import type {Logger} from '../logger.js';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {AbstractBaseAppender} from '../appender/AbstractBaseAppender.js';
 import {ConsoleAppender} from '../appender/ConsoleAppender.js';
+import {toLogLevel} from '../definitions.js';
 import {configureLogging, useLog} from '../index.js';
 
 describe('test usage', () => {
@@ -54,7 +55,7 @@ describe('test usage', () => {
     it('default root logger', () => {
       const logger = useLog();
       expect(logger).toMatchObject({
-        level: 'INFO',
+        level: toLogLevel('INFO'),
         name: '',
         parent: undefined,
         appender: {
@@ -214,9 +215,9 @@ describe('test usage', () => {
       });
       const foo = useLog('foo');
       const bar = useLog('foo.bar');
-      // because the root logger has level INFO at the moment when foo logger has been created
-      expect(foo.level).toBe('INFO');
-      expect(bar.level).toBe('DEBUG');
+      // because the root logger has the level INFO at the moment when foo logger has been created
+      expect(foo.level).toBe(toLogLevel('INFO'));
+      expect(bar.level).toBe(toLogLevel('DEBUG'));
     });
 
     it('should use overwritten formatPrefix method', async () => {
