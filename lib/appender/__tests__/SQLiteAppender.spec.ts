@@ -4,7 +4,6 @@ import os from 'node:os';
 import path from 'node:path';
 import DatabaseConstructor, {SqliteError} from 'better-sqlite3';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
-import {LogLevel} from '../../definitions.js';
 import {exists} from '../FileAppender.js';
 import {SQLiteAppender} from '../SQLiteAppender.js';
 import {emptyDirectory, genLogDirName, getDefaultEvent} from './FileAppender.spec.js';
@@ -46,8 +45,8 @@ describe('test SQLiteAppender', () => {
   });
 
   it('constructor with log level', () => {
-    appender = new SQLiteAppender(LogLevel.INFO);
-    expect(appender.level).toBe(LogLevel.INFO);
+    appender = new SQLiteAppender('INFO');
+    expect(appender.level).toBe('INFO');
   });
 
   it('should create a logfile and add the logging', async (ctx: CustomTestContext) => {
@@ -82,9 +81,9 @@ describe('test SQLiteAppender', () => {
   });
 
   it('should not handle if the log level does not match', async (ctx: CustomTestContext) => {
-    appender.level = LogLevel.INFO;
+    appender.level = 'INFO';
     const event = getDefaultEvent();
-    event.level = LogLevel.DEBUG;
+    event.level = 'DEBUG';
     await appender.handle(event);
     const expectedFile = path.join(ctx.logDir, 'logging.db');
     expect(await exists(expectedFile)).toBe(false);
