@@ -1,4 +1,4 @@
-# bit-log: Yet another logging library for Typescript (and Javascript)
+# bit-log: Yet another logging library for TypeScript (and JavaScript)
 
 ![lang: Typescript](https://img.shields.io/badge/crafted_with-Typescript-blue?logo=typescript)
 ![GitHub License](https://img.shields.io/github/license/mburchard/bit-log)
@@ -21,8 +21,8 @@ try {
 
 ### Configuration
 
-The configuration can be carried out at any time while the code is running, multiple calls and therefore changes are
-also possible.
+The logging system can be reconfigured at any time during execution. Repeated calls allow dynamic changes to the
+configuration.
 
 Logging is configured as follows by default:
 
@@ -43,7 +43,7 @@ configureLogging({
 #### The Call Site
 
 In some environments one wants to know where the log event was created.  
-Since version 0.8.0 the call site is supported.  
+Since version 0.8.0, the call site is supported.  
 Since this is a bit expensive, as the stack trace must be created, it is not activated by default.  
 To enable it, you can use the property `includeCallSite`.
 
@@ -62,9 +62,7 @@ configureLogging({
 });
 ```
 
-As always, it can be set at any time and for any Logger. The choice is yours.  
-Bear in mind, if you set it too late for the root logger, it will not be available for the loggers that are created
-before.
+As always, it can be set at any time and for any Logger. The choice is yours.
 
 #### Additional Loggers
 
@@ -80,7 +78,7 @@ configureLogging({
 });
 ```
 
-After this configuration you have 3 loggers, all of which can be used as required.
+After this configuration you have three loggers, all of which can be used as required.
 
 ```javascript
 const log = useLog(); // get the root logger
@@ -97,7 +95,7 @@ You can also change the level when accessing a logger. However, it is not recomm
 the configuration across the entire code base. Log levels should be configured centrally, in other words by calling
 `configureLogging`.
 
-It is of course also possible to completely overwrite the default configuration, i.e. to customise the root logger and
+It is of course also possible to completely overwrite the default configuration, i.e. to customize the root logger and
 register a different appender than the `ConsoleAppender`.
 
 #### Additional Appender
@@ -107,7 +105,8 @@ You can also register them on several loggers.
 If you use one of the logging methods of a logger, a LogEvent is created. This is bubbled up the hierarchy until an
 appender takes care of it. If this has happened, it is not passed up further.
 
-You could add a hypothetical SQLiteAppender to the root logger this way:
+You could add a hypothetical SQLiteAppender (no longer hypothetical — see [`demo/sqlite`](tree/demo/sqlite))
+to the root logger this way:
 
 ```javascript
 configureLogging({
@@ -129,8 +128,8 @@ configureLogging({
 
 #### Overwrite Formatting
 
-Bit-Log is designed to be easy to use and extremely flexible. It is therefore possible to influence the formatting of
-the output for each appender.
+Bit-Log is designed to be straightforward to use and extremely flexible. It is therefore possible to influence the
+formatting of the output for each appender.
 
 ```typescript
 configureLogging({
@@ -183,7 +182,7 @@ As the name states, this appender writes to the console.
 It has three properties.
 
 `colored: boolean`  
-Specifies whether logs should be formatted with colors. By default, this property is set to `false`.
+Specifies whether logs should be formatted with colours. By default, this property is set to `false`.
 
 `pretty: boolean`  
 Specifies whether objects to be output should be formatted nicely, i.e. with indents and breaks.
@@ -197,12 +196,12 @@ By default, this property is set to `false`.
 
 ### `FileAppender`
 
-This appender of course writes to a file and cannot be used in the browser environment.
+This appender, of course, writes to a file and cannot be used in the browser environment.
 
 This implementation is *rolling*, as the name of the output file is calculated from the timestamp for each log event.
 This means that the appender switches to a new file after midnight.  
-If you do not want this, you can simply overwrite the `getTimestamp` method as described above. You can also implement
-an hourly rolling output in the same way.
+If you do not want this, you can overwrite the `getTimestamp` method as described above. You can also implement an
+hourly rolling output in the same way.
 
 The FileAppender has the following properties.
 
@@ -210,7 +209,7 @@ The FileAppender has the following properties.
 Specifies a base name for the output file. By default, this property is set to an empty string.
 
 The baseName can be empty as long as the `getTimestamp` method does not return an empty string.  
-You can therefore combine both, or use both individually.
+You can therefore combine both or use both individually.
 
 ```text
 combined: MyLog-2024-05-13.log
@@ -219,7 +218,7 @@ timestamp only: 2024-05-13.log
 ```
 
 `colored: boolean`  
-Specifies whether logs should be formatted with colors. By default, this property is set to `false`.
+Specifies whether logs should be formatted with colours. By default, this property is set to `false`.
 
 `extension: string`  
 Specifies the file extension. By default, this property is set to `log`.
