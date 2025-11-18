@@ -1,7 +1,7 @@
 {
   "name": "@mburchard/bit-log",
   "type": "module",
-  "version": "0.8.8",
+  "version": "0.8.9",
   "packageManager": "pnpm@10.22.0+sha512.bf049efe995b28f527fd2b41ae0474ce29186f7edcb3bf545087bd61fbbebb2bf75362d1307fda09c2d288e1e499787ac12d4fcb617a974718a6051f2eee741c",
   "description": "A Node library for logging",
   "author": {
@@ -75,17 +75,17 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^6.2.0",
-    "@tsconfig/node20": "^20.1.7",
+    "@tsconfig/node20": "^20.1.8",
     "@types/node": "^22.19.1",
-    "@vitest/coverage-v8": "^4.0.9",
-    "@vitest/ui": "^4.0.9",
+    "@vitest/coverage-v8": "^4.0.10",
+    "@vitest/ui": "^4.0.10",
     "eslint": "^9.39.1",
-    "glob": "^11.0.3",
+    "glob": "^11.1.0",
     "timezone-mock": "^1.3.6",
     "typescript": "~5.9.3",
     "vite": "^7.2.2",
     "vite-plugin-dts": "^4.5.4",
-    "vitest": "^4.0.9"
+    "vitest": "^4.0.10"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
