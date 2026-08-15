@@ -2,9 +2,13 @@
 
 This repository is used for **issue tracking only**.
 
-The source code, documentation and releases are hosted on our Forgejo instance:
+The source code and documentation are hosted on our Forgejo instance:
 
 **[forge.burchard-it.de/mburchard/bit-log](https://forge.burchard-it.de/mburchard/bit-log)**
+
+Releases and release notes are published on Forgejo:
+
+**[forge.burchard-it.de/mburchard/bit-log/releases](https://forge.burchard-it.de/mburchard/bit-log/releases)**
 
 The npm package is available as usual:
 
